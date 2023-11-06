@@ -6,12 +6,13 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://invoice_and_tracking:invoi
 
 db = SQLAlchemy(app)
 
-from .models.invoice import *
+from .models.modals import *
 
 
 from .views.bill_to import *
 from .views.ship_from import *
 from .views.ship_to import *
+from .views.item import *
 from .views.company import *
 from .views.invoice import *
 

@@ -4,7 +4,7 @@ import json
 from flask import jsonify, redirect, render_template, request
 
 from app import app, db
-from app.models.invoice import Bill_to, Company, Invoice, Ship_from, Ship_to
+from app.models.modals import Bill_to, Company, Invoice, Ship_from, Ship_to
 
 @app.route("/company")
 def company_view():

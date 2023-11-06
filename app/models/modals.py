@@ -48,7 +48,6 @@ class Item(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200))
     description = db.Column(db.String(200))
-    quantity = db.Column(db.Integer)
     price = db.Column(db.Integer)
     invoice_id = db.Column(db.Integer, db.ForeignKey('invoice.id'))
 
@@ -64,6 +63,17 @@ class Invoice(db.Model):
     date = db.Column(db.DateTime)
     terms = db.Column(db.String(200))
     extra_info = db.Column(db.String(200))
+
+    # tracking params
+    container = db.Column(db.String(200))
+    departure = db.Column(db.String(200))
+    on_ocean = db.Column(db.String(200))
+    on_rail = db.Column(db.String(200))
+    custom_tracking = db.Column(db.String(200))
+    BL = db.Column(db.String(200))
+    Deli = db.Column(db.String(200))
+    Manifest = db.Column(db.String(200))
+    
 
 with app.app_context():
     db.create_all()
