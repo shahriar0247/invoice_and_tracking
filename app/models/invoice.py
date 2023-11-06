@@ -62,15 +62,7 @@ class Invoice(db.Model):
 
     date = db.Column(db.DateTime)
     terms = db.Column(db.String(200))
-    bill_to1 = db.Column(db.String(200))
-    bill_to2 = db.Column(db.String(200))
-    bill_to3 = db.Column(db.String(200))
-    ship_from1 = db.Column(db.String(200))
-    ship_from2 = db.Column(db.String(200))
-    ship_from3 = db.Column(db.String(200))
-    comapany_name = db.Column(db.String(200))
-    completed = db.Column(db.Boolean, default=False)
-
+    extra_info = db.Column(db.String(200))
 
 with app.app_context():
     db.create_all()

@@ -8,5 +8,5 @@ db = SQLAlchemy(app)
 
 from .models.invoice import *
 
-from .views.index import *
+from .views.invoice import *
 
