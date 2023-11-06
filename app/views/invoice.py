@@ -1,4 +1,8 @@
-from flask import redirect, render_template, request
+
+import json
+
+from flask import jsonify, redirect, render_template, request
+
 from app import app, db
 from app.models.invoice import Bill_to, Company, Invoice, Ship_from, Ship_to
 
@@ -19,8 +23,9 @@ def get_invoice_view():
     return invoice
 @app.route("/get/company")
 def get_company_view():
-    invoice = Company.query.one()
-    return invoice
+    company = Company.query.one()
+    return jsonify(company)
+
 @app.route("/get/bill_to")
 def get_bill_to_view():
     invoice = Bill_to.query.all()
@@ -37,7 +42,7 @@ def get_ship_to_view():
 
 @app.route("/create/invoice", methods=["POST"])
 def create_invoice_view():
-    data = request.json  # Assuming you receive JSON data from the request
+    data = request.json  
     new_invoice = Invoice(
         date=data["date"],
         terms=data["terms"],
@@ -56,6 +61,24 @@ def create_invoice_view():
     
     return "Invoice created successfully"
 
+@app.route("/create/company", methods=["POST"])
+def create_company_view():
+    data = request.json  
+    new_company = Company(
+        name=data["name"],
+        address1=data["address1"],
+        address2=data["address2"],
+        address3=data["address3"],
+        tel=data["tel"],
+        fax=data["fax"],
+        gst=data["gst"],
+        bank_details=data["bank_details"],
+    )
+
+    db.session.add(new_company)
+    db.session.commit()
+    
+    return "Invoice created successfully"
 
 @app.route("/delete/invoice/<int:invoice_id>", methods=["DELETE"])
 def delete_invoice(invoice_id):

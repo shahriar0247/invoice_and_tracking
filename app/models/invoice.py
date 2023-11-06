@@ -1,6 +1,7 @@
 from app import db, app
+from dataclasses import dataclass
 
-
+@dataclass
 class Company(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200))
@@ -14,6 +15,20 @@ class Company(db.Model):
     invoice_id = db.Column(db.Integer, db.ForeignKey('invoice.id'))
     invoice = db.relationship('Invoice', back_populates='company')
 
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'address1': self.address1,
+            'address2': self.address2,
+            'address3': self.address3,
+            'tel': self.tel,
+            'fax': self.fax,
+            'gst': self.gst,
+            'bank_details': self.bank_details,
+        }
+
+@dataclass
 class Bill_to(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200))
@@ -24,7 +39,8 @@ class Bill_to(db.Model):
 
 
     
- 
+
+@dataclass 
 class Ship_from(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200))
@@ -34,7 +50,8 @@ class Ship_from(db.Model):
     invoice = db.relationship('Invoice', back_populates='ship_from')
 
 
-  
+
+@dataclass  
 class Ship_to(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200))
@@ -43,6 +60,7 @@ class Ship_to(db.Model):
     invoice_id = db.Column(db.Integer, db.ForeignKey('invoice.id'))
     invoice = db.relationship('Invoice', back_populates='ship_to')
 
+@dataclass
 class Item(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200))
@@ -52,6 +70,7 @@ class Item(db.Model):
     invoice_id = db.Column(db.Integer, db.ForeignKey('invoice.id'))
 
 
+@dataclass
 class Invoice(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     company = db.relationship('Company', back_populates='invoice')
