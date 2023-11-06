@@ -1,4 +1,4 @@
-from app import db
+from app import db, app
 
 
 class Company(db.Model):
@@ -56,8 +56,8 @@ class Invoice(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     company = db.relationship('Company', back_populates='invoice')
     bill_to = db.relationship('Bill_to', back_populates='invoice')
-    ship_from = db.relationship('Bill_from', back_populates='invoice')
-    ship_to = db.relationship('Bill_from', back_populates='invoice')
+    ship_from = db.relationship('Ship_from', back_populates='invoice')
+    ship_to = db.relationship('Ship_to', back_populates='invoice')
     item = db.relationship('Item', backref='invoice', lazy=True)
 
     date = db.Column(db.DateTime)
@@ -72,6 +72,6 @@ class Invoice(db.Model):
     completed = db.Column(db.Boolean, default=False)
 
 
-
-db.create_all()
+with app.app_context():
+    db.create_all()
 

@@ -7,7 +7,7 @@ def home():
     return render_template("index.html")
 
 @app.route("/invoice")
-def home():
+def invoice():
     invoice = Invoice.query.all()
     return render_template("invoice.html", invoice=invoice)
 
