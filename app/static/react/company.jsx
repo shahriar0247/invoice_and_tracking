@@ -24,49 +24,49 @@ function App() {
                 <div className="input_field">
                     <div className="title">Name</div>
                     <div className="input">
-                        <input type="text" value={name} />
+                        <input type="text" value={name} onChange={(e) => {set_name(e.target.value)}} />
                     </div>
                 </div>
                 <div className="input_field">
                     <div className="title">Address Line 1</div>
                     <div className="input">
-                        <input type="text" value={address1} />
+                        <input type="text" value={address1} onChange={(e) => {set_address1(e.target.value)}} />
                     </div>
                 </div>
                 <div className="input_field">
                     <div className="title">Address Line 2</div>
                     <div className="input">
-                        <input type="text" value={address2} />
+                        <input type="text" value={address2} onChange={(e) => {set_address2(e.target.value)}} />
                     </div>
                 </div>
                 <div className="input_field">
                     <div className="title">Address Line 3</div>
                     <div className="input">
-                        <input type="text" value={address3} />
+                        <input type="text" value={address3} onChange={(e) => {set_address3(e.target.value)}} />
                     </div>
                 </div>
                 <div className="input_field">
                     <div className="title">Tel</div>
                     <div className="input">
-                        <input type="text" value={tel} />
+                        <input type="text" value={tel} onChange={(e) => {set_tel(e.target.value)}} />
                     </div>
                 </div>
                 <div className="input_field">
                     <div className="title">Fax</div>
                     <div className="input">
-                        <input type="text" value={fax} />
+                        <input type="text" value={fax} onChange={(e) => {set_fax(e.target.value)}} />
                     </div>
                 </div>
                 <div className="input_field">
                     <div className="title">GST</div>
                     <div className="input">
-                        <input type="text" value={gst} />
+                        <input type="text" value={gst} onChange={(e) => {set_gst(e.target.value)}} />
                     </div>
                 </div>
                 <div className="input_field">
                     <div className="title">Bank Details</div>
                     <div className="input">
-                        <input type="text" value={bank_details} />
+                        <textarea type="text" value={bank_details} onChange={(e) => {set_bank_details(e.target.value)}} />
                     </div>
                 </div>
                 <button>Save</button>

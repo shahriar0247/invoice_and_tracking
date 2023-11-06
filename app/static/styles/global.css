@@ -33,6 +33,10 @@ body nav a {
 body nav a:hover {
   background-color: rgb(108, 157, 255);
 }
+body main {
+  margin: 50px;
+  margin-top: 0px;
+}
 
 .all_inputs {
   display: grid;
@@ -44,10 +48,9 @@ body nav a:hover {
   margin-bottom: 10px;
 }
 .all_inputs .input_field .title {
-  display: flex;
-  align-items: center;
+  margin-top: 9px;
 }
-.all_inputs .input_field .input input {
+.all_inputs .input_field .input input, .all_inputs .input_field .input textarea {
   height: 30px;
   border-radius: 5px;
   border: 1px solid #222222;
@@ -55,6 +58,12 @@ body nav a:hover {
   padding-left: 10px;
   padding-right: 10px;
   width: calc(90% - 40px);
+}
+.all_inputs .input_field .input textarea {
+  padding: 20px;
+  width: calc(90% - 60px);
+  min-width: calc(90% - 60px);
+  max-width: calc(90% - 60px);
 }
 
 button {

@@ -39,6 +39,11 @@ body {
             background-color: $secondary;
         }
     }
+
+    main {
+        margin: 50px;
+        margin-top: 0px;
+    }
 }
 
 
@@ -53,12 +58,11 @@ body {
         margin-bottom: 10px;
 
         .title {
-            display: flex;
-            align-items: center;
+            margin-top: 9px;
         }
 
         .input {
-            input {
+            input, textarea {
                 height: 30px;
                 border-radius: 5px;
                 border: 1px solid #222222;
@@ -67,6 +71,12 @@ body {
                 padding-right: 10px;
                 width: calc(90% - 40px);
 
+            }
+            textarea{
+                padding: 20px;
+                width: calc(90% - 60px);
+                min-width: calc(90% - 60px);
+                max-width: calc(90% - 60px);
             }
         }
     }
