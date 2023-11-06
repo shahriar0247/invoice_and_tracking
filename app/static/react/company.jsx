@@ -7,11 +7,21 @@ function App() {
     const [fax, set_fax] = React.useState();
     const [gst, set_gst] = React.useState();
     const [bank_details, set_bank_details] = React.useState();
+    React.useEffect(() => {
+        fetchCompany();
+    }, []);
     function fetchCompany() {
         fetch("/get/company")
             .then((response) => response.json())
             .then((data) => {
-                console.log(data);
+                set_name(data["name"]);
+                set_address1(data["address1"]);
+                set_address2(data["address2"]);
+                set_address3(data["address3"]);
+                set_tel(data["tel"]);
+                set_fax(data["fax"]);
+                set_gst(data["gst"]);
+                set_bank_details(data["bank_details"]);
             })
             .catch((error) => {
                 console.error("Error fetching company data:", error);
@@ -39,6 +49,7 @@ function App() {
             .then((response) => {
                 if (response.ok) {
                     alert("Company created successfully");
+                    location.reload()
                 } else {
                     alert("Failed to create company");
                 }
@@ -147,7 +158,7 @@ function App() {
                         />
                     </div>
                 </div>
-                <button onClick={fetchCompany}>Save</button>
+                <button onClick={createCompany}>Save</button>
             </div>
         </div>
     );

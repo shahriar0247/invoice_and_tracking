@@ -51,10 +51,10 @@ body {
 .all_inputs {
     display: grid;
     grid-template-columns: 1fr 1fr;
-
+    max-width: 800px;
     .input_field {
         display: grid;
-        grid-template-columns: 150px 1fr;
+        grid-template-columns: 130px 1fr;
         margin-bottom: 10px;
 
         .title {
