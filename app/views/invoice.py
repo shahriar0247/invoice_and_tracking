@@ -6,6 +6,10 @@ from app.models.invoice import Bill_to, Company, Invoice, Ship_from, Ship_to
 def home():
     return redirect("/invoice")
 
+@app.route("/company")
+def company_view():
+    return render_template("company.html")
+    
 @app.route("/invoice")
 def invoice_view():
     return render_template("invoice.html")

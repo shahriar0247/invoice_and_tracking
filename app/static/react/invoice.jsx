@@ -1,14 +1,14 @@
 const App = () => {
     const [createModalOpen, setCreateModalOpen] = React.useState(false);
 
-    function fetchInvoices() {
+    function fetchinvoice() {
         fetch("/get/invoice")
             .then((response) => response.json())
             .then((data) => {
                 console.log(data);
             })
             .catch((error) => {
-                console.error("Error fetching invoices:", error);
+                console.error("Error fetching invoice:", error);
             });
     }
     function fetchCompany() {
@@ -122,7 +122,7 @@ const App = () => {
     return (
         <div>
             <h1>Hello, React CDN Demo!</h1>
-            <button onClick={fetchInvoices}>Get Invoices</button>
+            <button onClick={fetchinvoice}>Get invoice</button>
             {createModalOpen && (
                 <div className="modal">
                     <h2>Create Invoice</h2>
