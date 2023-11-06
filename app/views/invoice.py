@@ -19,21 +19,6 @@ def get_invoice_view():
     invoice = Invoice.query.all()
     return invoice
 
-
-@app.route("/get/bill_to")
-def get_bill_to_view():
-    invoice = Bill_to.query.all()
-    return invoice
-@app.route("/get/ship_from")
-def get_ship_from_view():
-    invoice = Ship_from.query.all()
-    return invoice
-
-@app.route("/get/ship_to")
-def get_ship_to_view():
-    ship_to = Ship_to.query.all()
-    return ship_to
-
 @app.route("/create/invoice", methods=["POST"])
 def create_invoice_view():
     data = request.json  

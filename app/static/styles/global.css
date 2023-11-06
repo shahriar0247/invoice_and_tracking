@@ -4,6 +4,15 @@ body {
   grid-template-columns: 250px auto;
   height: 100vh;
 }
+body h1,
+body h2,
+body h3,
+body h4,
+body h5,
+body h6 {
+  font-weight: bold;
+  margin: 20px;
+}
 body nav {
   display: grid;
   justify-content: center;
@@ -20,8 +29,9 @@ body nav a {
   color: white;
   text-decoration: none;
   background-color: rgb(57, 107, 208);
-  width: 100px;
-  padding: 20px;
+  width: 150px;
+  padding-left: 20px;
+  padding-right: 20px;
   padding-top: 10px;
   padding-bottom: 10px;
   margin-bottom: 5px;
@@ -29,19 +39,33 @@ body nav a {
   border-radius: 5px;
   text-align: center;
   transition: 200ms all;
+  box-shadow: 2px 2px 5px 1px rgba(0, 0, 0, 0.4);
 }
 body nav a:hover {
   background-color: rgb(108, 157, 255);
+  color: white;
 }
 body main {
   margin: 50px;
   margin-top: 0px;
+}
+body main .topbar {
+  width: -moz-max-content;
+  width: max-content;
+  margin: auto;
+  margin-right: 0;
+  margin-bottom: 20px;
+}
+body main .table {
+  box-shadow: 2px 2px 5px 1px rgba(0, 0, 0, 0.4);
 }
 
 .all_inputs {
   display: grid;
   grid-template-columns: 1fr 1fr;
   max-width: 800px;
+  box-shadow: 2px 2px 5px 1px rgba(0, 0, 0, 0.4);
+  padding: 50px;
 }
 .all_inputs .input_field {
   display: grid;
@@ -51,7 +75,8 @@ body main {
 .all_inputs .input_field .title {
   margin-top: 9px;
 }
-.all_inputs .input_field .input input, .all_inputs .input_field .input textarea {
+.all_inputs .input_field .input input,
+.all_inputs .input_field .input textarea {
   height: 30px;
   border-radius: 5px;
   border: 1px solid #222222;
@@ -76,9 +101,11 @@ button {
   color: white;
   min-width: 100px;
   border-radius: 5px;
-  box-shadow: 0px 0px 5px 1px rgba(0, 0, 0, 0.1);
+  box-shadow: 2px 2px 5px 1px rgba(0, 0, 0, 0.4);
   transition: 200ms all;
   border: none;
+  padding-left: 20px;
+  padding-right: 20px;
 }
 
 button:hover {

@@ -8,6 +8,7 @@ from app.models.invoice import Bill_to, Company, Invoice, Ship_from, Ship_to
 
 @app.route("/bill_to")
 def bill_to_view():
+    print("coming here")
     return render_template("bill_to.html")
 
 
@@ -20,34 +21,20 @@ def get_bill_to_view():
         bill_to_object["name"] = bill_to.name 
         bill_to_object["address1"] = bill_to.address1 
         bill_to_object["address2"] = bill_to.address2 
-        bill_to_object["address3"] = bill_to.address3 
-        bill_to_object["tel"] = bill_to.tel 
-        bill_to_object["fax"] = bill_to.fax 
-        bill_to_object["gst"] = bill_to.gst 
-        bill_to_object["bank_details"] = bill_to.bank_details 
+
         all_bills.append(bill_to_object)
 
-    return jsonify(bill_to_object)
+    return jsonify(all_bills)
 
 
 @app.route("/create/bill_to", methods=["POST"])
 def create_bill_to_view():
-    try:
-        db.session.query(Company).delete()
-        db.session.commit()
-    except:
-        db.session.rollback()
 
     data = request.json  
-    new_bill_to = Company(
+    new_bill_to = Bill_to(
         name=data["name"],
         address1=data["address1"],
         address2=data["address2"],
-        address3=data["address3"],
-        tel=data["tel"],
-        fax=data["fax"],
-        gst=data["gst"],
-        bank_details=data["bank_details"],
     )
 
     db.session.add(new_bill_to)

@@ -10,39 +10,39 @@ function App() {
     }
 
     React.useEffect(() => {
-        fetchBill_to();
+        fetchShip_from();
     }, []);
 
-    function fetchBill_to() {
-        fetch("/get/bill_to")
+    function fetchShip_from() {
+        fetch("/get/ship_from")
             .then((response) => response.json())
             .then((data) => {
                 loadTable(data);
             })
             .catch((error) => {
-                console.error("Error fetching bill_to data:", error);
+                console.error("Error fetching ship_from data:", error);
             });
     }
-    function createBill_to() {
-        const bill_toData = {
+    function createShip_from() {
+        const ship_fromData = {
             name: name,
             address1: address1,
             address2: address2,
         };
 
-        fetch("/create/bill_to", {
+        fetch("/create/ship_from", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify(bill_toData),
+            body: JSON.stringify(ship_fromData),
         })
             .then((response) => {
                 if (response.ok) {
-                    alert("Bill To created successfully");
+                    alert("Ship From created successfully");
                     location.reload();
                 } else {
-                    alert("Failed to create bill_to");
+                    alert("Failed to create ship_from");
                 }
             })
             .catch((error) => {
@@ -59,10 +59,10 @@ function App() {
         });
     }
     return (
-        <div className="bill_to">
-            <h1>Bill To Details</h1>
+        <div className="ship_from">
+            <h1>Ship From Details</h1>
             <div className="topbar">
-                <button onClick={toggleCreateModal}>Create Bill To</button>
+                <button onClick={toggleCreateModal}>Create Ship From</button>
             </div>
             <table id="data-table" className="table table-striped">
                 <thead>
@@ -113,7 +113,7 @@ function App() {
                                 />
                             </div>
                         </div>
-                        <button onClick={createBill_to}>Create</button>
+                        <button onClick={createShip_from}>Create</button>
                     </div>
                 </div>
             )}

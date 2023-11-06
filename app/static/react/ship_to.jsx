@@ -10,39 +10,39 @@ function App() {
     }
 
     React.useEffect(() => {
-        fetchBill_to();
+        fetchShip_to();
     }, []);
 
-    function fetchBill_to() {
-        fetch("/get/bill_to")
+    function fetchShip_to() {
+        fetch("/get/ship_to")
             .then((response) => response.json())
             .then((data) => {
                 loadTable(data);
             })
             .catch((error) => {
-                console.error("Error fetching bill_to data:", error);
+                console.error("Error fetching ship_to data:", error);
             });
     }
-    function createBill_to() {
-        const bill_toData = {
+    function createShip_to() {
+        const ship_toData = {
             name: name,
             address1: address1,
             address2: address2,
         };
 
-        fetch("/create/bill_to", {
+        fetch("/create/ship_to", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify(bill_toData),
+            body: JSON.stringify(ship_toData),
         })
             .then((response) => {
                 if (response.ok) {
-                    alert("Bill To created successfully");
+                    alert("Ship To created successfully");
                     location.reload();
                 } else {
-                    alert("Failed to create bill_to");
+                    alert("Failed to create ship_to");
                 }
             })
             .catch((error) => {
@@ -59,10 +59,10 @@ function App() {
         });
     }
     return (
-        <div className="bill_to">
-            <h1>Bill To Details</h1>
+        <div className="ship_to">
+            <h1>Ship To Details</h1>
             <div className="topbar">
-                <button onClick={toggleCreateModal}>Create Bill To</button>
+                <button onClick={toggleCreateModal}>Create Ship To</button>
             </div>
             <table id="data-table" className="table table-striped">
                 <thead>
@@ -113,7 +113,7 @@ function App() {
                                 />
                             </div>
                         </div>
-                        <button onClick={createBill_to}>Create</button>
+                        <button onClick={createShip_to}>Create</button>
                     </div>
                 </div>
             )}
