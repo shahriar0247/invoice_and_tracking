@@ -14,10 +14,45 @@ def home():
 @app.route("/invoice")
 def invoice_view():
     return render_template("invoice.html")
+
 @app.route("/get/invoice")
 def get_invoice_view():
-    invoice = Invoice.query.all()
-    return invoice
+
+    
+    # id = 
+    # company = 
+    # bill_to =
+    # ship_from 
+    # ship_to =
+    # item = d
+
+    # date 
+    # terms = 
+    # extra_info = 
+
+    # # tracking params
+    # container = 
+    # departure = 
+    # on_ocean = 
+    # on_rail = 
+    # custom_tracking = 
+    # BL = 
+    # Deli = 
+    # Manifest = 
+    
+
+    all_invoice = []
+    all_invoices_raw = Invoice.query.all()
+    print(all_invoices_raw)
+    for invoice in all_invoices_raw:
+        invoice_object = {}
+        print("invoice.bill_to.name")
+        print(invoice.bill_to.name)
+
+
+        all_invoice.append(invoice_object)
+
+    return jsonify(all_invoice)
 
 @app.route("/create/invoice", methods=["POST"])
 def create_invoice_view():

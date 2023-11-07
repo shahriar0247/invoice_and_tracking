@@ -1,21 +1,52 @@
 const App = () => {
-    const [createModalOpen, setCreateModalOpen] = React.useState(false);
+    const [showCreateModal, setShowCreateModal] = React.useState(false);
 
-    function fetchinvoice() {
+    const [company, set_company] = React.useState([]);
+    const [all_bill_to, set_all_bill_to] = React.useState([]);
+    const [all_ship_from, set_all_ship_from] = React.useState([]);
+    const [all_ship_to, set_all_ship_to] = React.useState([]);
+    const [all_items, set_all_items] = React.useState([]);
+
+    React.useEffect(() => {
+        $("select").selectpicker();
+    });
+
+    React.useEffect(() => {
+        fetchCompany();
+        fetchBillTo();
+        fetchShipFrom();
+        fetchShipTo();
+        fetchItems();
+        fetchInvoice();
+
+    }, []);
+    function toggleCreateModal() {
+        setShowCreateModal(!showCreateModal);
+    }
+    function fetchInvoice() {
         fetch("/get/invoice")
             .then((response) => response.json())
             .then((data) => {
-                console.log(data);
+                loadTable(data);
             })
             .catch((error) => {
                 console.error("Error fetching invoice:", error);
             });
     }
+    function loadTable(data) {
+        $(document).ready(function () {
+            var dataTable = $("#data-table").DataTable();
+
+            data.forEach(function (item) {
+                dataTable.row.add([item.name, item.address1, item.address2]).draw();
+            });
+        });
+    }
     function fetchCompany() {
         fetch("/get/company")
             .then((response) => response.json())
             .then((data) => {
-                console.log(data);
+                set_company(data);
             })
             .catch((error) => {
                 console.error("Error fetching company data:", error);
@@ -25,17 +56,17 @@ const App = () => {
         fetch("/get/bill_to")
             .then((response) => response.json())
             .then((data) => {
-                console.log(data);
+                set_all_bill_to(data);
             })
             .catch((error) => {
-                console.error("Error fetching bill_to data:", error);
+                console.error("Error fetching invoice data:", error);
             });
     }
     function fetchShipFrom() {
         fetch("/get/ship_from")
             .then((response) => response.json())
             .then((data) => {
-                console.log(data);
+                set_all_ship_from(data);
             })
             .catch((error) => {
                 console.error("Error fetching ship_from data:", error);
@@ -45,10 +76,21 @@ const App = () => {
         fetch("/get/ship_to")
             .then((response) => response.json())
             .then((data) => {
-                console.log(data);
+                set_all_ship_to(data);
             })
             .catch((error) => {
                 console.error("Error fetching ship_to data:", error);
+            });
+    }
+    function fetchItems() {
+        fetch("/get/item")
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+                set_all_items(data);
+            })
+            .catch((error) => {
+                console.error("Error fetching items data:", error);
             });
     }
 
@@ -56,7 +98,7 @@ const App = () => {
         const invoiceData = {
             company_id: company_id, // Replace with actual data
             terms: "Net 30", // Replace with actual data
-            bill_to1: "John Doe", // Replace with actual data
+            invoice1: "John Doe", // Replace with actual data
             // Add other fields as needed
         };
 
@@ -97,7 +139,7 @@ const App = () => {
         const updatedInvoiceData = {
             date: "2023-11-07", // Replace with updated data
             terms: "Net 45", // Replace with updated data
-            bill_to1: "Jane Smith", // Replace with updated data
+            invoice1: "Jane Smith", // Replace with updated data
             // Add other fields as needed
         };
 
@@ -120,12 +162,70 @@ const App = () => {
             });
     }
     return (
-        <div>
-            <h1>Hello, React CDN Demo!</h1>
-            <button onClick={fetchinvoice}>Get invoice</button>
-            {createModalOpen && (
-                <div className="modal">
-                    <h2>Create Invoice</h2>
+        <div className="invoice">
+            <h1>Invoice Details</h1>
+            <div className="topbar">
+                <button onClick={toggleCreateModal}>Create Invoice</button>
+            </div>
+            <table id="data-table" className="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Address 1</th>
+                        <th>Address 1</th>
+                        <th>Address 1</th>
+                        <th>Address 1</th>
+                        <th>Address 2</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            {showCreateModal && (
+                <div className="modal-personal">
+                    <div className="all_inputs">
+                        <div className="input_field">
+                            <div className="title">Bill To</div>
+                            <div className="input">
+                                <select>
+                                    {all_bill_to.map(function (element) {
+                                        return <option>{element.name}</option>;
+                                    })}
+                                </select>
+                            </div>
+                        </div>
+                        <div className="input_field">
+                            <div className="title">Ship To</div>
+                            <div className="input">
+                                <select>
+                                    {all_ship_to.map(function (element) {
+                                        return <option>{element.name}</option>;
+                                    })}
+                                </select>
+                            </div>
+                        </div>
+                        <div className="input_field">
+                            <div className="title">Ship From</div>
+                            <div className="input">
+                                <select>
+                                    {all_ship_from.map(function (element) {
+                                        return <option>{element.name}</option>;
+                                    })}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div className="input_field">
+                            <div className="title">Items</div>
+                            <div className="input">
+                                <select id="item_select" className="" multiple="multiple">
+                                    {all_items.map(function (element) {
+                                        return <option>{element.name}</option>;
+                                    })}
+                                </select>
+                            </div>
+                        </div>
+                        <button onClick={createInvoice}>Create</button>
+                    </div>
                 </div>
             )}
         </div>

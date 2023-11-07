@@ -133,3 +133,7 @@ button {
 button:hover {
     background-color: $secondary;
 }
+
+.bootstrap-select > button.dropdown-toggle{
+    width: auto;
+}

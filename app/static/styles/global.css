@@ -110,4 +110,8 @@ button {
 
 button:hover {
   background-color: rgb(108, 157, 255);
+}
+
+.bootstrap-select > button.dropdown-toggle {
+  width: auto;
 }/*# sourceMappingURL=global.css.map */

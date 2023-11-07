@@ -9,7 +9,6 @@ from app.models.modals import Bill_to, Company, Invoice, Ship_from, Ship_to
 
 @app.route("/ship_from")
 def ship_from_view():
-    print("coming here")
     return render_template("ship_from.html")
 
 
