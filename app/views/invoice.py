@@ -8,12 +8,18 @@ from app.models.modals import Bill_to, Company, Invoice, Ship_from, Ship_to
 
 @app.route("/")
 def home():
-    return redirect("/invoice")
+    return redirect("/create_invoice")
 
     
-@app.route("/invoice")
-def invoice_view():
-    return render_template("invoice.html")
+@app.route("/create_invoice")
+def create_invoice_view_():
+    return render_template("create_invoice.html")
+
+    
+    
+@app.route("/invoices")
+def invoices_view():
+    return render_template("invoices.html")
 
 @app.route("/get/invoice")
 def get_invoice_view():
