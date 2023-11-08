@@ -39,7 +39,7 @@
         <main>{% block main %}{% endblock %}</main>
         <script>
             $(document).ready(function () {
-                $("select").selectpicker();
+                $(".form-select").selectpicker();
             });
 
             function asyncLoop(iterations, interval, callback) {
@@ -58,9 +58,9 @@
                 loop();
             }
 
-            $("select").selectpicker();
+            $(".form-select").selectpicker();
             asyncLoop(150000, 500, (count) => {
-                $("select").selectpicker();
+                $(".form-select").selectpicker();
             });
         </script>
     </body>

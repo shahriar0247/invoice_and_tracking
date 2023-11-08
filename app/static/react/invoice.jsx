@@ -5,10 +5,32 @@ const App = () => {
     const [all_bill_to, set_all_bill_to] = React.useState([]);
     const [all_ship_from, set_all_ship_from] = React.useState([]);
     const [all_ship_to, set_all_ship_to] = React.useState([]);
-    const [all_items, set_all_items] = React.useState([]);
+    const [all_items, set_all_items] = React.useState([
+        { id: 0, name: "milk", description: "a health drink", price: 20 },
+        { id: 1, name: "coffee", description: "a very good drink", price: 30 },
+        { id: 2, name: "chocolate", description: "something sweet", price: 40 },
+    ]);
+    const [selected_items, set_selected_items] = React.useState([]);
+
+    const [company_information, set_company_information] = React.useState("");
+    const [invoice_information, set_invoice_information] = React.useState("");
+    const [bill_to_information, set_bill_to_information] = React.useState("");
+    const [ship_from_information, set_ship_from_information] = React.useState("");
+    const [ship_to_information, set_ship_to_information] = React.useState("");
+    const [extra_information, set_extra_information] = React.useState("");
+
+    const [total_price, set_total_price] = React.useState(0);
 
     React.useEffect(() => {
-        $("select").selectpicker();
+        let total_price_ = 0;
+        selected_items.map(function (item) {
+            total_price_ = total_price_ + item.price * item.quantity;
+        });
+        set_total_price(total_price_);
+    }, [selected_items]);
+
+    React.useEffect(() => {
+        $(".form-select").selectpicker();
     });
 
     React.useEffect(() => {
@@ -19,6 +41,27 @@ const App = () => {
         fetchItems();
         fetchInvoice();
     }, []);
+
+    const edit_invoice_fields = (index, field, value) => {
+        const updatedItems = [...selected_items];
+        updatedItems[index][field] = value;
+        set_selected_items(updatedItems);
+    };
+
+    const add_new_invoice_item = (event) => {
+        let selectedItemValue = event.target.value;
+        selectedItemValue = JSON.parse(selectedItemValue);
+        if (selectedItemValue !== "none" && selectedItemValue !== "blank") {
+            const selectedItem = all_items.find((item) => item.id === selectedItemValue.id);
+            if (selectedItem) {
+                const selectedItemJson = JSON.stringify(selectedItem);
+                set_selected_items([...selected_items, { ...selectedItem, quantity: 1 }]);
+                event.target.value = "none";
+            }
+        } else if (selectedItemValue === "blank") {
+        }
+    };
+
     function toggleCreateModal() {
         setShowCreateModal(!showCreateModal);
     }
@@ -85,8 +128,7 @@ const App = () => {
         fetch("/get/item")
             .then((response) => response.json())
             .then((data) => {
-                console.log(data);
-                set_all_items(data);
+                // set_all_items(data);
             })
             .catch((error) => {
                 console.error("Error fetching items data:", error);
@@ -185,7 +227,7 @@ const App = () => {
                         <div className="input_field">
                             <div className="title">Bill To</div>
                             <div className="input">
-                                <select>
+                                <select className="form-select">
                                     {all_bill_to.map(function (element) {
                                         return <option>{element.name}</option>;
                                     })}
@@ -195,7 +237,7 @@ const App = () => {
                         <div className="input_field">
                             <div className="title">Ship To</div>
                             <div className="input">
-                                <select>
+                                <select className="form-select">
                                     {all_ship_to.map(function (element) {
                                         return <option>{element.name}</option>;
                                     })}
@@ -205,19 +247,8 @@ const App = () => {
                         <div className="input_field">
                             <div className="title">Ship From</div>
                             <div className="input">
-                                <select>
+                                <select className="form-select">
                                     {all_ship_from.map(function (element) {
-                                        return <option>{element.name}</option>;
-                                    })}
-                                </select>
-                            </div>
-                        </div>
-
-                        <div className="input_field">
-                            <div className="title">Items</div>
-                            <div className="input">
-                                <select id="item_select" className="" multiple="multiple">
-                                    {all_items.map(function (element) {
                                         return <option>{element.name}</option>;
                                     })}
                                 </select>
@@ -239,63 +270,110 @@ const App = () => {
                         </div>
 
                         <div className="input_field">
-                            <div className="title">Items</div>
+                            <div className="title">Extra Info</div>
                             <div className="input">
-                                <select id="item_select" className="" multiple="multiple">
-                                    {all_items.map(function (element) {
-                                        return <option>{element.name}</option>;
-                                    })}
-                                </select>
+                                <textarea name="" id="" cols="30" rows="10"></textarea>
                             </div>
                         </div>
-
-                        <div className="input_field">
-                            <div className="title">Items</div>
-                            <div className="input">
-                                <select id="item_select" className="" multiple="multiple">
-                                    {all_items.map(function (element) {
-                                        return <option>{element.name}</option>;
-                                    })}
-                                </select>
-                            </div>
-                        </div>
-
-                        <div className="input_field">
-                            <div className="title">Items</div>
-                            <div className="input">
-                                <select id="item_select" className="" multiple="multiple">
-                                    {all_items.map(function (element) {
-                                        return <option>{element.name}</option>;
-                                    })}
-                                </select>
-                            </div>
-                        </div>
-
-                        <div className="input_field">
-                            <div className="title">Items</div>
-                            <div className="input">
-                                <select id="item_select" className="" multiple="multiple">
-                                    {all_items.map(function (element) {
-                                        return <option>{element.name}</option>;
-                                    })}
-                                </select>
-                            </div>
-                        </div>
-
-                        <div className="input_field">
-                            <div className="title">Items</div>
-                            <div className="input">
-                                <select id="item_select" className="" multiple="multiple">
-                                    {all_items.map(function (element) {
-                                        return <option>{element.name}</option>;
-                                    })}
-                                </select>
-                            </div>
-                        </div>
-                        <button onClick={createInvoice}>Create</button>
                     </div>
+                    <div className="input_field">
+                        <div className="title">Items</div>
+                        <div className="input">
+                            <table id="invoice-table" className="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Item</th>
+                                        <th>Description</th>
+                                        <th>Price per piece</th>
+                                        <th>Quantity</th>
+                                        <th>Total Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {selected_items.map((item, index) => (
+                                        <tr key={index}>
+                                            <td>
+                                                <input type="text" value={item.name} onChange={(e) => edit_invoice_fields(index, "name", e.target.value)} />
+                                            </td>
+                                            <td>
+                                                <input type="text" value={item.description} onChange={(e) => edit_invoice_fields(index, "description", e.target.value)} />
+                                            </td>
+                                            <td>
+                                                <input type="number" value={item.price} onChange={(e) => edit_invoice_fields(index, "price", parseFloat(e.target.value))} />
+                                            </td>
+                                            <td>
+                                                <input type="number" value={item.quantity} onChange={(e) => edit_invoice_fields(index, "quantity", parseInt(e.target.value))} />
+                                            </td>
+                                            <td>{item.price * item.quantity}</td>
+                                        </tr>
+                                    ))}
+                                    <tr>
+                                        <td>
+                                            <select onChange={(e) => add_new_invoice_item(e)}>
+                                                <option value="none">New Item</option>
+                                                <option value="blank">Black Item</option>
+                                                {all_items.map(function (item) {
+                                                    return (
+                                                        <option value={JSON.stringify(item)}>
+                                                            {item.name} - {item.price} Price
+                                                        </option>
+                                                    );
+                                                })}
+                                            </select>
+                                        </td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td>
+                                            <strong>Total Price</strong>
+                                        </td>
+                                        <td>{total_price}</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                    <button onClick={createInvoice}>Create</button>
                 </div>
             )}
+            <div className="pdf_viewer">
+                <div className="logo"></div>
+                <div className="first_section">
+                    <div className="company_information">{company_information}</div>
+                    <div className="invoice_information">{invoice_information}</div>
+                </div>
+                <div className="second_section">
+                    <div className="bill_to_information">{bill_to_information}</div>
+                    <div className="ship_from_information">{ship_from_information}</div>
+                </div>
+                <div className="third_section">
+                    <div className="ship_to_information">{ship_to_information}</div>
+                    <div className="extra_information">{extra_information}</div>
+                </div>
+                <div className="forth_section">
+                    <table id="invoice-table" className="table table-striped">
+                        <tr>
+                            <th>Item</th>
+                            <th>Price per piece</th>
+                            <th>Quantity</th>
+                            <th>Total Price</th>
+                        </tr>
+                        <tr>
+                            <td>Maria Anders</td>
+                            <td>Germany</td>
+                            <td>Germany</td>
+                            <td>Germany</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
         </div>
     );
 };
