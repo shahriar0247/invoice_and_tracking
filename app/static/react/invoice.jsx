@@ -50,15 +50,21 @@ const App = () => {
 
     const add_new_invoice_item = (event) => {
         let selectedItemValue = event.target.value;
+
+        if (selectedItemValue == "none") return;
+
+        if (selectedItemValue == "blank") {
+            set_selected_items([...selected_items, { id: 0, name: "", description: "", price: 0 , quantity: 1 }]);
+            return;
+        }
         selectedItemValue = JSON.parse(selectedItemValue);
-        if (selectedItemValue !== "none" && selectedItemValue !== "blank") {
-            const selectedItem = all_items.find((item) => item.id === selectedItemValue.id);
-            if (selectedItem) {
-                const selectedItemJson = JSON.stringify(selectedItem);
-                set_selected_items([...selected_items, { ...selectedItem, quantity: 1 }]);
-                event.target.value = "none";
-            }
-        } else if (selectedItemValue === "blank") {
+        const selectedItem = all_items.find((item) => item.id === selectedItemValue.id);
+        if (selectedItem) {
+            const selectedItemJson = JSON.stringify(selectedItem);
+            set_selected_items([...selected_items, { ...selectedItem, quantity: 1 }]);
+            event.target.value = "none";
+        } else {
+            alert("Error item not found in the list");
         }
     };
 
