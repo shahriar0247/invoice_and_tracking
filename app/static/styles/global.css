@@ -63,7 +63,7 @@ body main .table {
 .all_inputs {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  max-width: 800px;
+  max-width: 1000px;
   box-shadow: 2px 2px 5px 1px rgba(0, 0, 0, 0.4);
   padding: 50px;
 }
@@ -84,12 +84,13 @@ body main .table {
   padding-left: 10px;
   padding-right: 10px;
   width: calc(90% - 40px);
+  min-width: 100px;
+  max-width: 400px;
+  resize: none;
 }
 .all_inputs .input_field .input textarea {
-  padding: 20px;
-  width: calc(90% - 60px);
-  min-width: calc(90% - 60px);
-  max-width: calc(90% - 60px);
+  height: 100px;
+  padding: 10px;
 }
 
 button {

@@ -18,7 +18,6 @@ const App = () => {
         fetchShipTo();
         fetchItems();
         fetchInvoice();
-
     }, []);
     function toggleCreateModal() {
         setShowCreateModal(!showCreateModal);
@@ -208,6 +207,75 @@ const App = () => {
                             <div className="input">
                                 <select>
                                     {all_ship_from.map(function (element) {
+                                        return <option>{element.name}</option>;
+                                    })}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div className="input_field">
+                            <div className="title">Items</div>
+                            <div className="input">
+                                <select id="item_select" className="" multiple="multiple">
+                                    {all_items.map(function (element) {
+                                        return <option>{element.name}</option>;
+                                    })}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div className="input_field">
+                            <div className="title">Date</div>
+                            <div className="input">
+                                <input type="date" />
+                            </div>
+                        </div>
+
+                        <div className="input_field">
+                            <div className="title">Terms</div>
+                            <div className="input">
+                                <textarea name="" id="" cols="30" rows="10"></textarea>
+                            </div>
+                        </div>
+
+                        <div className="input_field">
+                            <div className="title">Items</div>
+                            <div className="input">
+                                <select id="item_select" className="" multiple="multiple">
+                                    {all_items.map(function (element) {
+                                        return <option>{element.name}</option>;
+                                    })}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div className="input_field">
+                            <div className="title">Items</div>
+                            <div className="input">
+                                <select id="item_select" className="" multiple="multiple">
+                                    {all_items.map(function (element) {
+                                        return <option>{element.name}</option>;
+                                    })}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div className="input_field">
+                            <div className="title">Items</div>
+                            <div className="input">
+                                <select id="item_select" className="" multiple="multiple">
+                                    {all_items.map(function (element) {
+                                        return <option>{element.name}</option>;
+                                    })}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div className="input_field">
+                            <div className="title">Items</div>
+                            <div className="input">
+                                <select id="item_select" className="" multiple="multiple">
+                                    {all_items.map(function (element) {
                                         return <option>{element.name}</option>;
                                     })}
                                 </select>
