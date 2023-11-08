@@ -62,9 +62,9 @@ body main .table {
 .all_inputs {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  max-width: 1000px;
   box-shadow: 2px 2px 5px 1px rgba(0, 0, 0, 0.4);
-  padding: 50px; }
+  padding: 50px;
+  margin-bottom: 40px; }
 
 .all_inputs .input_field {
   display: grid;

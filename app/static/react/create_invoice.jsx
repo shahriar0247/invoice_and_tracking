@@ -66,8 +66,11 @@ const App = () => {
             alert('Error item not found in the list');
         }
     };
-
-    function toggleCreateModal() {}
+    const removeItem = (index) => {
+        const updatedItems = [...selected_items];
+        updatedItems.splice(index, 1);
+        set_selected_items(updatedItems);
+    };
     function fetchInvoice() {
         fetch('/get/invoice')
             .then((response) => response.json())
@@ -241,11 +244,34 @@ const App = () => {
                 console.error('Error:', error);
             });
     }
+    function createPDF() {
+        var HTML_Width = $('.invoice_viewer').width();
+        var HTML_Height = $('.invoice_viewer').height();
+        var top_left_margin = 15;
+        var PDF_Width = HTML_Width + top_left_margin * 2;
+        var PDF_Height = PDF_Width * 1.5 + top_left_margin * 2;
+        var canvas_image_width = HTML_Width;
+        var canvas_image_height = HTML_Height;
+
+        var totalPDFPages = Math.ceil(HTML_Height / PDF_Height) - 1;
+
+        html2canvas($('.invoice_viewer')[0]).then(function (canvas) {
+            var imgData = canvas.toDataURL('image/jpeg', 1.0);
+            var pdf = new jsPDF('p', 'pt', [PDF_Width, PDF_Height]);
+            pdf.addImage(imgData, 'JPG', top_left_margin, top_left_margin, canvas_image_width, canvas_image_height);
+            for (var i = 1; i <= totalPDFPages; i++) {
+                pdf.addPage(PDF_Width, PDF_Height);
+                pdf.addImage(imgData, 'JPG', top_left_margin, -(PDF_Height * i) + top_left_margin * 4, canvas_image_width, canvas_image_height);
+            }
+            pdf.save('Your_PDF_Name.pdf');
+            $('.invoice_viewer').hide();
+        });
+    }
     return (
         <div className="invoice">
             <h1>Invoice Details</h1>
             <div className="topbar">
-                <button onClick={toggleCreateModal}>Create Invoice</button>
+                <button onClick={createPDF}>Create Invoice</button>
             </div>
 
             <div className="all_inputs">
@@ -373,6 +399,7 @@ const App = () => {
                                 <th>Price per piece</th>
                                 <th>Quantity</th>
                                 <th>Total Price</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -407,6 +434,9 @@ const App = () => {
                                         />
                                     </td>
                                     <td>{item.price * item.quantity}</td>
+                                    <td>
+                                        <button onClick={() => removeItem(index)}>Remove</button> {/* Button to remove item */}
+                                    </td>
                                 </tr>
                             ))}
                             <tr>
@@ -426,6 +456,8 @@ const App = () => {
                                 <td></td>
                                 <td></td>
                                 <td></td>
+                                <td></td>
+                                <td></td>
                             </tr>
                         </tbody>
                         <tfoot>
@@ -434,9 +466,11 @@ const App = () => {
                                 <td></td>
                                 <td></td>
                                 <td>
-                                    <strong>Total Price</strong>
+                                    <strong>Total Price of all items: </strong>
                                 </td>
-                                <td>{total_price}</td>
+
+                                <td> {total_price}</td>
+                                <td></td>
                             </tr>
                         </tfoot>
                     </table>
