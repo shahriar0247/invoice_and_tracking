@@ -253,7 +253,6 @@ const App = () => {
                     <div className="title">Bill To</div>
                     <div className="input">
                         <select
-                            className="form-select"
                             onChange={(e) => {
                                 let value = e.target.value;
                                 let data = JSON.parse(value);
@@ -275,7 +274,6 @@ const App = () => {
                     <div className="title">Ship To</div>
                     <div className="input">
                         <select
-                            className="form-select"
                             onChange={(e) => {
                                 let value = e.target.value;
                                 let data = JSON.parse(value);
@@ -297,7 +295,6 @@ const App = () => {
                     <div className="title">Ship From</div>
                     <div className="input">
                         <select
-                            className="form-select"
                             onChange={(e) => {
                                 let value = e.target.value;
                                 let data = JSON.parse(value);

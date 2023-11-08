@@ -1,7 +1,4 @@
 const App = () => {
-    React.useEffect(() => {
-        $('.form-select').selectpicker();
-    });
 
     React.useEffect(() => {
         fetchInvoice();
