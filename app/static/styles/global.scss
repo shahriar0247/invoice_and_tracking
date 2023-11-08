@@ -1,3 +1,4 @@
+
 $primary: rgb(57, 107, 208);
 $secondary: rgb(108, 157, 255);
 $accent: rgb(255, 66, 66);
@@ -16,6 +17,7 @@ body {
     h6 {
         font-weight: bold;
         margin: 20px;
+        margin-left: 0px;
     }
 
     nav {
@@ -160,3 +162,4 @@ textarea {
     max-width: 1000px;
     width: 90%;
 }
+@import "./invoice_viewer.scss";

@@ -33,33 +33,6 @@ const App = () => {
         $('.form-select').selectpicker();
     });
 
-
-    set_invoice_information(
-        data.name +
-            '\n' +
-            data.address1 +
-            '\n' +
-            data.address2 +
-            '\n' +
-            data.address3 +
-            '\n' +
-            'Tel: ' +
-            data.tel +
-            '\n' +
-            'Fax: ' +
-            data.fax +
-            '\n' +
-            'GST Registration #: ' +
-            data.gst +
-            '\n'
-    );
-
-
-   React.useEffect(() => {
-        $('.form-select').selectpicker();
-    });
-
-
     React.useEffect(() => {
         fetchCompany();
         fetchBillTo();
@@ -123,23 +96,15 @@ const App = () => {
             .then((data) => {
                 set_company(data);
                 set_company_information(
-                    data.name +
-                        '\n' +
-                        data.address1 +
-                        '\n' +
-                        data.address2 +
-                        '\n' +
-                        data.address3 +
-                        '\n' +
-                        'Tel: ' +
-                        data.tel +
-                        '\n' +
-                        'Fax: ' +
-                        data.fax +
-                        '\n' +
-                        'GST Registration #: ' +
-                        data.gst +
-                        '\n'
+                    <div>
+                        <div>{data.name}</div>
+                        <div>{data.address1}</div>
+                        <div>{data.address2}</div>
+                        <div>{data.address3}</div>
+                        <div>Tel: {data.tel}</div>
+                        <div>Fax: {data.fax}</div>
+                        <div>GST Registration #: {data.gst}</div>
+                    </div>
                 );
             })
             .catch((error) => {
@@ -151,6 +116,14 @@ const App = () => {
             .then((response) => response.json())
             .then((data) => {
                 set_all_bill_to(data);
+                data = data[0];
+                set_bill_to_information(
+                    <div>
+                        <div>{data.name}</div>
+                        <div>{data.address1}</div>
+                        <div>{data.address2}</div>
+                    </div>
+                );
             })
             .catch((error) => {
                 console.error('Error fetching invoice data:', error);
@@ -161,6 +134,14 @@ const App = () => {
             .then((response) => response.json())
             .then((data) => {
                 set_all_ship_from(data);
+                data = data[0];
+                set_ship_from_information(
+                    <div>
+                        <div>{data.name}</div>
+                        <div>{data.address1}</div>
+                        <div>{data.address2}</div>
+                    </div>
+                );
             })
             .catch((error) => {
                 console.error('Error fetching ship_from data:', error);
@@ -171,6 +152,14 @@ const App = () => {
             .then((response) => response.json())
             .then((data) => {
                 set_all_ship_to(data);
+                data = data[0];
+                set_ship_to_information(
+                    <div>
+                        <div>{data.name}</div>
+                        <div>{data.address1}</div>
+                        <div>{data.address2}</div>
+                    </div>
+                );
             })
             .catch((error) => {
                 console.error('Error fetching ship_to data:', error);
@@ -281,9 +270,21 @@ const App = () => {
                         <div className="input_field">
                             <div className="title">Bill To</div>
                             <div className="input">
-                                <select className="form-select">
-                                    {all_bill_to.map(function (element) {
-                                        return <option>{element.name}</option>;
+                                <select
+                                    className="form-select"
+                                    onChange={(e) => {
+                                        let value = e.target.value;
+                                        let data = JSON.parse(value);
+                                        set_bill_to_information(
+                                            <div>
+                                                <div>{data.name}</div>
+                                                <div>{data.address1}</div>
+                                                <div>{data.address2}</div>
+                                            </div>
+                                        );
+                                    }}>
+                                    {all_bill_to.map(function (bill_to) {
+                                        return <option value={JSON.stringify(bill_to)}>{bill_to.name}</option>;
                                     })}
                                 </select>
                             </div>
@@ -291,9 +292,21 @@ const App = () => {
                         <div className="input_field">
                             <div className="title">Ship To</div>
                             <div className="input">
-                                <select className="form-select">
-                                    {all_ship_to.map(function (element) {
-                                        return <option>{element.name}</option>;
+                                <select
+                                    className="form-select"
+                                    onChange={(e) => {
+                                        let value = e.target.value;
+                                        let data = JSON.parse(value);
+                                        set_ship_to_information(
+                                            <div>
+                                                <div>{data.name}</div>
+                                                <div>{data.address1}</div>
+                                                <div>{data.address2}</div>
+                                            </div>
+                                        );
+                                    }}>
+                                    {all_ship_to.map(function (ship_to) {
+                                        return <option value={JSON.stringify(ship_to)}>{ship_to.name}</option>;
                                     })}
                                 </select>
                             </div>
@@ -301,9 +314,21 @@ const App = () => {
                         <div className="input_field">
                             <div className="title">Ship From</div>
                             <div className="input">
-                                <select className="form-select">
-                                    {all_ship_from.map(function (element) {
-                                        return <option>{element.name}</option>;
+                                <select
+                                    className="form-select"
+                                    onChange={(e) => {
+                                        let value = e.target.value;
+                                        let data = JSON.parse(value);
+                                        set_ship_from_information(
+                                            <div>
+                                                <div>{data.name}</div>
+                                                <div>{data.address1}</div>
+                                                <div>{data.address2}</div>
+                                            </div>
+                                        );
+                                    }}>
+                                    {all_ship_from.map(function (ship_from) {
+                                        return <option value={JSON.stringify(ship_from)}>{ship_from.name}</option>;
                                     })}
                                 </select>
                             </div>
@@ -334,12 +359,14 @@ const App = () => {
                                     name=""
                                     id=""
                                     cols="30"
-                                    rows="10"></textarea>
+                                    rows="10"
+                                    onChange={(e) => {
+                                        set_extra_information(e.target.value);
+                                    }}></textarea>
                             </div>
                         </div>
                     </div>
                     <div className="input_field">
-                        <div className="title">Items</div>
                         <div className="input">
                             <table
                                 id="invoice-table"
@@ -423,36 +450,67 @@ const App = () => {
                     <button onClick={createInvoice}>Create</button>
                 </div>
             )}
-            <div className="pdf_viewer">
+            <div
+                className="invoice_viewer"
+                id="invoice_viewer">
                 <div className="logo"></div>
                 <div className="first_section">
                     <div className="company_information">{company_information}</div>
                     <div className="invoice_information">{invoice_information}</div>
                 </div>
                 <div className="second_section">
-                    <div className="bill_to_information">{bill_to_information}</div>
-                    <div className="ship_from_information">{ship_from_information}</div>
+                    <div className="bill_to_information">
+                        <h3>Bill To</h3>
+                        {bill_to_information}
+                    </div>
+                    <div className="ship_from_information">
+                        <h3>Ship From</h3>
+                        {ship_from_information}
+                    </div>
                 </div>
                 <div className="third_section">
-                    <div className="ship_to_information">{ship_to_information}</div>
+                    <div className="ship_to_information">
+                        <h3>Ship To </h3>
+                        {ship_to_information}
+                    </div>
                     <div className="extra_information">{extra_information}</div>
                 </div>
                 <div className="forth_section">
                     <table
                         id="invoice-table"
                         className="table table-striped">
-                        <tr>
-                            <th>Item</th>
-                            <th>Price per piece</th>
-                            <th>Quantity</th>
-                            <th>Total Price</th>
-                        </tr>
-                        <tr>
-                            <td>Maria Anders</td>
-                            <td>Germany</td>
-                            <td>Germany</td>
-                            <td>Germany</td>
-                        </tr>
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Description</th>
+                                <th>Price per piece</th>
+                                <th>Quantity</th>
+                                <th>Total Price</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {selected_items.map((item, index) => (
+                                <tr key={index}>
+                                    <td>{item.name}</td>
+                                    <td>{item.description}</td>
+                                    <td>{item.price}</td>
+                                    <td>{item.quantity}</td>
+                                    <td>{item.price * item.quantity}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td>
+                                    <strong>Total Price</strong>
+                                </td>
+                                <td>{total_price}</td>
+                            </tr>
+                        </tfoot>
                     </table>
                 </div>
             </div>
