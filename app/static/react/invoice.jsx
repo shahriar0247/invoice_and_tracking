@@ -18,6 +18,9 @@ const App = () => {
     const [ship_from_information, set_ship_from_information] = React.useState('');
     const [ship_to_information, set_ship_to_information] = React.useState('');
     const [extra_information, set_extra_information] = React.useState('');
+    const [bank_details_information, set_bank_details_information] = React.useState('');
+
+    const [terms_and_conditions, set_terms_and_conditions] = React.useState('');
 
     const [total_price, set_total_price] = React.useState(0);
 
@@ -95,6 +98,7 @@ const App = () => {
             .then((response) => response.json())
             .then((data) => {
                 set_company(data);
+                set_bank_details_information(data.bank_details);
                 set_company_information(
                     <div>
                         <div>{data.name}</div>
@@ -335,6 +339,17 @@ const App = () => {
                         </div>
 
                         <div className="input_field">
+                            <div className="title">Bank Details</div>
+                            <div className="input">
+                                <input
+                                    type="text"
+                                    value={bank_details_information}
+                                    onChange={(e) => set_bank_details_information(e.target.value)}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="input_field">
                             <div className="title">Date</div>
                             <div className="input">
                                 <input type="date" />
@@ -348,7 +363,10 @@ const App = () => {
                                     name=""
                                     id=""
                                     cols="30"
-                                    rows="10"></textarea>
+                                    rows="10"
+                                    onChange={(e) => {
+                                        set_terms_and_conditions(e.target.value);
+                                    }}></textarea>
                             </div>
                         </div>
 
@@ -505,13 +523,26 @@ const App = () => {
                                 <td></td>
                                 <td></td>
                                 <td></td>
+                                <td></td>
                                 <td>
-                                    <strong>Total Price</strong>
+                                    <strong>Total Price of all Items: {total_price}</strong>
                                 </td>
-                                <td>{total_price}</td>
                             </tr>
                         </tfoot>
                     </table>
+                </div>
+                <div className="fifth_section">
+                    <h3>Bank Details</h3>
+                    {bank_details_information}
+                </div>
+                <div className="sixth_section">
+                    <center>THANK YOU FOR SHIPPING THROUGH MIANZ WE APPRECIATE YOUR BUSINESS</center>
+                    <div className="terms_and_conditions">
+                        <strong>Terms & Conditions: </strong>
+                        {terms_and_conditions}
+                    </div>
+                    <div className="name">Ahmed Mukit</div>
+                    <div className="nsf">All NSF Charges $25.00</div>
                 </div>
             </div>
         </div>

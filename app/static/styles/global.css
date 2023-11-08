@@ -17,13 +17,14 @@ body h6 {
 body nav {
   display: grid;
   justify-content: center;
-  width: 90%;
-  margin-left: 10%;
   height: max-content;
   box-shadow: 0px 0px 10px 1px rgba(0, 0, 0, 0.319);
   padding-top: 20px;
   padding-bottom: 20px;
-  margin: auto; }
+  margin-top: 20vh;
+  position: fixed;
+  width: 250px;
+  margin-left: 20px; }
 
 body nav a {
   color: white;
@@ -130,8 +131,6 @@ textarea {
   width: 90%; }
 
 .invoice_viewer {
-  width: 1280px;
-  height: 720px;
   padding: 50px 100px;
   box-shadow: 0px 0px 10px 1px rgba(0, 0, 0, 0.341); }
 
@@ -144,7 +143,9 @@ textarea {
   font-weight: bold;
   margin: 0px; }
 
-.invoice_viewer .first_section, .invoice_viewer .second_section, .invoice_viewer .third_section {
+.invoice_viewer .first_section,
+.invoice_viewer .second_section,
+.invoice_viewer .third_section {
   display: grid;
   grid-template-columns: 1fr 1fr;
   margin-bottom: 20px;
@@ -153,3 +154,13 @@ textarea {
 
 .invoice_viewer .forth_section table {
   margin: auto; }
+
+.invoice_viewer .fifth_section {
+  width: max-content;
+  margin: auto;
+  margin-right: 0;
+  margin-top: 30px;
+  border-bottom: 2px solid #454545; }
+
+.invoice_viewer .sixth_section {
+  margin-top: 100px; }

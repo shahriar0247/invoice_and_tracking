@@ -1,6 +1,4 @@
 .invoice_viewer {
-  width: 1280px;
-  height: 720px;
   padding: 50px 100px;
   box-shadow: 0px 0px 10px 1px rgba(0, 0, 0, 0.341); }
 
@@ -13,7 +11,9 @@
   font-weight: bold;
   margin: 0px; }
 
-.invoice_viewer .first_section, .invoice_viewer .second_section, .invoice_viewer .third_section {
+.invoice_viewer .first_section,
+.invoice_viewer .second_section,
+.invoice_viewer .third_section {
   display: grid;
   grid-template-columns: 1fr 1fr;
   margin-bottom: 20px;
@@ -22,3 +22,13 @@
 
 .invoice_viewer .forth_section table {
   margin: auto; }
+
+.invoice_viewer .fifth_section {
+  width: max-content;
+  margin: auto;
+  margin-right: 0;
+  margin-top: 30px;
+  border-bottom: 2px solid #454545; }
+
+.invoice_viewer .sixth_section {
+  margin-top: 100px; }
