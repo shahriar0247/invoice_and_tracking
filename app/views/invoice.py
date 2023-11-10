@@ -46,14 +46,18 @@ def get_invoice_view():
     # Deli = 
     # Manifest = 
     
+    # dataTable.row.add([item.id, item.bill_to, item.ship_from, item.ship_to, item.bl_number]).draw();
 
     all_invoice = []
     all_invoices_raw = Invoice.query.all()
     print(all_invoices_raw)
     for invoice in all_invoices_raw:
         invoice_object = {}
-        print("invoice.bill_to.name")
-        print(invoice.bill_to.name)
+        invoice_object["id"] = invoice.id 
+        invoice_object["bill_to"] = invoice.bill_to.name
+        invoice_object["ship_from"] = invoice.ship_from.name
+        invoice_object["ship_to"] = invoice.ship_to.name
+        invoice_object["bl_number"] = invoice.bl_number 
 
 
         all_invoice.append(invoice_object)

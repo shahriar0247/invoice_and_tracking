@@ -19,7 +19,7 @@ const App = () => {
             var dataTable = $('#data-table').DataTable();
 
             data.forEach(function (item) {
-                dataTable.row.add([item.name, item.address1, item.address2]).draw();
+                dataTable.row.add([item.id, item.bill_to, item.ship_from, item.ship_to, item.bl_number]).draw();
             });
         });
     }
@@ -32,12 +32,11 @@ const App = () => {
                 className="table table-striped">
                 <thead>
                     <tr>
-                        <th>Name</th>
-                        <th>Address 1</th>
-                        <th>Address 1</th>
-                        <th>Address 1</th>
-                        <th>Address 1</th>
-                        <th>Address 2</th>
+                        <th>ID</th>
+                        <th>Bill To</th>
+                        <th>Ship From</th>
+                        <th>Ship To</th>
+                        <th>BL Number</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
