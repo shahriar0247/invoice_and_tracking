@@ -46,7 +46,7 @@ class Item(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200))
     description = db.Column(db.String(200))
-    price = db.Column(db.Integer)
+    price = db.Column(db.Float(precision=5))
     quantity = db.Column(db.Integer)
     invoice_id = db.Column(db.Integer, db.ForeignKey('invoice.id'))
 
