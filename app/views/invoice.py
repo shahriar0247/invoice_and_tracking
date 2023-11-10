@@ -63,17 +63,18 @@ def get_invoice_view():
 @app.route("/create/invoice", methods=["POST"])
 def create_invoice_view():
     data = request.json  
+    print(Company.query.first())
     new_invoice = Invoice(
+        company=Company.query.first(),
+        bill_to=Bill_to.query.get(data["bill_to_id"]),
+        ship_from=Ship_from.query.get(data["ship_from_id"]),
+        ship_to=Ship_to.query.get(data["ship_to_id"]),
         date=data["date"],
         terms=data["terms"],
-        bill_to1=data["bill_to1"],
-        bill_to2=data["bill_to2"],
-        bill_to3=data["bill_to3"],
-        ship_from1=data["ship_from1"],
-        ship_from2=data["ship_from2"],
-        ship_from3=data["ship_from3"],
-        company_name=data["company_name"],
-        completed=False
+        extra_info=data["extra_info"],
+        bank_details=data["bank_details"],
+        bl_number=data["bl_number"],
+        type=data["type"],
     )
 
     db.session.add(new_invoice)

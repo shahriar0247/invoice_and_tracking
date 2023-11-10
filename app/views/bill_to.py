@@ -17,6 +17,7 @@ def get_bill_to_view():
     all_bills_raw = Bill_to.query.all()
     for bill_to in all_bills_raw:
         bill_to_object = {}
+        bill_to_object["id"] = bill_to.id 
         bill_to_object["name"] = bill_to.name 
         bill_to_object["address1"] = bill_to.address1 
         bill_to_object["address2"] = bill_to.address2 

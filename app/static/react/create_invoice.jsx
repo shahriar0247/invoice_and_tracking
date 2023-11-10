@@ -21,6 +21,12 @@ const App = () => {
     const [bank_details_information, set_bank_details_information] = React.useState('');
 
     const [terms_and_conditions, set_terms_and_conditions] = React.useState('');
+    const [invoice_type, set_invoice_type] = React.useState('First Quote');
+    const [bl_number, set_bl_number] = React.useState('');
+    const [bill_to_id, set_bill_to_id] = React.useState('');
+    const [ship_to_id, set_ship_to_id] = React.useState('');
+    const [ship_from_id, set_ship_from_id] = React.useState('');
+    const [date, set_date] = React.useState('');
 
     const [total_price, set_total_price] = React.useState(0);
 
@@ -54,6 +60,7 @@ const App = () => {
 
         if (selectedItemValue == 'blank') {
             set_selected_items([...selected_items, { id: 0, name: '', description: '', price: 0, quantity: 1 }]);
+            event.target.value = 'none';
             return;
         }
         selectedItemValue = JSON.parse(selectedItemValue);
@@ -118,6 +125,7 @@ const App = () => {
             .then((data) => {
                 set_all_bill_to(data);
                 data = data[0];
+                set_bill_to_id(data.id);
                 set_bill_to_information(
                     <div>
                         <div>{data.name}</div>
@@ -136,6 +144,7 @@ const App = () => {
             .then((data) => {
                 set_all_ship_from(data);
                 data = data[0];
+                set_ship_from_id(data.id);
                 set_ship_from_information(
                     <div>
                         <div>{data.name}</div>
@@ -154,6 +163,7 @@ const App = () => {
             .then((data) => {
                 set_all_ship_to(data);
                 data = data[0];
+                set_ship_to_id(data.id);
                 set_ship_to_information(
                     <div>
                         <div>{data.name}</div>
@@ -179,11 +189,19 @@ const App = () => {
 
     function createInvoice() {
         const invoiceData = {
-            company_id: company_id, // Replace with actual data
-            terms: 'Net 30', // Replace with actual data
-            invoice1: 'John Doe', // Replace with actual data
-            // Add other fields as needed
+            bill_to_id: bill_to_id,
+            ship_to_id: ship_to_id,
+            ship_from_id: ship_from_id,
+            bank_details: bank_details_information,
+            date: date,
+            terms: terms_and_conditions,
+            type: invoice_type,
+            extra_info: extra_information,
+            bl_number: bl_number,
+            items: selected_items
         };
+        console.log("invoiceData")
+        console.log(invoiceData)
 
         fetch('/create/invoice', {
             method: 'POST',
@@ -245,6 +263,7 @@ const App = () => {
             });
     }
     function createPDF() {
+        createInvoice()
         var HTML_Width = $('.invoice_viewer').width();
         var HTML_Height = $('.invoice_viewer').height();
         var top_left_margin = 15;
@@ -282,6 +301,7 @@ const App = () => {
                             onChange={(e) => {
                                 let value = e.target.value;
                                 let data = JSON.parse(value);
+                                set_bill_to(data.id);
                                 set_bill_to_information(
                                     <div>
                                         <div>{data.name}</div>
@@ -303,6 +323,7 @@ const App = () => {
                             onChange={(e) => {
                                 let value = e.target.value;
                                 let data = JSON.parse(value);
+                                set_ship_to_id(data.id);
                                 set_ship_to_information(
                                     <div>
                                         <div>{data.name}</div>
@@ -324,6 +345,7 @@ const App = () => {
                             onChange={(e) => {
                                 let value = e.target.value;
                                 let data = JSON.parse(value);
+                                set_ship_from_id(data.id);
                                 set_ship_from_information(
                                     <div>
                                         <div>{data.name}</div>
@@ -353,7 +375,12 @@ const App = () => {
                 <div className="input_field">
                     <div className="title">Date</div>
                     <div className="input">
-                        <input type="date" />
+                        <input
+                            type="date"
+                            onChange={(e) => {
+                                set_date(e.target.value);
+                            }}
+                        />
                     </div>
                 </div>
 
@@ -372,7 +399,19 @@ const App = () => {
                             }}></textarea>
                     </div>
                 </div>
-
+                <div className="input_field">
+                    <div className="title">Type</div>
+                    <div className="input">
+                        <select
+                            onChange={(e) => {
+                                set_invoice_type(e.target.value);
+                            }}>
+                            <option value="First Quote">First Quote</option>
+                            <option value="Final Quote">Final Quote</option>
+                            <option value="Invoice">Invoice</option>
+                        </select>
+                    </div>
+                </div>
                 <div className="input_field">
                     <div className="title">Extra Info</div>
                     <div className="input">
@@ -384,6 +423,18 @@ const App = () => {
                             onChange={(e) => {
                                 set_extra_information(e.target.value);
                             }}></textarea>
+                    </div>
+                </div>
+                <div className="input_field">
+                    <div className="title">B/L number #</div>
+                    <div className="input">
+                        <input
+                            type="text"
+                            value={bl_number}
+                            onChange={(e) => {
+                                set_bl_number(e.target.value);
+                            }}
+                        />
                     </div>
                 </div>
             </div>
@@ -476,14 +527,17 @@ const App = () => {
                     </table>
                 </div>
             </div>
-            <button onClick={createInvoice}>Create</button>
             <div
                 className="invoice_viewer"
                 id="invoice_viewer">
                 <div className="logo"></div>
+                <h4>{invoice_type}</h4>
                 <div className="first_section">
                     <div className="company_information">{company_information}</div>
                     <div className="invoice_information">
+                        <br />
+                        <br />
+                        <div>Date: {date}</div>
                         <div
                             dangerouslySetInnerHTML={{
                                 __html: invoice_information.replace(/\n/g, '<br>'),

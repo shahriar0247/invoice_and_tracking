@@ -39,7 +39,6 @@ function App() {
         })
             .then((response) => {
                 if (response.ok) {
-                    alert("Ship To created successfully");
                     location.reload();
                 } else {
                     alert("Failed to create ship_to");

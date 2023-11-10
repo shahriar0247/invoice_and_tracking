@@ -18,6 +18,7 @@ def get_ship_from_view():
     all_bills_raw = Ship_from.query.all()
     for ship_from in all_bills_raw:
         ship_from_object = {}
+        ship_from_object["id"] = ship_from.id 
         ship_from_object["name"] = ship_from.name 
         ship_from_object["address1"] = ship_from.address1 
         ship_from_object["address2"] = ship_from.address2 
