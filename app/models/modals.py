@@ -10,8 +10,6 @@ class Company(db.Model):
     fax = db.Column(db.String(200))
     gst = db.Column(db.String(200))
     bank_details = db.Column(db.String(200))
-    invoice_id = db.Column(db.Integer, db.ForeignKey('invoice.id'))
-    invoice = db.relationship('Invoice', back_populates='company')
 
 
 class Bill_to(db.Model):
@@ -19,8 +17,6 @@ class Bill_to(db.Model):
     name = db.Column(db.String(200))
     address1 = db.Column(db.String(200))
     address2 = db.Column(db.String(200))
-    invoice_id = db.Column(db.Integer, db.ForeignKey('invoice.id'))
-    invoice = db.relationship('Invoice', back_populates='bill_to')
 
 
     
@@ -30,8 +26,6 @@ class Ship_from(db.Model):
     name = db.Column(db.String(200))
     address1 = db.Column(db.String(200))
     address2 = db.Column(db.String(200))
-    invoice_id = db.Column(db.Integer, db.ForeignKey('invoice.id'))
-    invoice = db.relationship('Invoice', back_populates='ship_from')
 
  
 class Ship_to(db.Model):
@@ -39,8 +33,6 @@ class Ship_to(db.Model):
     name = db.Column(db.String(200))
     address1 = db.Column(db.String(200))
     address2 = db.Column(db.String(200))
-    invoice_id = db.Column(db.Integer, db.ForeignKey('invoice.id'))
-    invoice = db.relationship('Invoice', back_populates='ship_to')
 
 class Item(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -48,18 +40,16 @@ class Item(db.Model):
     description = db.Column(db.String(200))
     price = db.Column(db.Float(precision=5))
     quantity = db.Column(db.Integer)
-    invoice_id = db.Column(db.Integer, db.ForeignKey('invoice.id'))
 
 
 class Invoice(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    company = db.relationship('Company', back_populates='invoice', uselist=False)
-    bill_to = db.relationship('Bill_to', back_populates='invoice', uselist=False)
-    ship_from = db.relationship('Ship_from', back_populates='invoice', uselist=False)
-    ship_to = db.relationship('Ship_to', back_populates='invoice', uselist=False)
-    items = db.relationship('Item', backref='invoice', lazy=True)
-
-
+    
+    bill_to_id = db.Column(db.Integer, db.ForeignKey('bill_to.id'))
+    ship_from_id = db.Column(db.Integer, db.ForeignKey('ship_from.id'))
+    ship_to_id = db.Column(db.Integer, db.ForeignKey('ship_to.id'))
+    all_items = db.Column(db.String(500))
+    
     date = db.Column(db.DateTime)
     terms = db.Column(db.String(200))
     extra_info = db.Column(db.String(200))

@@ -5,11 +5,7 @@ const App = () => {
     const [all_bill_to, set_all_bill_to] = React.useState([]);
     const [all_ship_from, set_all_ship_from] = React.useState([]);
     const [all_ship_to, set_all_ship_to] = React.useState([]);
-    const [all_items, set_all_items] = React.useState([
-        { id: 0, name: 'milk', description: 'a health drink', price: 20 },
-        { id: 1, name: 'coffee', description: 'a very good drink', price: 30 },
-        { id: 2, name: 'chocolate', description: 'something sweet', price: 40 },
-    ]);
+    const [all_items, set_all_items] = React.useState();
     const [selected_items, set_selected_items] = React.useState([]);
 
     const [company_information, set_company_information] = React.useState('');
@@ -39,10 +35,13 @@ const App = () => {
     }, [selected_items]);
 
     React.useEffect(() => {
+        console.log('here 1')
+
         fetchCompany();
         fetchBillTo();
         fetchShipFrom();
         fetchShipTo();
+        console.log('here 1')
         fetchItems();
         fetchInvoice();
     }, []);
@@ -177,10 +176,12 @@ const App = () => {
             });
     }
     function fetchItems() {
+        console.log('here 2')
         fetch('/get/item')
             .then((response) => response.json())
             .then((data) => {
-                // set_all_items(data);
+                console.log(data)
+                set_all_items(data);
             })
             .catch((error) => {
                 console.error('Error fetching items data:', error);
@@ -286,6 +287,7 @@ const App = () => {
             $('.invoice_viewer').hide();
         });
     }
+    
     return (
         <div className="invoice">
             <h1>Invoice Details</h1>
@@ -495,7 +497,7 @@ const App = () => {
                                     <select onChange={(e) => add_new_invoice_item(e)}>
                                         <option value="none">New Item</option>
                                         <option value="blank">Black Item</option>
-                                        {all_items.map(function (item) {
+                                        { all_items && all_items.map(function (item) {
                                             return (
                                                 <option value={JSON.stringify(item)}>
                                                     {item.name} - {item.price} Price

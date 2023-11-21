@@ -18,7 +18,7 @@ def get_item_view():
     all_bills_raw = Item.query.all()
     for item in all_bills_raw:
         item_object = {}
-        print(item.description)
+        item_object["id"] = item.name 
         item_object["name"] = item.name 
         item_object["description"] = item.description 
         item_object["price"] = item.price 

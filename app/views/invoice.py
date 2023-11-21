@@ -24,41 +24,17 @@ def invoices_view():
 @app.route("/get/invoice")
 def get_invoice_view():
 
-    
-    # id = 
-    # company = 
-    # bill_to =
-    # ship_from 
-    # ship_to =
-    # item = d
-
-    # date 
-    # terms = 
-    # extra_info = 
-
-    # # tracking params
-    # container = 
-    # departure = 
-    # on_ocean = 
-    # on_rail = 
-    # custom_tracking = 
-    # BL = 
-    # Deli = 
-    # Manifest = 
-    
-    # dataTable.row.add([item.id, item.bill_to, item.ship_from, item.ship_to, item.bl_number]).draw();
-
     all_invoice = []
     all_invoices_raw = Invoice.query.all()
     print(all_invoices_raw)
     for invoice in all_invoices_raw:
         invoice_object = {}
         invoice_object["id"] = invoice.id 
-        invoice_object["bill_to"] = invoice.bill_to.name
-        invoice_object["ship_from"] = invoice.ship_from.name
-        invoice_object["ship_to"] = invoice.ship_to.name
-        invoice_object["bl_number"] = invoice.bl_number 
-
+        invoice_object["bill_to"] = Bill_to.query.get(invoice.bill_to_id).name
+        invoice_object["ship_from"] = Ship_from.query.get(invoice.ship_from_id).name
+        invoice_object["ship_to"] = Ship_to.query.get(invoice.ship_to_id).name
+        invoice_object["bl_number"] = invoice.bl_number
+        print(invoice_object)
 
         all_invoice.append(invoice_object)
 
@@ -67,18 +43,17 @@ def get_invoice_view():
 @app.route("/create/invoice", methods=["POST"])
 def create_invoice_view():
     data = request.json  
-    print(Company.query.first())
     new_invoice = Invoice(
-        company=Company.query.first(),
-        bill_to=Bill_to.query.get(data["bill_to_id"]),
-        ship_from=Ship_from.query.get(data["ship_from_id"]),
-        ship_to=Ship_to.query.get(data["ship_to_id"]),
+        bill_to_id=(data["bill_to_id"]),
+        ship_from_id=data["ship_from_id"],
+        ship_to_id=(data["ship_to_id"]),
         date=data["date"],
         terms=data["terms"],
         extra_info=data["extra_info"],
         bank_details=data["bank_details"],
         bl_number=data["bl_number"],
         type=data["type"],
+        all_items = data["all_items"]
     )
 
     db.session.add(new_invoice)
