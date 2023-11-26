@@ -98,7 +98,7 @@ def get_purchase_order_details_view_(purchase_order_number):
     purchase_order = Purchase_Order.query.get(purchase_order_number)
     purchase_order_object = {}
     purchase_order_object["id"] = purchase_order.id 
-    purchase_order_object["vendor"] = purchase_order.vendor
+    purchase_order_object["vendor"] = purchase_order.vendor_id
     purchase_order_object["bl_number"] = purchase_order.bl_number
     purchase_order_object["date"] = purchase_order.date
     purchase_order_object["type"] = purchase_order.type
