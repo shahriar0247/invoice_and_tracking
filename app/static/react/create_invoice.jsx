@@ -290,7 +290,7 @@ const App = () => {
     
     return (
         <div className="invoice">
-            <h1>Invoice Details</h1>
+            <h1>Create Invoice</h1>
             <div className="topbar">
                 <button onClick={createPDF}>Create Invoice</button>
             </div>
