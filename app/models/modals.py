@@ -76,7 +76,7 @@ class Vendor(db.Model):
 class Purchase_Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     
-    vendor = db.Column(db.Integer, db.ForeignKey('vendor.id'))
+    vendor_id = db.Column(db.Integer, db.ForeignKey('vendor.id'))
     all_items = db.Column(db.String(500))
     
     date = db.Column(db.DateTime)

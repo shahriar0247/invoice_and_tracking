@@ -2,20 +2,20 @@ const App = () => {
     const [showCreateModal, setShowCreateModal] = React.useState(false);
 
     const [company, set_company] = React.useState([]);
-    const [all_bill_to, set_all_bill_to] = React.useState([]);
+    const [all_vendor, set_all_vendor] = React.useState([]);
     const [all_items, set_all_items] = React.useState();
     const [selected_items, set_selected_items] = React.useState([]);
 
     const [company_information, set_company_information] = React.useState('');
-    const [invoice_information, set_invoice_information] = React.useState('');
-    const [bill_to_information, set_bill_to_information] = React.useState('');
+    const [purchase_order_information, set_purchase_order_information] = React.useState('');
+    const [vendor_information, set_vendor_information] = React.useState('');
     const [extra_information, set_extra_information] = React.useState('');
     const [bank_details_information, set_bank_details_information] = React.useState('');
 
     const [terms_and_conditions, set_terms_and_conditions] = React.useState('');
-    const [invoice_type, set_invoice_type] = React.useState('First Quote');
+    const [purchase_order_type, set_purchase_order_type] = React.useState('First Quote');
     const [bl_number, set_bl_number] = React.useState('');
-    const [bill_to_id, set_bill_to_id] = React.useState('');
+    const [vendor_id, set_vendor_id] = React.useState('');
     const [date, set_date] = React.useState('');
 
     const [total_price, set_total_price] = React.useState(0);
@@ -32,19 +32,18 @@ const App = () => {
         console.log('here 1')
 
         fetchCompany();
-        fetchBillTo();
-        console.log('here 1')
+        fetchVendor();
         fetchItems();
-        fetchInvoice();
+        fetchPurchase_Order();
     }, []);
 
-    const edit_invoice_fields = (index, field, value) => {
+    const edit_purchase_order_fields = (index, field, value) => {
         const updatedItems = [...selected_items];
         updatedItems[index][field] = value;
         set_selected_items(updatedItems);
     };
 
-    const add_new_invoice_item = (event) => {
+    const add_new_purchase_order_item = (event) => {
         let selectedItemValue = event.target.value;
 
         if (selectedItemValue == 'none') return;
@@ -69,14 +68,14 @@ const App = () => {
         updatedItems.splice(index, 1);
         set_selected_items(updatedItems);
     };
-    function fetchInvoice() {
-        fetch('/get/invoice')
+    function fetchPurchase_Order() {
+        fetch('/get/purchase_order')
             .then((response) => response.json())
             .then((data) => {
                 loadTable(data);
             })
             .catch((error) => {
-                console.error('Error fetching invoice:', error);
+                console.error('Error fetching purchase_order:', error);
             });
     }
     function loadTable(data) {
@@ -110,14 +109,14 @@ const App = () => {
                 console.error('Error fetching company data:', error);
             });
     }
-    function fetchBillTo() {
-        fetch('/get/bill_to')
+    function fetchVendor() {
+        fetch('/get/vendor')
             .then((response) => response.json())
             .then((data) => {
-                set_all_bill_to(data);
+                set_all_vendor(data);
                 data = data[0];
-                set_bill_to_id(data.id);
-                set_bill_to_information(
+                set_vendor_id(data.id);
+                set_vendor_information(
                     <div>
                         <div>{data.name}</div>
                         <div>{data.address1}</div>
@@ -126,7 +125,7 @@ const App = () => {
                 );
             })
             .catch((error) => {
-                console.error('Error fetching invoice data:', error);
+                console.error('Error fetching purchase_order data:', error);
             });
     }
  
@@ -143,73 +142,73 @@ const App = () => {
             });
     }
 
-    function createInvoice() {
-        const invoiceData = {
-            bill_to_id: bill_to_id,
+    function createPurchase_Order() {
+        const purchase_orderData = {
+            vendor_id: vendor_id,
             bank_details: bank_details_information,
             date: date,
             terms: terms_and_conditions,
-            type: invoice_type,
+            type: purchase_order_type,
             extra_info: extra_information,
             bl_number: bl_number,
             all_items: selected_items
         };
-        console.log("invoiceData")
-        console.log(invoiceData)
+        console.log("purchase_orderData")
+        console.log(purchase_orderData)
 
-        fetch('/create/invoice', {
+        fetch('/create/purchase_order', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(invoiceData),
+            body: JSON.stringify(purchase_orderData),
         })
             .then((response) => {
                 if (response.ok) {
-                    alert('Invoice created successfully');
+                    alert('Purchase_Order created successfully');
                 } else {
-                    alert('Failed to create invoice');
+                    alert('Failed to create purchase_order');
                 }
             })
             .catch((error) => {
                 console.error('Error:', error);
             });
     }
-    function deleteInvoice(invoiceId) {
-        fetch(`/delete/invoice/${invoiceId}`, {
+    function deletePurchase_Order(purchase_orderId) {
+        fetch(`/delete/purchase_order/${purchase_orderId}`, {
             method: 'DELETE',
         })
             .then((response) => {
                 if (response.ok) {
-                    alert('Invoice deleted successfully');
+                    alert('Purchase_Order deleted successfully');
                 } else {
-                    alert('Failed to delete invoice');
+                    alert('Failed to delete purchase_order');
                 }
             })
             .catch((error) => {
                 console.error('Error:', error);
             });
     }
-    function editInvoice(invoiceId) {
-        const updatedInvoiceData = {
+    function editPurchase_Order(purchase_orderId) {
+        const updatedPurchase_OrderData = {
             date: '2023-11-07', // Replace with updated data
             terms: 'Net 45', // Replace with updated data
-            invoice1: 'Jane Smith', // Replace with updated data
+            purchase_order1: 'Jane Smith', // Replace with updated data
             // Add other fields as needed
         };
 
-        fetch(`/edit/invoice/${invoiceId}`, {
+        fetch(`/edit/purchase_order/${purchase_orderId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(updatedInvoiceData),
+            body: JSON.stringify(updatedPurchase_OrderData),
         })
             .then((response) => {
                 if (response.ok) {
-                    alert('Invoice updated successfully');
+                    alert('Purchase_Order updated successfully');
                 } else {
-                    alert('Failed to update invoice');
+                    alert('Failed to update purchase_order');
                 }
             })
             .catch((error) => {
@@ -217,9 +216,9 @@ const App = () => {
             });
     }
     function createPDF() {
-        createInvoice()
-        var HTML_Width = $('.invoice_viewer').width();
-        var HTML_Height = $('.invoice_viewer').height();
+        createPurchase_Order()
+        var HTML_Width = $('.purchase_order_viewer').width();
+        var HTML_Height = $('.purchase_order_viewer').height();
         var top_left_margin = 15;
         var PDF_Width = HTML_Width + top_left_margin * 2;
         var PDF_Height = PDF_Width * 1.5 + top_left_margin * 2;
@@ -228,7 +227,7 @@ const App = () => {
 
         var totalPDFPages = Math.ceil(HTML_Height / PDF_Height) - 1;
 
-        html2canvas($('.invoice_viewer')[0]).then(function (canvas) {
+        html2canvas($('.purchase_order_viewer')[0]).then(function (canvas) {
             var imgData = canvas.toDataURL('image/jpeg', 1.0);
             var pdf = new jsPDF('p', 'pt', [PDF_Width, PDF_Height]);
             pdf.addImage(imgData, 'JPG', top_left_margin, top_left_margin, canvas_image_width, canvas_image_height);
@@ -237,15 +236,15 @@ const App = () => {
                 pdf.addImage(imgData, 'JPG', top_left_margin, -(PDF_Height * i) + top_left_margin * 4, canvas_image_width, canvas_image_height);
             }
             pdf.save('Your_PDF_Name.pdf');
-            $('.invoice_viewer').hide();
+            $('.purchase_order_viewer').hide();
         });
     }
     
     return (
         <div className="invoice">
-            <h1>Create Invoice</h1>
+            <h1>Create Purchase_Order</h1>
             <div className="topbar">
-                <button onClick={createPDF}>Create Invoice</button>
+                <button onClick={createPDF}>Create Purchase_Order</button>
             </div>
 
             <div className="all_inputs">
@@ -256,8 +255,8 @@ const App = () => {
                             onChange={(e) => {
                                 let value = e.target.value;
                                 let data = JSON.parse(value);
-                                set_bill_to_id(data.id);
-                                set_bill_to_information(
+                                set_vendor_id(data.id);
+                                set_vendor_information(
                                     <div>
                                         <div>{data.name}</div>
                                         <div>{data.address1}</div>
@@ -265,8 +264,8 @@ const App = () => {
                                     </div>
                                 );
                             }}>
-                            {all_bill_to.map(function (bill_to) {
-                                return <option value={JSON.stringify(bill_to)}>{bill_to.name}</option>;
+                            {all_vendor.map(function (vendor) {
+                                return <option value={JSON.stringify(vendor)}>{vendor.name}</option>;
                             })}
                         </select>
                     </div>
@@ -315,11 +314,11 @@ const App = () => {
                     <div className="input">
                         <select
                             onChange={(e) => {
-                                set_invoice_type(e.target.value);
+                                set_purchase_order_type(e.target.value);
                             }}>
                             <option value="First Quote">First Quote</option>
                             <option value="Final Quote">Final Quote</option>
-                            <option value="Invoice">Invoice</option>
+                            <option value="Purchase_Order">Purchase_Order</option>
                         </select>
                     </div>
                 </div>
@@ -371,28 +370,28 @@ const App = () => {
                                         <input
                                             type="text"
                                             value={item.name}
-                                            onChange={(e) => edit_invoice_fields(index, 'name', e.target.value)}
+                                            onChange={(e) => edit_purchase_order_fields(index, 'name', e.target.value)}
                                         />
                                     </td>
                                     <td>
                                         <input
                                             type="text"
                                             value={item.description}
-                                            onChange={(e) => edit_invoice_fields(index, 'description', e.target.value)}
+                                            onChange={(e) => edit_purchase_order_fields(index, 'description', e.target.value)}
                                         />
                                     </td>
                                     <td>
                                         <input
                                             type="number"
                                             value={item.price}
-                                            onChange={(e) => edit_invoice_fields(index, 'price', parseFloat(e.target.value))}
+                                            onChange={(e) => edit_purchase_order_fields(index, 'price', parseFloat(e.target.value))}
                                         />
                                     </td>
                                     <td>
                                         <input
                                             type="number"
                                             value={item.quantity}
-                                            onChange={(e) => edit_invoice_fields(index, 'quantity', parseInt(e.target.value))}
+                                            onChange={(e) => edit_purchase_order_fields(index, 'quantity', parseInt(e.target.value))}
                                         />
                                     </td>
                                     <td>{item.price * item.quantity}</td>
@@ -403,7 +402,7 @@ const App = () => {
                             ))}
                             <tr>
                                 <td>
-                                    <select onChange={(e) => add_new_invoice_item(e)}>
+                                    <select onChange={(e) => add_new_purchase_order_item(e)}>
                                         <option value="none">New Item</option>
                                         <option value="blank">Black Item</option>
                                         { all_items && all_items.map(function (item) {
@@ -442,7 +441,7 @@ const App = () => {
                 className="invoice_viewer"
                 id="invoice_viewer">
                 <div className="logo"></div>
-                <h4>{invoice_type}</h4>
+                <h4>{purchase_order_type}</h4>
                 <div className="first_section">
                     <div className="company_information">{company_information}</div>
                     <div className="invoice_information">
@@ -451,15 +450,15 @@ const App = () => {
                         <div>Date: {date}</div>
                         <div
                             dangerouslySetInnerHTML={{
-                                __html: invoice_information.replace(/\n/g, '<br>'),
+                                __html: purchase_order_information.replace(/\n/g, '<br>'),
                             }}></div>
                     </div>
                 </div>
                 <div className="second_section">
-                    <div className="bill_to_information">
-                        <h3>Bill To</h3>
+                    <div className="vendor_information">
+                        <h3>Vendor</h3>
 
-                        {bill_to_information}
+                        {vendor_information}
                     </div>
                    
                 </div>

@@ -26,7 +26,7 @@ def get_purchase_order_view():
     for purchase_order in all_purchase_orders_raw:
         purchase_order_object = {}
         purchase_order_object["id"] = purchase_order.id 
-        purchase_order_object["vendor"] = Vendor.query.get(purchase_order.vendor).name
+        purchase_order_object["vendor"] = Vendor.query.get(purchase_order.vendor_id).name
         purchase_order_object["bl_number"] = purchase_order.bl_number
         print(purchase_order_object)
 

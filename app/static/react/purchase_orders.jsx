@@ -5,7 +5,7 @@ const App = () => {
     }, []);
 
     function fetchInvoice() {
-        fetch('/get/invoice')
+        fetch('/get/purchase_order')
             .then((response) => response.json())
             .then((data) => {
                 loadTable(data);
@@ -19,8 +19,8 @@ const App = () => {
             var dataTable = $('#data-table').DataTable();
 
             data.forEach(function (item) {
-                var view_link = `<a class="button" href="/view_invoice/${item.id}">View</a>`;
-                dataTable.row.add(["INV - " + item.id*23123, item.bill_to, item.ship_from, item.ship_to, item.bl_number, view_link]).draw();
+                var view_link = `<a class="button" href="/view_purchase_order/${item.id}">View</a>`;
+                dataTable.row.add(["PUR - " + item.id*23123, item.vendor, item.bl_number, view_link]).draw();
             });
         });
     }
@@ -34,9 +34,7 @@ const App = () => {
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Bill To</th>
-                        <th>Ship From</th>
-                        <th>Ship To</th>
+                        <th>Vendor</th>
                         <th>BL Number</th>
                         <th></th>
                     </tr>
