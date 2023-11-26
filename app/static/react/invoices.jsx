@@ -19,7 +19,8 @@ const App = () => {
             var dataTable = $('#data-table').DataTable();
 
             data.forEach(function (item) {
-                dataTable.row.add([item.id, item.bill_to, item.ship_from, item.ship_to, item.bl_number]).draw();
+                var view_link = `<a class="button" href="/view_invoice/${item.id}">View</a>`;
+                dataTable.row.add([item.id, item.bill_to, item.ship_from, item.ship_to, item.bl_number, view_link]).draw();
             });
         });
     }
@@ -37,6 +38,7 @@ const App = () => {
                         <th>Ship From</th>
                         <th>Ship To</th>
                         <th>BL Number</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody></tbody>

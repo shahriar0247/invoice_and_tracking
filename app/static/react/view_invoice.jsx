@@ -35,16 +35,31 @@ const App = () => {
     }, [selected_items]);
 
     React.useEffect(() => {
-        console.log('here 1')
-
         fetchCompany();
         fetchBillTo();
         fetchShipFrom();
         fetchShipTo();
-        console.log('here 1')
         fetchItems();
         fetchInvoice();
+        get_invoice_details();
     }, []);
+
+    async function get_invoice_details() {
+        const number = window.location.href.split('/').pop();
+        const response = await fetch('/get_invoice_details/' + number);
+        const data = await response.json();
+        console.log(data);
+        const all_items_ = JSON.parse(data['all_items']);
+        set_selected_items(all_items_);
+        set_bill_to_id(data.bill_to);
+        set_ship_to_id(data.ship_to);
+        set_ship_from_id(data.ship_from);
+        set_invoice_type(data.type);
+        set_terms_and_conditions(data.terms);
+        set_extra_information(data.extra_info);
+        set_bank_details_information(data.bank_details);
+        set_bl_number(data.bl_number);
+    }
 
     const edit_invoice_fields = (index, field, value) => {
         const updatedItems = [...selected_items];
@@ -176,11 +191,11 @@ const App = () => {
             });
     }
     function fetchItems() {
-        console.log('here 2')
+        console.log('here 2');
         fetch('/get/item')
             .then((response) => response.json())
             .then((data) => {
-                console.log(data)
+                console.log(data);
                 set_all_items(data);
             })
             .catch((error) => {
@@ -199,10 +214,10 @@ const App = () => {
             type: invoice_type,
             extra_info: extra_information,
             bl_number: bl_number,
-            all_items: selected_items
+            all_items: selected_items,
         };
-        console.log("invoiceData")
-        console.log(invoiceData)
+        console.log('invoiceData');
+        console.log(invoiceData);
 
         fetch('/create/invoice', {
             method: 'POST',
@@ -264,7 +279,7 @@ const App = () => {
             });
     }
     function createPDF() {
-        createInvoice()
+        createInvoice();
         var HTML_Width = $('.invoice_viewer').width();
         var HTML_Height = $('.invoice_viewer').height();
         var top_left_margin = 15;
@@ -287,7 +302,7 @@ const App = () => {
             $('.invoice_viewer').hide();
         });
     }
-    
+
     return (
         <div className="invoice">
             <h1>Invoice Details</h1>
@@ -300,6 +315,7 @@ const App = () => {
                     <div className="title">Bill To</div>
                     <div className="input">
                         <select
+                            value={bill_to_id}
                             onChange={(e) => {
                                 let value = e.target.value;
                                 let data = JSON.parse(value);
@@ -313,7 +329,7 @@ const App = () => {
                                 );
                             }}>
                             {all_bill_to.map(function (bill_to) {
-                                return <option value={JSON.stringify(bill_to)}>{bill_to.name}</option>;
+                                return <option value={bill_to.id}>{bill_to.name}</option>;
                             })}
                         </select>
                     </div>
@@ -322,6 +338,7 @@ const App = () => {
                     <div className="title">Ship To</div>
                     <div className="input">
                         <select
+                            value={ship_to_id}
                             onChange={(e) => {
                                 let value = e.target.value;
                                 let data = JSON.parse(value);
@@ -335,7 +352,7 @@ const App = () => {
                                 );
                             }}>
                             {all_ship_to.map(function (ship_to) {
-                                return <option value={JSON.stringify(ship_to)}>{ship_to.name}</option>;
+                                return <option value={ship_to.id}>{ship_to.name}</option>;
                             })}
                         </select>
                     </div>
@@ -344,6 +361,7 @@ const App = () => {
                     <div className="title">Ship From</div>
                     <div className="input">
                         <select
+                            value={ship_from_id}
                             onChange={(e) => {
                                 let value = e.target.value;
                                 let data = JSON.parse(value);
@@ -357,7 +375,7 @@ const App = () => {
                                 );
                             }}>
                             {all_ship_from.map(function (ship_from) {
-                                return <option value={JSON.stringify(ship_from)}>{ship_from.name}</option>;
+                                return <option value={ship_from.id}>{ship_from.name}</option>;
                             })}
                         </select>
                     </div>
@@ -378,6 +396,7 @@ const App = () => {
                     <div className="title">Date</div>
                     <div className="input">
                         <input
+                            value={date}
                             type="date"
                             onChange={(e) => {
                                 set_date(e.target.value);
@@ -390,6 +409,7 @@ const App = () => {
                     <div className="title">Terms</div>
                     <div className="input">
                         <textarea
+                            value={terms_and_conditions}
                             name=""
                             id=""
                             cols="30"
@@ -405,6 +425,7 @@ const App = () => {
                     <div className="title">Type</div>
                     <div className="input">
                         <select
+                            value={invoice_type}
                             onChange={(e) => {
                                 set_invoice_type(e.target.value);
                             }}>
@@ -418,6 +439,7 @@ const App = () => {
                     <div className="title">Extra Info</div>
                     <div className="input">
                         <textarea
+                            value={extra_information}
                             name=""
                             id=""
                             cols="30"
@@ -497,13 +519,14 @@ const App = () => {
                                     <select onChange={(e) => add_new_invoice_item(e)}>
                                         <option value="none">New Item</option>
                                         <option value="blank">Black Item</option>
-                                        { all_items && all_items.map(function (item) {
-                                            return (
-                                                <option value={JSON.stringify(item)}>
-                                                    {item.name} - {item.price} Price
-                                                </option>
-                                            );
-                                        })}
+                                        {all_items &&
+                                            all_items.map(function (item) {
+                                                return (
+                                                    <option value={JSON.stringify(item)}>
+                                                        {item.name} - {item.price} Price
+                                                    </option>
+                                                );
+                                            })}
                                     </select>
                                 </td>
                                 <td></td>

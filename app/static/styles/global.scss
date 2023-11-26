@@ -119,6 +119,28 @@ button:hover {
     background-color: $secondary;
 }
 
+
+.button {
+    width: max-content;
+    height: 40px;
+    outline: none;
+    background-color: $primary;
+    color: white;
+    min-width: 100px;
+    border-radius: 5px;
+    box-shadow: 2px 2px 5px 1px rgba(0, 0, 0, 0.4);
+    transition: 200ms all;
+    border: none;
+    padding-left: 20px;
+    padding-right: 20px;
+    text-decoration: none;
+
+}
+
+.button:hover {
+    background-color: $secondary;
+}
+
 select {
     width: max-content;
     max-width: 300px;

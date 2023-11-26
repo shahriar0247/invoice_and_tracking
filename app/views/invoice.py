@@ -53,7 +53,7 @@ def create_invoice_view():
         bank_details=data["bank_details"],
         bl_number=data["bl_number"],
         type=data["type"],
-        all_items = data["all_items"]
+        all_items = json.dumps(data["all_items"])
     )
 
     db.session.add(new_invoice)
@@ -96,3 +96,25 @@ def edit_invoice(invoice_id):
     db.session.commit()
     
     return "Invoice updated successfully"
+
+@app.route("/view_invoice/<invoice_number>")
+def view_invoice_view_(invoice_number):
+    return render_template("view_invoice.html")
+
+@app.route("/get_invoice_details/<invoice_number>")
+def get_invoice_details_view_(invoice_number):
+    invoice = Invoice.query.get(invoice_number)
+    invoice_object = {}
+    invoice_object["id"] = invoice.id 
+    invoice_object["bill_to"] = invoice.bill_to_id
+    invoice_object["ship_from"] = invoice.ship_from_id
+    invoice_object["ship_to"] = invoice.ship_to_id
+    invoice_object["bl_number"] = invoice.bl_number
+    invoice_object["date"] = invoice.date
+    invoice_object["type"] = invoice.type
+    invoice_object["terms"] = invoice.terms
+    invoice_object["extra_info"] = invoice.extra_info
+    invoice_object["all_items"] = invoice.all_items
+    invoice_object["bank_details"] = invoice.bank_details
+
+    return jsonify(invoice_object)
