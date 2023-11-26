@@ -33,7 +33,9 @@ const App = () => {
         });
         set_total_price(total_price_);
     }, [selected_items]);
-
+    React.useEffect(() => {
+        console.log(bill_to_id);
+    });
     React.useEffect(() => {
         fetchCompany();
         fetchBillTo();
@@ -59,6 +61,12 @@ const App = () => {
         set_extra_information(data.extra_info);
         set_bank_details_information(data.bank_details);
         set_bl_number(data.bl_number);
+
+        const dateObject = new Date(data.date);
+        const year = dateObject.getFullYear();
+        const month = (dateObject.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based, so add 1
+        const day = dateObject.getDate().toString().padStart(2, '0');
+        set_date(`${year}-${month}-${day}`);
     }
 
     const edit_invoice_fields = (index, field, value) => {
@@ -319,7 +327,7 @@ const App = () => {
                             onChange={(e) => {
                                 let value = e.target.value;
                                 let data = JSON.parse(value);
-                                set_bill_to(data.id);
+                                set_bill_to_id(data.id);
                                 set_bill_to_information(
                                     <div>
                                         <div>{data.name}</div>

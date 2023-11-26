@@ -303,7 +303,7 @@ const App = () => {
                             onChange={(e) => {
                                 let value = e.target.value;
                                 let data = JSON.parse(value);
-                                set_bill_to(data.id);
+                                set_bill_to_id(data.id);
                                 set_bill_to_information(
                                     <div>
                                         <div>{data.name}</div>
