@@ -18,4 +18,6 @@ from .views.item import *
 from .views.company import *
 from .views.tracking import *
 from .views.invoice import *
+from .views.vendor import *
+from .views.purchase_order import *
 

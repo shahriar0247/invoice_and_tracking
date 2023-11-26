@@ -65,7 +65,35 @@ class Invoice(db.Model):
     BL = db.Column(db.String(200))
     Deli = db.Column(db.String(200))
     Manifest = db.Column(db.String(200))
+
+
+class Vendor(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(200))
+    address1 = db.Column(db.String(200))
+    address2 = db.Column(db.String(200))
     
+class Purchase_Order(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    
+    vendor = db.Column(db.Integer, db.ForeignKey('vendor.id'))
+    all_items = db.Column(db.String(500))
+    
+    date = db.Column(db.DateTime)
+    terms = db.Column(db.String(200))
+    extra_info = db.Column(db.String(200))
+    bl_number = db.Column(db.String(200))
+    bank_details = db.Column(db.String(200))
+    type = db.Column(db.String(200))
+
+    # tracking params
+    container = db.Column(db.String(200))
+    departure = db.Column(db.String(200))
+    location_status = db.Column(db.String(200))
+    custom_tracking = db.Column(db.String(200))
+    BL = db.Column(db.String(200))
+    Deli = db.Column(db.String(200))
+    Manifest = db.Column(db.String(200))
 
 with app.app_context():
     db.create_all()

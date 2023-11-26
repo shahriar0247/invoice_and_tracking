@@ -1,7 +1,7 @@
 .invoice_viewer {
   padding: 50px 100px;
-  box-shadow: 0px 0px 10px 1px rgba(0, 0, 0, 0.341); }
-
+  box-shadow: 0px 0px 10px 1px rgba(0, 0, 0, 0.341);
+}
 .invoice_viewer h1,
 .invoice_viewer h2,
 .invoice_viewer h3,
@@ -9,26 +9,28 @@
 .invoice_viewer h5,
 .invoice_viewer h6 {
   font-weight: bold;
-  margin: 0px; }
-
+  margin: 0px;
+}
 .invoice_viewer .first_section,
 .invoice_viewer .second_section,
 .invoice_viewer .third_section {
   display: grid;
   grid-template-columns: 1fr 1fr;
   margin-bottom: 30px;
-  border-top: 2px solid #454545;
-  padding-top: 10px; }
-
+  border-top: 2px solid rgb(69, 69, 69);
+  padding-top: 10px;
+}
 .invoice_viewer .forth_section table {
-  margin: auto; }
-
+  margin: auto;
+}
 .invoice_viewer .fifth_section {
+  width: -moz-max-content;
   width: max-content;
   margin: auto;
   margin-right: 0;
   margin-top: 30px;
-  border-bottom: 2px solid #454545; }
-
+  border-bottom: 2px solid rgb(69, 69, 69);
+}
 .invoice_viewer .sixth_section {
-  margin-top: 100px; }
+  margin-top: 100px;
+}/*# sourceMappingURL=invoice_viewer.css.map */
