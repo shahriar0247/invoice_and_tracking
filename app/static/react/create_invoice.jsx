@@ -24,6 +24,8 @@ const App = () => {
     const [ship_from_id, set_ship_from_id] = React.useState('');
     const [date, set_date] = React.useState('');
 
+    const [bill_to_name, set_bill_to_name] = React.useState('')
+
     const [total_price, set_total_price] = React.useState(0);
 
     React.useEffect(() => {
@@ -125,6 +127,7 @@ const App = () => {
                 set_all_bill_to(data);
                 data = data[0];
                 set_bill_to_id(data.id);
+                set_bill_to_name(data.name)
                 set_bill_to_information(
                     <div>
                         <div>{data.name}</div>
@@ -283,7 +286,7 @@ const App = () => {
                 pdf.addPage(PDF_Width, PDF_Height);
                 pdf.addImage(imgData, 'JPG', top_left_margin, -(PDF_Height * i) + top_left_margin * 4, canvas_image_width, canvas_image_height);
             }
-            pdf.save('Your_PDF_Name.pdf');
+            pdf.save('Invoice - ' + invoice_type + ' - ' + bill_to_name + " - " + date + '.pdf');
             $('.invoice_viewer').hide();
         });
     }
@@ -304,6 +307,7 @@ const App = () => {
                                 let value = e.target.value;
                                 let data = JSON.parse(value);
                                 set_bill_to_id(data.id);
+                                set_bill_to_name(data.name)
                                 set_bill_to_information(
                                     <div>
                                         <div>{data.name}</div>

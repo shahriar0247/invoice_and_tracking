@@ -185,4 +185,20 @@ textarea {
     width: 100%;
 }
 
+.invoice{
+    .all_filters{
+        display: grid;
+        grid-template-columns: 1fr 1.5fr 1.5fr ;
+        width: max-content;
+        margin: auto;
+        margin-right: 0px;
+        align-items: center;
+        label{
+            margin-right: 10px;
+        }
+        input{
+            max-width: 220px !important;
+        }
+    }
+}
 @import "./invoice_viewer.scss";

@@ -162,6 +162,22 @@ textarea {
   width: 100%;
 }
 
+.invoice .all_filters {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr 1.5fr;
+  width: -moz-max-content;
+  width: max-content;
+  margin: auto;
+  margin-right: 0px;
+  align-items: center;
+}
+.invoice .all_filters label {
+  margin-right: 10px;
+}
+.invoice .all_filters input {
+  max-width: 220px !important;
+}
+
 .invoice_viewer {
   padding: 50px 100px;
   box-shadow: 0px 0px 10px 1px rgba(0, 0, 0, 0.341);

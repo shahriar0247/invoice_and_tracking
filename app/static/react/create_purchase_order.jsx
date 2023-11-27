@@ -17,6 +17,8 @@ const App = () => {
     const [bl_number, set_bl_number] = React.useState('');
     const [vendor_id, set_vendor_id] = React.useState('');
     const [date, set_date] = React.useState('');
+    
+    const [vendor_name, set_vendor_name] = React.useState('');
 
     const [total_price, set_total_price] = React.useState(0);
 
@@ -116,6 +118,7 @@ const App = () => {
                 set_all_vendor(data);
                 data = data[0];
                 set_vendor_id(data.id);
+                set_vendor_name(data.name);
                 set_vendor_information(
                     <div>
                         <div>{data.name}</div>
@@ -215,10 +218,10 @@ const App = () => {
                 console.error('Error:', error);
             });
     }
-    function createPDF() {
+function createPDF() {
         createPurchase_Order()
-        var HTML_Width = $('.purchase_order_viewer').width();
-        var HTML_Height = $('.purchase_order_viewer').height();
+        var HTML_Width = $('.invoice_viewer').width();
+        var HTML_Height = $('.invoice_viewer').height();
         var top_left_margin = 15;
         var PDF_Width = HTML_Width + top_left_margin * 2;
         var PDF_Height = PDF_Width * 1.5 + top_left_margin * 2;
@@ -227,7 +230,7 @@ const App = () => {
 
         var totalPDFPages = Math.ceil(HTML_Height / PDF_Height) - 1;
 
-        html2canvas($('.purchase_order_viewer')[0]).then(function (canvas) {
+        html2canvas($('.invoice_viewer')[0]).then(function (canvas) {
             var imgData = canvas.toDataURL('image/jpeg', 1.0);
             var pdf = new jsPDF('p', 'pt', [PDF_Width, PDF_Height]);
             pdf.addImage(imgData, 'JPG', top_left_margin, top_left_margin, canvas_image_width, canvas_image_height);
@@ -235,8 +238,8 @@ const App = () => {
                 pdf.addPage(PDF_Width, PDF_Height);
                 pdf.addImage(imgData, 'JPG', top_left_margin, -(PDF_Height * i) + top_left_margin * 4, canvas_image_width, canvas_image_height);
             }
-            pdf.save('Your_PDF_Name.pdf');
-            $('.purchase_order_viewer').hide();
+            pdf.save('Purchase Order - ' + vendor_name + " - " + date + '.pdf');
+            $('.invoice_viewer').hide();
         });
     }
     
@@ -256,6 +259,7 @@ const App = () => {
                                 let value = e.target.value;
                                 let data = JSON.parse(value);
                                 set_vendor_id(data.id);
+                                set_vendor_name(data.name)
                                 set_vendor_information(
                                     <div>
                                         <div>{data.name}</div>

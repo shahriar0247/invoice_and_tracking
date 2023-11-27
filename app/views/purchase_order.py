@@ -28,6 +28,7 @@ def get_purchase_order_view():
         purchase_order_object["id"] = purchase_order.id 
         purchase_order_object["vendor"] = Vendor.query.get(purchase_order.vendor_id).name
         purchase_order_object["bl_number"] = purchase_order.bl_number
+        purchase_order_object["date"] = purchase_order.date
         print(purchase_order_object)
 
         all_purchase_order.append(purchase_order_object)
