@@ -30,9 +30,10 @@ const App = () => {
             var dataTable = $('#data-table').DataTable({
                 data: data,
                 columns: [
-                    { title: 'ID', data: (item) => 'PUR - ' + item.id * 23123 },
+                    { title: 'ID', data: (item) => 'PUR - ' + item.id * 39751 },
                     { title: 'Vendor', data: 'vendor' },
                     { title: 'BL Number', data: 'bl_number' },
+                    { title: 'Date', data: 'date' },
                     {
                         title: '',
                         data: (item) => `<a class="button" href="/view_purchase_order/${item.id}">View</a>`,
@@ -105,6 +106,7 @@ const App = () => {
                         <th>ID</th>
                         <th>Vendor</th>
                         <th>BL Number</th>
+                        <th>Date</th>
                         <th></th>
                     </tr>
                 </thead>
