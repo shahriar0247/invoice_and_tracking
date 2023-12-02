@@ -30,12 +30,9 @@ const App = () => {
             var dataTable = $('#data-table').DataTable({
                 data: data,
                 columns: [
-                    { title: 'ID', data: (item) => 'INV - ' + item.id * 23123 },
-                    { title: 'Bill To', data: 'bill_to' },
-                    { title: 'Ship From', data: 'ship_from' },
-                    { title: 'Ship To', data: 'ship_to' },
-                    { title: 'BL Number', data: 'bl_number' },
-                    { title: 'Date', data: 'date' },
+                    { title: 'ID', data: (item) => 'DA - ' + item.id * 23123 },
+                    { title: 'Invoice', data: 'invoice_id' },
+                    { title: 'Purchase Order', data: 'purchase_order_id' },
                     {
                         title: '',
                         data: (item) => `<a class="button" href="/view_daily_account/${item.id}">View</a>`,
@@ -72,6 +69,7 @@ const App = () => {
         <div className="invoice">
             <h1>Daily_Accounts</h1>
             <a className="button" href="/create_daily_account">Create Daily_Account</a>
+           
             <div className="all_filters">
                 <div>
                     <label>User:</label>
@@ -108,11 +106,8 @@ const App = () => {
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Bill To</th>
-                        <th>Ship From</th>
-                        <th>Ship To</th>
-                        <th>BL Number</th>
-                        <th>Date</th>
+                        <th>Invoice</th>
+                        <th>Purchase Order</th>
                         <th></th>
                     </tr>
                 </thead>

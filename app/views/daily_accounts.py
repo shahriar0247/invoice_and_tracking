@@ -4,7 +4,7 @@ import json
 from flask import jsonify, redirect, render_template, request
 
 from app import app, db
-from app.models.modals import Bill_to, Company, Invoice, Ship_from, Ship_to
+from app.models.modals import Bill_to, Company, Daily_Account, Invoice, Purchase_Order, Ship_from, Ship_to, Vendor
 
 
     
@@ -22,17 +22,36 @@ def daily_accounts_view():
 def get_daily_account_view():
 
     all_daily_account = []
-    all_daily_accounts_raw = Invoice.query.all()
-    print(all_daily_accounts_raw)
+    all_daily_accounts_raw = Daily_Account.query.all()
     for daily_account in all_daily_accounts_raw:
         daily_account_object = {}
         daily_account_object["id"] = daily_account.id 
-        daily_account_object["bill_to"] = Bill_to.query.get(daily_account.bill_to_id).name
-        daily_account_object["ship_from"] = Ship_from.query.get(daily_account.ship_from_id).name
-        daily_account_object["ship_to"] = Ship_to.query.get(daily_account.ship_to_id).name
-        daily_account_object["bl_number"] = daily_account.bl_number
-        daily_account_object["date"] = daily_account.date
-        print(daily_account_object)
+        daily_account_object["all_items"] = daily_account.all_items
+
+        purchase_order = Purchase_Order.get(daily_account_object['purchase_order_id'])
+        purchase_order_object = {}
+        purchase_order_object["id"] = purchase_order.id
+        purchase_order_object["invoice_id"] = 'INV - ' + str(purchase_order.id * 23123) 
+        purchase_order_object["vendor"] = Vendor.query.get(
+            purchase_order.vendor_id
+        ).name
+        purchase_order_object["bl_number"] = purchase_order.bl_number
+        purchase_order_object["date"] = purchase_order.date
+        print(purchase_order_object)
+
+        invoice = Invoice.get(purchase_order.invoice_id)
+        invoice_object = {}
+        invoice_object["id"] = invoice.id 
+        invoice_object["bill_to"] = Bill_to.query.get(invoice.bill_to_id).name
+        invoice_object["ship_from"] = Ship_from.query.get(invoice.ship_from_id).name
+        invoice_object["ship_to"] = Ship_to.query.get(invoice.ship_to_id).name
+        invoice_object["bl_number"] = invoice.bl_number
+        invoice_object["date"] = invoice.date
+
+        daily_account['invoice'] = invoice_object
+
+        daily_account['invoice_id'] = invoice.id
+        daily_account['purchase_order_id'] = purchase_order.id
 
         all_daily_account.append(daily_account_object)
 
@@ -104,15 +123,31 @@ def get_daily_account_details_view_(daily_account_number):
     daily_account = Invoice.query.get(daily_account_number)
     daily_account_object = {}
     daily_account_object["id"] = daily_account.id 
-    daily_account_object["bill_to"] = daily_account.bill_to_id
-    daily_account_object["ship_from"] = daily_account.ship_from_id
-    daily_account_object["ship_to"] = daily_account.ship_to_id
-    daily_account_object["bl_number"] = daily_account.bl_number
-    daily_account_object["date"] = daily_account.date
-    daily_account_object["type"] = daily_account.type
-    daily_account_object["terms"] = daily_account.terms
-    daily_account_object["extra_info"] = daily_account.extra_info
     daily_account_object["all_items"] = daily_account.all_items
-    daily_account_object["bank_details"] = daily_account.bank_details
+
+    purchase_order = Purchase_Order.get(daily_account_object['purchase_order_id'])
+    purchase_order_object = {}
+    purchase_order_object["id"] = purchase_order.id
+    purchase_order_object["invoice_id"] = 'INV - ' + str(purchase_order.id * 23123) 
+    purchase_order_object["vendor"] = Vendor.query.get(
+        purchase_order.vendor_id
+    ).name
+    purchase_order_object["bl_number"] = purchase_order.bl_number
+    purchase_order_object["date"] = purchase_order.date
+    print(purchase_order_object)
+
+    invoice = Invoice.get(purchase_order.invoice_id)
+    invoice_object = {}
+    invoice_object["id"] = invoice.id 
+    invoice_object["bill_to"] = Bill_to.query.get(invoice.bill_to_id).name
+    invoice_object["ship_from"] = Ship_from.query.get(invoice.ship_from_id).name
+    invoice_object["ship_to"] = Ship_to.query.get(invoice.ship_to_id).name
+    invoice_object["bl_number"] = invoice.bl_number
+    invoice_object["date"] = invoice.date
+
+    daily_account['invoice'] = invoice_object
+
+    daily_account['invoice_id'] = invoice.id
+    daily_account['purchase_order_id'] = purchase_order.id
 
     return jsonify(daily_account_object)

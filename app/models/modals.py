@@ -97,6 +97,13 @@ class Purchase_Order(db.Model):
     Deli = db.Column(db.String(200))
     Manifest = db.Column(db.String(200))
 
+class Daily_Account(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    
+    purchase_order_id = db.Column(db.Integer, db.ForeignKey('purchase__order.id'))
+    all_items = db.Column(db.String(500))
+
+
 with app.app_context():
     db.create_all()
 
