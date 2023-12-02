@@ -19,6 +19,8 @@ const App = () => {
     const [date, set_date] = React.useState('');
     
     const [vendor_name, set_vendor_name] = React.useState('');
+    const [invoice_id, set_invoice_id] = React.useState(0);
+    const [all_invoices, set_all_invoices] = React.useState([]);
 
     const [total_price, set_total_price] = React.useState(0);
 
@@ -36,6 +38,7 @@ const App = () => {
         fetchCompany();
         fetchVendor();
         fetchItems();
+        fetchInvoice();
         fetchPurchase_Order();
     }, []);
 
@@ -115,6 +118,7 @@ const App = () => {
         fetch('/get/vendor')
             .then((response) => response.json())
             .then((data) => {
+                console.log(data)
                 set_all_vendor(data);
                 data = data[0];
                 set_vendor_id(data.id);
@@ -131,6 +135,19 @@ const App = () => {
                 console.error('Error fetching purchase_order data:', error);
             });
     }
+    function fetchInvoice() {
+        fetch('/get/invoice')
+            .then((response) => response.json())
+            .then((data) => {
+                set_all_invoices(data)
+                data = data[0];
+                set_invoice_id(data.id);
+            })
+            .catch((error) => {
+                console.error('Error fetching purchase_order data:', error);
+            });
+    }
+
  
     function fetchItems() {
         console.log('here 2')
@@ -154,7 +171,9 @@ const App = () => {
             type: purchase_order_type,
             extra_info: extra_information,
             bl_number: bl_number,
-            all_items: selected_items
+            all_items: selected_items,
+            invoice_id: invoice_id,
+
         };
         console.log("purchase_orderData")
         console.log(purchase_orderData)
@@ -251,8 +270,23 @@ function createPDF() {
             </div>
 
             <div className="all_inputs">
+            <div className="input_field">
+                    <div className="title">Connect Invoice</div>
+                    <div className="input">
+                        <select
+                            onChange={(e) => {
+                                let value = e.target.value;
+                                let data = JSON.parse(value);
+                                set_invoice_id(data.id)
+                            }}>
+                            {all_invoices.map(function (invoice) {
+                                return <option value={JSON.stringify(invoice)}>{invoice.id} - {invoice.bill_to} - {invoice.date}</option>;
+                            })}
+                        </select>
+                    </div>
+                </div>
                 <div className="input_field">
-                    <div className="title">Bill To</div>
+                    <div className="title">Vendor</div>
                     <div className="input">
                         <select
                             onChange={(e) => {

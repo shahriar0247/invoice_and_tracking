@@ -78,6 +78,8 @@ class Purchase_Order(db.Model):
     
     vendor_id = db.Column(db.Integer, db.ForeignKey('vendor.id'))
     all_items = db.Column(db.String(500))
+
+    invoice_id = db.Column(db.Integer, db.ForeignKey('invoice.id'))
     
     date = db.Column(db.DateTime)
     terms = db.Column(db.String(200))

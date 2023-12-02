@@ -18,6 +18,11 @@ const App = () => {
     const [vendor_id, set_vendor_id] = React.useState('');
     const [date, set_date] = React.useState('');
 
+    const [invoice_id, set_invoice_id] = React.useState(0);
+    const [all_invoices, set_all_invoices] = React.useState([]);
+    const [invoice, set_invoice] = React.useState({});
+
+
     const [total_price, set_total_price] = React.useState(0);
 
     React.useEffect(() => {
@@ -28,15 +33,22 @@ const App = () => {
         set_total_price(total_price_);
     }, [selected_items]);
     React.useEffect(() => {
-        console.log(vendor_id);
+        const invoice_ = (all_invoices.find(invoice => invoice.id == invoice_id))
+        if (invoice_){
+            set_invoice(invoice_)
+        }
     });
     React.useEffect(() => {
         fetchCompany();
         fetchVendor();
         fetchItems();
         fetchPurchase_Order();
+        fetchInvoice();
         get_purchase_order_details();
     }, []);
+
+
+
 
     async function get_purchase_order_details() {
         const number = window.location.href.split('/').pop();
@@ -51,6 +63,7 @@ const App = () => {
         set_extra_information(data.extra_info);
         set_bank_details_information(data.bank_details);
         set_bl_number(data.bl_number);
+        set_invoice_id(data.invoice_id);
 
         const dateObject = new Date(data.date);
         const year = dateObject.getFullYear();
@@ -150,7 +163,7 @@ const App = () => {
                 console.error('Error fetching purchase_order data:', error);
             });
     }
-   
+
     function fetchItems() {
         console.log('here 2');
         fetch('/get/item')
@@ -161,6 +174,19 @@ const App = () => {
             })
             .catch((error) => {
                 console.error('Error fetching items data:', error);
+            });
+    }
+
+    function fetchInvoice() {
+        fetch('/get/invoice')
+            .then((response) => response.json())
+            .then((data) => {
+                set_all_invoices(data)
+
+
+            })
+            .catch((error) => {
+                console.error('Error fetching purchase_order data:', error);
             });
     }
 
@@ -271,6 +297,21 @@ const App = () => {
 
             <div className="all_inputs">
                 <div className="input_field">
+                    <div className="title">Connect Invoice</div>
+                    <div className="input">
+                        <select
+                            onChange={(e) => {
+                                let value = e.target.value;
+                                let data = JSON.parse(value);
+                                set_invoice_id(data.id)
+                            }}>
+                            {
+                                invoice &&
+                                <option value={JSON.stringify(invoice)}>{invoice.id} - {invoice.bill_to} - {invoice.date}</option>
+                            }  </select>
+                    </div>
+                </div>
+                <div className="input_field">
                     <div className="title">Vendor</div>
                     <div className="input">
                         <select
@@ -293,7 +334,7 @@ const App = () => {
                         </select>
                     </div>
                 </div>
-            
+
 
                 <div className="input_field">
                     <div className="title">Bank Details</div>
@@ -489,10 +530,10 @@ const App = () => {
 
                         {vendor_information}
                     </div>
-                   
+
                 </div>
                 <div className="third_section">
-                    
+
                     <div className="extra_information">
                         <div
                             dangerouslySetInnerHTML={{
