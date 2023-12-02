@@ -8,6 +8,9 @@ const App = () => {
     const [purchase_orders, set_all_purchase_orders] = React.useState([])
     const [purchase_order_id, set_purchase_order_id] = React.useState()
 
+    const [all_invoices, set_all_invoices] = React.useState([])
+    const [invoice_id, set_invoice_id] = React.useState()
+
     const [total_price, set_total_price] = React.useState(0);
 
     React.useEffect(() => {
@@ -152,17 +155,36 @@ const App = () => {
 
 
 
-
     function fetchPurchaseOrders() {
         fetch('/get/purchase_order')
             .then((response) => response.json())
             .then((data) => {
                 set_all_purchase_orders(data)
-                set_purchase_order[data[0]]
+                data = data[0]
+                set_purchase_order_id(data.id)
+                set_invoice_id(data.invoice_id_)
+                set_purchase_orders_all_items(JSON.parse(data.all_items))
+                fetchInvoice(data.invoice_id_);
+
 
             })
             .catch((error) => {
                 console.error('Error fetching purchase_order data:', error);
+            });
+    }
+
+    function fetchInvoice(invoice_id__) {
+        console.log(invoice_id__)
+        console.log(invoice_id__)
+        fetch('/get_invoice_details/' + invoice_id__)
+            .then((response) => response.json())
+            .then((data) => {
+                set_invoice_all_items(JSON.parse(data.all_items))
+
+
+            })
+            .catch((error) => {
+                console.error('Error fetching invoice data:', error);
             });
     }
 
@@ -191,7 +213,7 @@ const App = () => {
                 console.error('Error:', error);
             });
     }
-
+    console.log(purchase_orders_all_items)
 
     return (
         <div className="daily_account">
@@ -208,9 +230,13 @@ const App = () => {
                                 let value = e.target.value;
                                 let data = JSON.parse(value);
                                 set_purchase_order_id(data.id)
+                                set_invoice_id(data.invoice_id_)
+                                set_purchase_orders_all_items(JSON.parse(data.all_items))
+                                fetchInvoice(data.invoice_id_);
+
                             }}>
                             {
-                                purchase_orders.map(function (po){
+                                purchase_orders && purchase_orders.map(function (po) {
                                     return <option value={JSON.stringify(po)}>{po.id} - {po.vendor} - {po.date}</option>
                                 })
                             }  </select>
@@ -429,14 +455,14 @@ const App = () => {
                                         <input
                                             type="text"
                                             value={item.name}
-                                            onChange={(e) => edit_invoice_fields(index, 'name', e.target.value)}
+                                            onChange={(e) => edit_purchase_order_fields(index, 'name', e.target.value)}
                                         />
                                     </td>
                                     <td>
                                         <input
                                             type="text"
                                             value={item.description}
-                                            onChange={(e) => edit_invoice_fields(index, 'description', e.target.value)}
+                                            onChange={(e) => edit_purchase_order_fields(index, 'description', e.target.value)}
                                         />
                                     </td>
                                     <td>
@@ -455,13 +481,13 @@ const App = () => {
                                     </td>
                                     <td>{item.price * item.quantity}</td>
                                     <td>
-                                        <button onClick={() => removeInvoiceItem(index)}>Remove</button> {/* Button to remove item */}
+                                        <button onClick={() => removePurchaseOrderItem(index)}>Remove</button> {/* Button to remove item */}
                                     </td>
                                 </tr>
                             ))}
                             <tr>
                                 <td>
-                                    <select onChange={(e) => add_new_invoice_item(e)}>
+                                    <select onChange={(e) => add_new_purchase_order_item(e)}>
                                         <option value="none">New Item</option>
                                         <option value="blank">Black Item</option>
                                         {all_items && all_items.map(function (item) {

@@ -31,12 +31,14 @@ def get_purchase_order_view():
     for purchase_order in all_purchase_orders_raw:
         purchase_order_object = {}
         purchase_order_object["id"] = purchase_order.id
-        purchase_order_object["invoice_id"] = 'INV - ' + str(purchase_order.id * 23123) 
+        purchase_order_object["invoice_id"] = 'INV - ' + str(purchase_order.invoice_id * 23123) 
+        purchase_order_object["invoice_id_"] = purchase_order.invoice_id
         purchase_order_object["vendor"] = Vendor.query.get(
             purchase_order.vendor_id
         ).name
         purchase_order_object["bl_number"] = purchase_order.bl_number
         purchase_order_object["date"] = purchase_order.date
+        purchase_order_object["all_items"] = purchase_order.all_items
         print(purchase_order_object)
 
         all_purchase_order.append(purchase_order_object)
