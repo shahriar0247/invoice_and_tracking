@@ -1,28 +1,28 @@
 const App = () => {
     const [data, setData] = React.useState([]);
-    const [vendors, setVendors] = React.useState([]);
+    const [users, setUsers] = React.useState([]);
 
     React.useEffect(() => {
-        fetchInvoice();
+        fetchDaily_Account();
     }, []);
 
-    function fetchInvoice() {
-        fetch('/get/purchase_order')
+    function fetchDaily_Account() {
+        fetch('/get/daily_account')
             .then((response) => response.json())
             .then((data) => {
                 setData(data);
-                setVendors(getUniqueVendors(data));
+                setUsers(getUniqueUsers(data));
                 loadTable(data);
             })
             .catch((error) => {
-                console.error('Error fetching invoice:', error);
+                console.error('Error fetching daily_account:', error);
             });
     }
 
-    function getUniqueVendors(data) {
-        // Extract unique vendors from the data
-        const uniqueVendors = [...new Set(data.map((item) => item.vendor))];
-        return uniqueVendors;
+    function getUniqueUsers(data) {
+        // Extract unique users from the data (assuming "Bill To" is the user field)
+        const uniqueUsers = [...new Set(data.map((item) => item.bill_to))];
+        return uniqueUsers;
     }
 
     function loadTable(data) {
@@ -30,13 +30,15 @@ const App = () => {
             var dataTable = $('#data-table').DataTable({
                 data: data,
                 columns: [
-                    { title: 'ID', data: (item) => 'PUR - ' + item.id * 39751 },
-                    { title: 'Vendor', data: 'vendor' },
+                    { title: 'ID', data: (item) => 'INV - ' + item.id * 23123 },
+                    { title: 'Bill To', data: 'bill_to' },
+                    { title: 'Ship From', data: 'ship_from' },
+                    { title: 'Ship To', data: 'ship_to' },
                     { title: 'BL Number', data: 'bl_number' },
                     { title: 'Date', data: 'date' },
                     {
                         title: '',
-                        data: (item) => `<a class="button" href="/view_purchase_order/${item.id}">View</a>`,
+                        data: (item) => `<a class="button" href="/view_daily_account/${item.id}">View</a>`,
                     },
                 ],
             });
@@ -45,7 +47,7 @@ const App = () => {
             $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
                 const minDate = $('#min-date').val();
                 const maxDate = $('#max-date').val();
-                const currentDate = new Date(data[3]); // Assuming date is in the fourth column
+                const currentDate = new Date(data[5]); // Assuming date is in the sixth column
 
                 if ((!minDate || currentDate >= new Date(minDate)) && (!maxDate || currentDate <= new Date(maxDate))) {
                     return true;
@@ -53,10 +55,10 @@ const App = () => {
                 return false;
             });
 
-            // Adding vendor filtering
-            $('#vendor-filter').on('change', function () {
-                const selectedVendor = $(this).val();
-                dataTable.column(1).search(selectedVendor).draw();
+            // Adding user filtering
+            $('#user-filter').on('change', function () {
+                const selectedUser = $(this).val();
+                dataTable.column(1).search(selectedUser).draw();
             });
 
             // Refresh table on date filter change
@@ -68,19 +70,18 @@ const App = () => {
 
     return (
         <div className="invoice">
-            <h1>Invoices</h1>
-            <a className="button" href="/create_purchase_order">Create Purchase Order</a>
-
+            <h1>Daily_Accounts</h1>
+            <a className="button" href="/create_daily_account">Create Daily_Account</a>
             <div className="all_filters">
                 <div>
-                    <label>Vendor:</label>
-                    <select id="vendor-filter">
+                    <label>User:</label>
+                    <select id="user-filter">
                         <option value="">All</option>
-                        {vendors.map((vendor, index) => (
+                        {users.map((user, index) => (
                             <option
                                 key={index}
-                                value={vendor}>
-                                {vendor}
+                                value={user}>
+                                {user}
                             </option>
                         ))}
                     </select>
@@ -92,6 +93,7 @@ const App = () => {
                         id="min-date"
                     />
                 </div>
+
                 <div>
                     <label>To:</label>
                     <input
@@ -106,7 +108,9 @@ const App = () => {
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Vendor</th>
+                        <th>Bill To</th>
+                        <th>Ship From</th>
+                        <th>Ship To</th>
                         <th>BL Number</th>
                         <th>Date</th>
                         <th></th>

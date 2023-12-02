@@ -120,7 +120,7 @@ button:hover {
 }
 
 
-.button {
+.button, .button:focus  {
     width: max-content;
     height: 40px;
     outline: none;
@@ -134,11 +134,16 @@ button:hover {
     padding-left: 20px;
     padding-right: 20px;
     text-decoration: none;
+    display: flex;
+    align-items: center;
+
 
 }
 
-.button:hover {
+.button:hover, .button:active{
     background-color: $secondary;
+    color: white;
+    text-decoration: none;
 }
 
 select {
@@ -188,7 +193,7 @@ textarea {
 .invoice{
     .all_filters{
         display: grid;
-        grid-template-columns: 1fr 1.5fr 1.5fr ;
+        grid-auto-flow: column;
         width: max-content;
         margin: auto;
         margin-right: 0px;
@@ -197,6 +202,7 @@ textarea {
             margin-right: 10px;
         }
         input{
+            min-width: 200px !important;
             max-width: 220px !important;
         }
     }

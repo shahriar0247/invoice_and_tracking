@@ -97,7 +97,7 @@ button:hover {
   background-color: rgb(108, 157, 255);
 }
 
-.button {
+.button, .button:focus {
   width: -moz-max-content;
   width: max-content;
   height: 40px;
@@ -112,10 +112,14 @@ button:hover {
   padding-left: 20px;
   padding-right: 20px;
   text-decoration: none;
+  display: flex;
+  align-items: center;
 }
 
-.button:hover {
+.button:hover, .button:active {
   background-color: rgb(108, 157, 255);
+  color: white;
+  text-decoration: none;
 }
 
 select {
@@ -164,7 +168,7 @@ textarea {
 
 .invoice .all_filters {
   display: grid;
-  grid-template-columns: 1fr 1.5fr 1.5fr;
+  grid-auto-flow: column;
   width: -moz-max-content;
   width: max-content;
   margin: auto;
@@ -175,6 +179,7 @@ textarea {
   margin-right: 10px;
 }
 .invoice .all_filters input {
+  min-width: 200px !important;
   max-width: 220px !important;
 }
 

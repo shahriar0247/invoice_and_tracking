@@ -71,6 +71,7 @@ const App = () => {
     return (
         <div className="invoice">
             <h1>Invoices</h1>
+            <a className="button" href="/create_invoice">Create Invoice</a>
             <div className="all_filters">
                 <div>
                     <label>User:</label>
