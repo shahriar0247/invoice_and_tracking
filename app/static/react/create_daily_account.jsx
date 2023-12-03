@@ -11,6 +11,13 @@ const App = () => {
     const [invoice_id, set_invoice_id] = React.useState();
 
     const [total_price, set_total_price] = React.useState(0);
+    const [total_invoice_price, set_total_invoice_price] = React.useState(0);
+    const [total_purchase_order_price, set_total_purchase_order_price] = React.useState(0);
+
+    const [vendor, set_vendor] = React.useState('');
+    const [bill_to, set_bill_to] = React.useState('');
+    const [ship_to, set_ship_to] = React.useState('');
+    const [ship_from, set_ship_from] = React.useState('');
 
     React.useEffect(() => {
         let total_price_ = 0;
@@ -53,11 +60,11 @@ const App = () => {
     };
 
     React.useEffect(() => {
-        let total_price_ = 0;
+        let total_invoice_price_ = 0;
         invoice_all_items.map(function (item) {
-            total_price_ = total_price_ + item.price * item.quantity;
+            total_invoice_price_ = total_invoice_price_ + item.price * item.quantity;
         });
-        set_total_price(total_price_);
+        set_total_invoice_price(total_invoice_price_);
     }, [invoice_all_items]);
 
     const edit_invoice_fields = (index, field, value) => {
@@ -93,11 +100,11 @@ const App = () => {
     };
 
     React.useEffect(() => {
-        let total_price_ = 0;
+        let total_purchase_order_price_ = 0;
         purchase_orders_all_items.map(function (item) {
-            total_price_ = total_price_ + item.price * item.quantity;
+            total_purchase_order_price_ = total_purchase_order_price_ + item.price * item.quantity;
         });
-        set_total_price(total_price_);
+        set_total_purchase_order_price(total_purchase_order_price_);
     }, [purchase_orders_all_items]);
 
     const edit_purchase_order_fields = (index, field, value) => {
@@ -145,6 +152,8 @@ const App = () => {
                 set_purchase_order_id(data.id);
                 set_invoice_id(data.invoice_id);
                 set_purchase_orders_all_items(JSON.parse(data.all_items));
+                set_vendor(data.vendor);
+
                 fetchInvoice(data.invoice_id);
             })
             .catch((error) => {
@@ -153,12 +162,13 @@ const App = () => {
     }
 
     function fetchInvoice(invoice_id_) {
-        console.log(invoice_id_);
-        console.log(invoice_id_);
-        fetch('/get_invoice_details/' + invoice_id_)
+        fetch('/get_invoice_details_for_daily_accounts/' + invoice_id_)
             .then((response) => response.json())
             .then((data) => {
                 set_invoice_all_items(JSON.parse(data.all_items));
+                set_bill_to(data.bill_to);
+                set_ship_from(data.ship_from);
+                set_ship_to(data.ship_to);
             })
             .catch((error) => {
                 console.error('Error fetching invoice data:', error);
@@ -190,12 +200,11 @@ const App = () => {
             });
     }
 
-
     return (
         <div className="daily_account">
-            <h1>Create Daily_Account</h1>
+            <h1>Create Daily Account</h1>
             <div className="topbar">
-                <button onClick={createDaily_Account}>Create Daily_Account</button>
+                <button onClick={createDaily_Account}>Create Daily Account</button>
             </div>
             <div className="all_inputs">
                 <div className="input_field">
@@ -219,6 +228,72 @@ const App = () => {
                                     );
                                 })}{' '}
                         </select>
+                    </div>
+                </div>
+                <div className="input_field"></div>
+                <div className="input_field">
+                    <div className="title">Purchase Order</div>
+                    <div className="input">
+                        <input
+                            type="text"
+                            value={purchase_order_id}
+                            disabled
+                        />
+                    </div>
+                </div>
+
+                <div className="input_field">
+                    <div className="title">Invoice</div>
+                    <div className="input">
+                        <input
+                            type="text"
+                            value={invoice_id}
+                            disabled
+                        />
+                    </div>
+                </div>
+
+                <div className="input_field">
+                    <div className="title">Vendor</div>
+                    <div className="input">
+                        <input
+                            type="text"
+                            value={vendor}
+                            disabled
+                        />
+                    </div>
+                </div>
+
+                <div className="input_field">
+                    <div className="title">Bill To</div>
+                    <div className="input">
+                        <input
+                            type="text"
+                            value={bill_to}
+                            disabled
+                        />
+                    </div>
+                </div>
+
+                <div className="input_field">
+                    <div className="title">Ship to</div>
+                    <div className="input">
+                        <input
+                            type="text"
+                            value={ship_to}
+                            disabled
+                        />
+                    </div>
+                </div>
+
+                <div className="input_field">
+                    <div className="title">Ship From</div>
+                    <div className="input">
+                        <input
+                            type="text"
+                            value={ship_from}
+                            disabled
+                        />
                     </div>
                 </div>
             </div>
@@ -315,6 +390,7 @@ const App = () => {
                     </table>
                 </div>
             </div>
+            <br />
 
             <h2>Invoice</h2>
 
@@ -401,13 +477,14 @@ const App = () => {
                                     <strong>Total Price of all items: </strong>
                                 </td>
 
-                                <td> {total_price}</td>
+                                <td> {total_invoice_price}</td>
                                 <td></td>
                             </tr>
                         </tfoot>
                     </table>
                 </div>
             </div>
+            <br />
 
             <h2>Purchase Order</h2>
 
@@ -494,7 +571,7 @@ const App = () => {
                                     <strong>Total Price of all items: </strong>
                                 </td>
 
-                                <td> {total_price}</td>
+                                <td> {total_purchase_order_price}</td>
                                 <td></td>
                             </tr>
                         </tfoot>

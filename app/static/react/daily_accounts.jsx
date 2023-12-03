@@ -68,7 +68,7 @@ const App = () => {
     return (
         <div className="invoice">
             <h1>Daily_Accounts</h1>
-            <a className="button" href="/create_daily_account">Create Daily_Account</a>
+            <a className="button" href="/create_daily_account">Create Daily Account</a>
            
             <div className="all_filters">
                 <div>
