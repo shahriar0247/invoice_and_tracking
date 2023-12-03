@@ -1,3 +1,4 @@
+import random
 from app import db, app
 
 class Company(db.Model):
@@ -43,8 +44,8 @@ class Item(db.Model):
 
 
 class Invoice(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    
+    id = db.Column(db.String(20), primary_key=True)
+
     bill_to_id = db.Column(db.Integer, db.ForeignKey('bill_to.id'))
     ship_from_id = db.Column(db.Integer, db.ForeignKey('ship_from.id'))
     ship_to_id = db.Column(db.Integer, db.ForeignKey('ship_to.id'))
@@ -66,6 +67,11 @@ class Invoice(db.Model):
     Deli = db.Column(db.String(200))
     Manifest = db.Column(db.String(200))
 
+    def __init__(self, *args, **kwargs):
+        if not kwargs.get('id'):
+            kwargs['id'] = f'INV - {random.randint(1000000, 9999999)}'
+        super(Invoice, self).__init__(*args, **kwargs)
+
 
 class Vendor(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -74,13 +80,13 @@ class Vendor(db.Model):
     address2 = db.Column(db.String(200))
     
 class Purchase_Order(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.String(20), primary_key=True)
     
     vendor_id = db.Column(db.Integer, db.ForeignKey('vendor.id'))
     all_items = db.Column(db.String(500))
 
-    invoice_id = db.Column(db.Integer, db.ForeignKey('invoice.id'))
-    
+    invoice_id = db.Column(db.String(20), db.ForeignKey('invoice.id'))
+
     date = db.Column(db.DateTime)
     terms = db.Column(db.String(200))
     extra_info = db.Column(db.String(200))
@@ -96,12 +102,25 @@ class Purchase_Order(db.Model):
     BL = db.Column(db.String(200))
     Deli = db.Column(db.String(200))
     Manifest = db.Column(db.String(200))
+    
+    def __init__(self, *args, **kwargs):
+        if not kwargs.get('id'):
+            kwargs['id'] = f'PO - {random.randint(1000000, 9999999)}'
+        super(Purchase_Order, self).__init__(*args, **kwargs)
+
 
 class Daily_Account(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.String(20), primary_key=True)
     
-    purchase_order_id = db.Column(db.Integer, db.ForeignKey('purchase__order.id'))
+    purchase_order_id = db.Column(db.String(20), db.ForeignKey('purchase__order.id'))
+    
     all_items = db.Column(db.String(500))
+    
+    def __init__(self, *args, **kwargs):
+        if not kwargs.get('id'):
+            kwargs['id'] = f'DA - {random.randint(1000000, 9999999)}'
+        super(Daily_Account, self).__init__(*args, **kwargs)
+
 
 
 with app.app_context():

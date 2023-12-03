@@ -31,8 +31,7 @@ def get_purchase_order_view():
     for purchase_order in all_purchase_orders_raw:
         purchase_order_object = {}
         purchase_order_object["id"] = purchase_order.id
-        purchase_order_object["invoice_id"] = 'INV - ' + str(purchase_order.invoice_id * 23123) 
-        purchase_order_object["invoice_id_"] = purchase_order.invoice_id
+        purchase_order_object["invoice_id"] = purchase_order.invoice_id
         purchase_order_object["vendor"] = Vendor.query.get(
             purchase_order.vendor_id
         ).name

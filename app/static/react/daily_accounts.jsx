@@ -30,7 +30,7 @@ const App = () => {
             var dataTable = $('#data-table').DataTable({
                 data: data,
                 columns: [
-                    { title: 'ID', data: (item) => 'DA - ' + item.id * 23123 },
+                    { title: 'ID', data: 'id' },
                     { title: 'Invoice', data: 'invoice_id' },
                     { title: 'Purchase Order', data: 'purchase_order_id' },
                     {

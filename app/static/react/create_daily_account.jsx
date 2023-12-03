@@ -1,15 +1,14 @@
 const App = () => {
-
     const [all_items, set_all_items] = React.useState();
     const [invoice_all_items, set_invoice_all_items] = React.useState([]);
     const [purchase_orders_all_items, set_purchase_orders_all_items] = React.useState([]);
     const [selected_items, set_selected_items] = React.useState([]);
 
-    const [purchase_orders, set_all_purchase_orders] = React.useState([])
-    const [purchase_order_id, set_purchase_order_id] = React.useState()
+    const [purchase_orders, set_all_purchase_orders] = React.useState([]);
+    const [purchase_order_id, set_purchase_order_id] = React.useState();
 
-    const [all_invoices, set_all_invoices] = React.useState([])
-    const [invoice_id, set_invoice_id] = React.useState()
+    const [all_invoices, set_all_invoices] = React.useState([]);
+    const [invoice_id, set_invoice_id] = React.useState();
 
     const [total_price, set_total_price] = React.useState(0);
 
@@ -20,7 +19,6 @@ const App = () => {
         });
         set_total_price(total_price_);
     }, [selected_items]);
-
 
     const edit_daily_account_fields = (index, field, value) => {
         const updatedItems = [...selected_items];
@@ -54,9 +52,6 @@ const App = () => {
         set_selected_items(updatedItems);
     };
 
-
-
-
     React.useEffect(() => {
         let total_price_ = 0;
         invoice_all_items.map(function (item) {
@@ -64,7 +59,6 @@ const App = () => {
         });
         set_total_price(total_price_);
     }, [invoice_all_items]);
-
 
     const edit_invoice_fields = (index, field, value) => {
         const updatedItems = [...invoice_all_items];
@@ -98,15 +92,6 @@ const App = () => {
         set_invoice_all_items(updatedItems);
     };
 
-
-
-
-
-
-
-
-
-
     React.useEffect(() => {
         let total_price_ = 0;
         purchase_orders_all_items.map(function (item) {
@@ -114,7 +99,6 @@ const App = () => {
         });
         set_total_price(total_price_);
     }, [purchase_orders_all_items]);
-
 
     const edit_purchase_order_fields = (index, field, value) => {
         const updatedItems = [...purchase_orders_all_items];
@@ -152,47 +136,39 @@ const App = () => {
         fetchPurchaseOrders();
     }, []);
 
-
-
-
     function fetchPurchaseOrders() {
         fetch('/get/purchase_order')
             .then((response) => response.json())
             .then((data) => {
-                set_all_purchase_orders(data)
-                data = data[0]
-                set_purchase_order_id(data.id)
-                set_invoice_id(data.invoice_id_)
-                set_purchase_orders_all_items(JSON.parse(data.all_items))
-                fetchInvoice(data.invoice_id_);
-
-
+                set_all_purchase_orders(data);
+                data = data[0];
+                set_purchase_order_id(data.id);
+                set_invoice_id(data.invoice_id);
+                set_purchase_orders_all_items(JSON.parse(data.all_items));
+                fetchInvoice(data.invoice_id);
             })
             .catch((error) => {
                 console.error('Error fetching purchase_order data:', error);
             });
     }
 
-    function fetchInvoice(invoice_id__) {
-        console.log(invoice_id__)
-        console.log(invoice_id__)
-        fetch('/get_invoice_details/' + invoice_id__)
+    function fetchInvoice(invoice_id_) {
+        console.log(invoice_id_);
+        console.log(invoice_id_);
+        fetch('/get_invoice_details/' + invoice_id_)
             .then((response) => response.json())
             .then((data) => {
-                set_invoice_all_items(JSON.parse(data.all_items))
-
-
+                set_invoice_all_items(JSON.parse(data.all_items));
             })
             .catch((error) => {
                 console.error('Error fetching invoice data:', error);
             });
     }
 
-
-
     function createDaily_Account() {
         const daily_accountData = {
-            all_items: selected_items
+            all_items: selected_items,
+            purchase_order_id: purchase_order_id,
         };
 
         fetch('/create/daily_account', {
@@ -213,7 +189,7 @@ const App = () => {
                 console.error('Error:', error);
             });
     }
-    console.log(purchase_orders_all_items)
+
 
     return (
         <div className="daily_account">
@@ -223,23 +199,26 @@ const App = () => {
             </div>
             <div className="all_inputs">
                 <div className="input_field">
-                    <div className="title">Connect Purchase</div>
+                    <div className="title">Connect PO</div>
                     <div className="input">
                         <select
                             onChange={(e) => {
                                 let value = e.target.value;
                                 let data = JSON.parse(value);
-                                set_purchase_order_id(data.id)
-                                set_invoice_id(data.invoice_id_)
-                                set_purchase_orders_all_items(JSON.parse(data.all_items))
-                                fetchInvoice(data.invoice_id_);
-
+                                set_purchase_order_id(data.id);
+                                set_invoice_id(data.invoice_id);
+                                set_purchase_orders_all_items(JSON.parse(data.all_items));
+                                fetchInvoice(data.invoice_id);
                             }}>
-                            {
-                                purchase_orders && purchase_orders.map(function (po) {
-                                    return <option value={JSON.stringify(po)}>{po.id} - {po.vendor} - {po.date}</option>
-                                })
-                            }  </select>
+                            {purchase_orders &&
+                                purchase_orders.map(function (po) {
+                                    return (
+                                        <option value={JSON.stringify(po)}>
+                                            {po.id} - {po.vendor} - {po.date}
+                                        </option>
+                                    );
+                                })}{' '}
+                        </select>
                     </div>
                 </div>
             </div>
@@ -303,13 +282,14 @@ const App = () => {
                                     <select onChange={(e) => add_new_daily_account_item(e)}>
                                         <option value="none">New Item</option>
                                         <option value="blank">Black Item</option>
-                                        {all_items && all_items.map(function (item) {
-                                            return (
-                                                <option value={JSON.stringify(item)}>
-                                                    {item.name} - {item.price} Price
-                                                </option>
-                                            );
-                                        })}
+                                        {all_items &&
+                                            all_items.map(function (item) {
+                                                return (
+                                                    <option value={JSON.stringify(item)}>
+                                                        {item.name} - {item.price} Price
+                                                    </option>
+                                                );
+                                            })}
                                     </select>
                                 </td>
                                 <td></td>
@@ -395,13 +375,14 @@ const App = () => {
                                     <select onChange={(e) => add_new_invoice_item(e)}>
                                         <option value="none">New Item</option>
                                         <option value="blank">Black Item</option>
-                                        {all_items && all_items.map(function (item) {
-                                            return (
-                                                <option value={JSON.stringify(item)}>
-                                                    {item.name} - {item.price} Price
-                                                </option>
-                                            );
-                                        })}
+                                        {all_items &&
+                                            all_items.map(function (item) {
+                                                return (
+                                                    <option value={JSON.stringify(item)}>
+                                                        {item.name} - {item.price} Price
+                                                    </option>
+                                                );
+                                            })}
                                     </select>
                                 </td>
                                 <td></td>
@@ -428,10 +409,7 @@ const App = () => {
                 </div>
             </div>
 
-
-
             <h2>Purchase Order</h2>
-
 
             <div className="input_field">
                 <div className="input">
@@ -490,13 +468,14 @@ const App = () => {
                                     <select onChange={(e) => add_new_purchase_order_item(e)}>
                                         <option value="none">New Item</option>
                                         <option value="blank">Black Item</option>
-                                        {all_items && all_items.map(function (item) {
-                                            return (
-                                                <option value={JSON.stringify(item)}>
-                                                    {item.name} - {item.price} Price
-                                                </option>
-                                            );
-                                        })}
+                                        {all_items &&
+                                            all_items.map(function (item) {
+                                                return (
+                                                    <option value={JSON.stringify(item)}>
+                                                        {item.name} - {item.price} Price
+                                                    </option>
+                                                );
+                                            })}
                                     </select>
                                 </td>
                                 <td></td>
@@ -522,10 +501,6 @@ const App = () => {
                     </table>
                 </div>
             </div>
-
-
-
-
         </div>
     );
 };

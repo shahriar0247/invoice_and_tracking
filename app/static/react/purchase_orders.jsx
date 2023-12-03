@@ -30,7 +30,7 @@ const App = () => {
             var dataTable = $('#data-table').DataTable({
                 data: data,
                 columns: [
-                    { title: 'ID', data: (item) => 'PO - ' + item.id * 39751 },
+                    { title: 'ID', data: 'id' },
                     { title: 'Invoice', data: 'invoice_id' },
                     { title: 'Vendor', data: 'vendor' },
                     { title: 'BL Number', data: 'bl_number' },
@@ -69,7 +69,7 @@ const App = () => {
 
     return (
         <div className="invoice">
-            <h1>Invoices</h1>
+            <h1>Purchase Orders</h1>
             <a className="button" href="/create_purchase_order">Create Purchase Order</a>
 
             <div className="all_filters">
