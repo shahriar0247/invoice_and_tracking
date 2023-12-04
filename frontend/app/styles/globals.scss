@@ -26,28 +26,26 @@ body {
         box-shadow: 0px 0px 10px 1px rgba(0, 0, 0, 0.319);
         padding-top: 20px;
         padding-bottom: 20px;
-        margin-top: 20vh;
+        margin-top: 15vh;
         position: fixed;
         width: 250px;
         margin-left: 20px;
-
 
         a {
             color: white;
             text-decoration: none;
             background-color: $primary;
-            width: 200px;
+            width: 150px;
             padding-left: 20px;
             padding-right: 20px;
-            padding-top: 10px;
-            padding-bottom: 10px;
+            padding-top: 15px;
+            padding-bottom: 15px;
             margin-bottom: 5px;
             margin-top: 5px;
             border-radius: 5px;
             text-align: center;
             transition: 200ms all;
             box-shadow: 2px 2px 5px 1px rgba(0, 0, 0, 0.4);
-
         }
 
         a:hover {
@@ -65,17 +63,13 @@ body {
             margin: auto;
             margin-right: 0;
             margin-bottom: 20px;
-
         }
 
         .table {
             box-shadow: 2px 2px 5px 1px rgba(0, 0, 0, 0.4);
-
         }
     }
 }
-
-
 
 .all_inputs {
     display: grid;
@@ -93,9 +87,8 @@ body {
             margin-top: 9px;
         }
 
-        .input {}
-
-
+        .input {
+        }
     }
 }
 
@@ -112,15 +105,14 @@ button {
     border: none;
     padding-left: 20px;
     padding-right: 20px;
-
 }
 
 button:hover {
     background-color: $secondary;
 }
 
-
-.button, .button:focus  {
+.button,
+.button:focus {
     width: max-content;
     height: 40px;
     outline: none;
@@ -136,11 +128,10 @@ button:hover {
     text-decoration: none;
     display: flex;
     align-items: center;
-
-
 }
 
-.button:hover, .button:active{
+.button:hover,
+.button:active {
     background-color: $secondary;
     color: white;
     text-decoration: none;
@@ -162,7 +153,6 @@ select {
     padding-right: 20px;
 }
 
-
 input,
 textarea {
     height: 30px;
@@ -182,7 +172,7 @@ textarea {
     padding: 10px;
 }
 
-.bootstrap-select>button.dropdown-toggle {
+.bootstrap-select > button.dropdown-toggle {
     width: auto;
 }
 
@@ -190,21 +180,21 @@ textarea {
     width: 100%;
 }
 
-.invoice{
-    .all_filters{
+.invoice {
+    .all_filters {
         display: grid;
         grid-auto-flow: column;
         width: max-content;
         margin: auto;
         margin-right: 0px;
         align-items: center;
-        label{
+        label {
             margin-right: 10px;
         }
-        input{
+        input {
             min-width: 200px !important;
             max-width: 220px !important;
         }
     }
 }
-@import "./invoice_viewer.scss";
+@import './invoice_viewer.scss';
