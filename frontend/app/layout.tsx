@@ -1,4 +1,6 @@
 import type { Metadata } from 'next';
+import './styles/globals.scss';
+import './styles/invoice_viewer.scss';
 
 
 export const metadata: Metadata = {

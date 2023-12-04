@@ -6,7 +6,6 @@ from flask_cors import CORS  # Import CORS from flask_cors
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://invoice_and_tracking:invoice_and_tracking@localhost:5432/invoice_and_tracking'
 
-# Enable CORS for all routes
 CORS(app)
 
 db = SQLAlchemy(app)

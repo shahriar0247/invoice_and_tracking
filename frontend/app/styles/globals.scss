@@ -10,7 +10,7 @@ $accent: rgb(255, 66, 66);
 body {
     font-family: Arial, Helvetica, sans-serif;
     display: grid;
-    grid-template-columns: 250px auto;
+    grid-template-columns: 300px auto;
     height: 100vh;
 
     h1,
@@ -33,14 +33,14 @@ body {
         padding-bottom: 20px;
         margin-top: 15vh;
         position: fixed;
-        width: 250px;
+        width: 300px;
         margin-left: 20px;
 
         a {
             color: white;
             text-decoration: none;
             background-color: $primary;
-            width: 150px;
+            width: 200px;
             padding-left: 20px;
             padding-right: 20px;
             padding-top: 15px;
@@ -78,7 +78,7 @@ body {
 
 .all_inputs {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     box-shadow: 2px 2px 5px 1px rgba(0, 0, 0, 0.4);
     padding: 50px;
     margin-bottom: 40px;
