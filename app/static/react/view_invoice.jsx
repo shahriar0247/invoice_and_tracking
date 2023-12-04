@@ -23,6 +23,7 @@ const App = () => {
     const [ship_to_id, set_ship_to_id] = React.useState('');
     const [ship_from_id, set_ship_from_id] = React.useState('');
     const [date, set_date] = React.useState('');
+    const [invoice_id, set_invoice_id] = React.useState('');
 
     const [total_price, set_total_price] = React.useState(0);
 
@@ -61,6 +62,7 @@ const App = () => {
         set_extra_information(data.extra_info);
         set_bank_details_information(data.bank_details);
         set_bl_number(data.bl_number);
+        set_invoice_id(data.id);
 
         const dateObject = new Date(data.date);
         const year = dateObject.getFullYear();
@@ -571,6 +573,7 @@ const App = () => {
                         <br />
                         <br />
                         <div>Date: {date}</div>
+                        <div>Invoice Number: {invoice_id}</div>
                         <div
                             dangerouslySetInnerHTML={{
                                 __html: invoice_information.replace(/\n/g, '<br>'),
