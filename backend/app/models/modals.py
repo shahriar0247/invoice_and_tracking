@@ -54,6 +54,7 @@ class Invoice(db.Model):
     all_items = db.Column(db.String(500), nullable=True)
     
     date = db.Column(db.DateTime, nullable=True)
+    due_date = db.Column(db.DateTime, nullable=True)
     terms = db.Column(db.String(1200), nullable=True)
     extra_info = db.Column(db.String(1200), nullable=True)
     bl_number = db.Column(db.String(1200), nullable=True)
