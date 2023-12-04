@@ -1,12 +1,8 @@
 
 
-from flask import jsonify, redirect, render_template, request
+from flask import jsonify, redirect, request
 from app import app, db
 from app.models.modals import Bill_to, Company, Invoice, Ship_to, Ship_to
-
-@app.route("/tracking")
-def tracking_view():
-    return render_template("tracking.html")
 
 
 @app.route("/get/one_invoice_bl", methods=['POST'])

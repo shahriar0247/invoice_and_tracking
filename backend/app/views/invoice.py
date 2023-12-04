@@ -1,25 +1,10 @@
 
 import json
 
-from flask import jsonify, redirect, render_template, request
+from flask import jsonify, redirect, request
 
 from app import app, db
 from app.models.modals import Bill_to, Company, Invoice, Ship_from, Ship_to
-
-@app.route("/")
-def home():
-    return redirect("/create_invoice")
-
-    
-@app.route("/create_invoice")
-def create_invoice_view_():
-    return render_template("create_invoice.html")
-
-    
-    
-@app.route("/invoices")
-def invoices_view():
-    return render_template("invoices.html")
 
 @app.route("/get/invoice")
 def get_invoice_view():
@@ -97,10 +82,6 @@ def edit_invoice(invoice_id):
     db.session.commit()
     
     return "Invoice updated successfully"
-
-@app.route("/view_invoice/<invoice_number>")
-def view_invoice_view_(invoice_number):
-    return render_template("view_invoice.html")
 
 @app.route("/get_invoice_details/<invoice_number>")
 def get_invoice_details_view_(invoice_number):

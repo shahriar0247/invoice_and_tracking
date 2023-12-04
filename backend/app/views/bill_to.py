@@ -1,14 +1,10 @@
 
 import json
 
-from flask import jsonify, redirect, render_template, request
+from flask import jsonify, redirect, request
 
 from app import app, db
 from app.models.modals import Bill_to, Company, Invoice, Ship_from, Ship_to
-
-@app.route("/bill_to")
-def bill_to_view():
-    return render_template("bill_to.html")
 
 
 @app.route("/get/bill_to")

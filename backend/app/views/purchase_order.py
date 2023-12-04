@@ -1,6 +1,6 @@
 import json
 
-from flask import jsonify, redirect, render_template, request
+from flask import jsonify, redirect, request
 
 from app import app, db
 from app.models.modals import (
@@ -11,16 +11,6 @@ from app.models.modals import (
     Ship_from,
     Ship_to,
 )
-
-
-@app.route("/create_purchase_order")
-def create_purchase_order_view_():
-    return render_template("create_purchase_order.html")
-
-
-@app.route("/purchase_orders")
-def purchase_orders_view():
-    return render_template("purchase_orders.html")
 
 
 @app.route("/get/purchase_order")
@@ -100,11 +90,6 @@ def edit_purchase_order(purchase_order_id):
     db.session.commit()
 
     return "Purchase_Order updated successfully"
-
-
-@app.route("/view_purchase_order/<purchase_order_number>")
-def view_purchase_order_view_(purchase_order_number):
-    return render_template("view_purchase_order.html")
 
 
 @app.route("/get_purchase_order_details/<purchase_order_number>")

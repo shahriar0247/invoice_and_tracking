@@ -1,6 +1,6 @@
 import json
 
-from flask import jsonify, redirect, render_template, request
+from flask import jsonify, redirect, request
 
 from app import app, db
 from app.models.modals import (
@@ -13,16 +13,6 @@ from app.models.modals import (
     Ship_to,
     Vendor,
 )
-
-
-@app.route("/create_daily_account")
-def create_daily_account_view_():
-    return render_template("create_daily_account.html")
-
-
-@app.route("/daily_accounts")
-def daily_accounts_view():
-    return render_template("daily_accounts.html")
 
 
 @app.route("/get/daily_account")
@@ -111,12 +101,6 @@ def edit_daily_account(daily_account_id):
     db.session.commit()
 
     return "Invoice updated successfully"
-
-
-@app.route("/view_daily_account/<daily_account_number>")
-def view_daily_account_view_(daily_account_number):
-    return render_template("view_daily_account.html")
-
 
 @app.route("/get_daily_account_details/<daily_account_number>")
 def get_daily_account_details_view_(daily_account_number):
