@@ -316,9 +316,7 @@ const App = () => {
     return (
         <div className="invoice">
             <h1>Invoice Details</h1>
-            <div className="topbar">
-                {/* <button onClick={createPDF}>Create Invoice</button> */}
-            </div>
+            <div className="topbar">{/* <button onClick={createPDF}>Create Invoice</button> */}</div>
 
             <div className="all_inputs">
                 <div className="input_field">
@@ -572,8 +570,9 @@ const App = () => {
                     <div className="invoice_information">
                         <br />
                         <br />
+
+                        <h3>{invoice_id}</h3>
                         <div>Date: {date}</div>
-                        <div>Invoice Number: {invoice_id}</div>
                         <div
                             dangerouslySetInnerHTML={{
                                 __html: invoice_information.replace(/\n/g, '<br>'),
