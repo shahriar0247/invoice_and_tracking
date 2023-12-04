@@ -316,7 +316,9 @@ const App = () => {
     return (
         <div className="invoice">
             <h1>Invoice Details</h1>
-            <div className="topbar"><button onClick={createPDF}>Create Invoice</button></div>
+            <div className="topbar">
+                <button onClick={createPDF}>Create Invoice</button>
+            </div>
 
             <div className="all_inputs">
                 <div className="input_field">
@@ -478,7 +480,8 @@ const App = () => {
                             <tr>
                                 <th>Item</th>
                                 <th>Description</th>
-                                <th>Price per piece</th>
+                                <th>Price</th>
+                                <th>Currency</th>
                                 <th>Quantity</th>
                                 <th>Total Price</th>
                                 <th>Actions</th>
@@ -507,6 +510,16 @@ const App = () => {
                                             value={item.price}
                                             onChange={(e) => edit_invoice_fields(index, 'price', parseFloat(e.target.value))}
                                         />
+                                    </td>
+                                    <td>
+                                        <select
+                                            value={item.currency}
+                                            onChange={(e) => edit_invoice_fields(index, 'currency', parseFloat(e.target.value))}
+                                            name=""
+                                            id="">
+                                            <option value="usd">USD</option>
+                                            <option value="cad">CAD</option>
+                                        </select>
                                     </td>
                                     <td>
                                         <input
