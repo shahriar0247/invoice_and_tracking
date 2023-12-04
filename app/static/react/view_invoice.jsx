@@ -424,7 +424,6 @@ const App = () => {
                             rows="10"
                             onChange={(e) => {
                                 let value = e.target.value;
-                                value = value.replace(/\n/g, '<br />');
                                 set_terms_and_conditions(value);
                             }}></textarea>
                     </div>
@@ -526,7 +525,7 @@ const App = () => {
                                 <td>
                                     <select onChange={(e) => add_new_invoice_item(e)}>
                                         <option value="none">New Item</option>
-                                        <option value="blank">Black Item</option>
+                                        <option value="blank">Blank Item</option>
                                         {all_items &&
                                             all_items.map(function (item) {
                                                 return (

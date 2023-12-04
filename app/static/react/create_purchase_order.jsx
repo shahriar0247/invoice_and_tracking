@@ -442,7 +442,7 @@ function createPDF() {
                                 <td>
                                     <select onChange={(e) => add_new_purchase_order_item(e)}>
                                         <option value="none">New Item</option>
-                                        <option value="blank">Black Item</option>
+                                        <option value="blank">Blank Item</option>
                                         { all_items && all_items.map(function (item) {
                                             return (
                                                 <option value={JSON.stringify(item)}>

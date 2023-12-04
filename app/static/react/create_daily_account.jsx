@@ -356,7 +356,7 @@ const App = () => {
                                 <td>
                                     <select onChange={(e) => add_new_daily_account_item(e)}>
                                         <option value="none">New Item</option>
-                                        <option value="blank">Black Item</option>
+                                        <option value="blank">Blank Item</option>
                                         {all_items &&
                                             all_items.map(function (item) {
                                                 return (
@@ -450,7 +450,7 @@ const App = () => {
                                 <td>
                                     <select onChange={(e) => add_new_invoice_item(e)}>
                                         <option value="none">New Item</option>
-                                        <option value="blank">Black Item</option>
+                                        <option value="blank">Blank Item</option>
                                         {all_items &&
                                             all_items.map(function (item) {
                                                 return (
@@ -544,7 +544,7 @@ const App = () => {
                                 <td>
                                     <select onChange={(e) => add_new_purchase_order_item(e)}>
                                         <option value="none">New Item</option>
-                                        <option value="blank">Black Item</option>
+                                        <option value="blank">Blank Item</option>
                                         {all_items &&
                                             all_items.map(function (item) {
                                                 return (

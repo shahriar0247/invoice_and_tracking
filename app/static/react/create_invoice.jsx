@@ -24,7 +24,7 @@ const App = () => {
     const [ship_from_id, set_ship_from_id] = React.useState('');
     const [date, set_date] = React.useState('');
 
-    const [bill_to_name, set_bill_to_name] = React.useState('')
+    const [bill_to_name, set_bill_to_name] = React.useState('');
 
     const [total_price, set_total_price] = React.useState(0);
 
@@ -37,13 +37,13 @@ const App = () => {
     }, [selected_items]);
 
     React.useEffect(() => {
-        console.log('here 1')
+        console.log('here 1');
 
         fetchCompany();
         fetchBillTo();
         fetchShipFrom();
         fetchShipTo();
-        console.log('here 1')
+        console.log('here 1');
         fetchItems();
         fetchInvoice();
     }, []);
@@ -127,7 +127,7 @@ const App = () => {
                 set_all_bill_to(data);
                 data = data[0];
                 set_bill_to_id(data.id);
-                set_bill_to_name(data.name)
+                set_bill_to_name(data.name);
                 set_bill_to_information(
                     <div>
                         <div>{data.name}</div>
@@ -179,11 +179,11 @@ const App = () => {
             });
     }
     function fetchItems() {
-        console.log('here 2')
+        console.log('here 2');
         fetch('/get/item')
             .then((response) => response.json())
             .then((data) => {
-                console.log(data)
+                console.log(data);
                 set_all_items(data);
             })
             .catch((error) => {
@@ -202,10 +202,10 @@ const App = () => {
             type: invoice_type,
             extra_info: extra_information,
             bl_number: bl_number,
-            all_items: selected_items
+            all_items: selected_items,
         };
-        console.log("invoiceData")
-        console.log(invoiceData)
+        console.log('invoiceData');
+        console.log(invoiceData);
 
         fetch('/create/invoice', {
             method: 'POST',
@@ -267,7 +267,7 @@ const App = () => {
             });
     }
     function createPDF() {
-        createInvoice()
+        createInvoice();
         var HTML_Width = $('.invoice_viewer').width();
         var HTML_Height = $('.invoice_viewer').height();
         var top_left_margin = 15;
@@ -286,11 +286,11 @@ const App = () => {
                 pdf.addPage(PDF_Width, PDF_Height);
                 pdf.addImage(imgData, 'JPG', top_left_margin, -(PDF_Height * i) + top_left_margin * 4, canvas_image_width, canvas_image_height);
             }
-            pdf.save('Invoice - ' + invoice_type + ' - ' + bill_to_name + " - " + date + '.pdf');
+            pdf.save('Invoice - ' + invoice_type + ' - ' + bill_to_name + ' - ' + date + '.pdf');
             $('.invoice_viewer').hide();
         });
     }
-    
+
     return (
         <div className="invoice">
             <h1>Create Invoice</h1>
@@ -307,7 +307,7 @@ const App = () => {
                                 let value = e.target.value;
                                 let data = JSON.parse(value);
                                 set_bill_to_id(data.id);
-                                set_bill_to_name(data.name)
+                                set_bill_to_name(data.name);
                                 set_bill_to_information(
                                     <div>
                                         <div>{data.name}</div>
@@ -453,7 +453,8 @@ const App = () => {
                             <tr>
                                 <th>Item</th>
                                 <th>Description</th>
-                                <th>Price per piece</th>
+                                <th>Price</th>
+                                <th>Currency</th>
                                 <th>Quantity</th>
                                 <th>Total Price</th>
                                 <th>Actions</th>
@@ -484,6 +485,16 @@ const App = () => {
                                         />
                                     </td>
                                     <td>
+                                        <select
+                                            value={item.currency}
+                                            onChange={(e) => edit_invoice_fields(index, 'currency', parseFloat(e.target.value))}
+                                            name=""
+                                            id="">
+                                            <option value="usd">USD</option>
+                                            <option value="cad">CAD</option>
+                                        </select>
+                                    </td>
+                                    <td>
                                         <input
                                             type="number"
                                             value={item.quantity}
@@ -500,14 +511,15 @@ const App = () => {
                                 <td>
                                     <select onChange={(e) => add_new_invoice_item(e)}>
                                         <option value="none">New Item</option>
-                                        <option value="blank">Black Item</option>
-                                        { all_items && all_items.map(function (item) {
-                                            return (
-                                                <option value={JSON.stringify(item)}>
-                                                    {item.name} - {item.price} Price
-                                                </option>
-                                            );
-                                        })}
+                                        <option value="blank">Blank Item</option>
+                                        {all_items &&
+                                            all_items.map(function (item) {
+                                                return (
+                                                    <option value={JSON.stringify(item)}>
+                                                        {item.name} - {item.price} Price
+                                                    </option>
+                                                );
+                                            })}
                                     </select>
                                 </td>
                                 <td></td>
