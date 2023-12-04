@@ -14,7 +14,7 @@ function App() {
     }, []);
 
     function fetchItem() {
-        fetch("/get/item")
+        fetch("http://localhost:5001/get/item")
             .then((response) => response.json())
             .then((data) => {
                 loadTable(data);
@@ -30,7 +30,7 @@ function App() {
             price: price,
         };
 
-        fetch("/create/item", {
+        fetch("http://localhost:5001/create/item", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

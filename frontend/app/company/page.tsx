@@ -1,4 +1,10 @@
-function App() {
+'use client';
+
+import React from 'react';
+import '../styles/globals.scss';
+import '../styles/invoice_viewer.scss';
+
+export default function Company() {
     const [name, set_name] = React.useState();
     const [address1, set_address1] = React.useState();
     const [address2, set_address2] = React.useState();
@@ -11,20 +17,20 @@ function App() {
         fetchCompany();
     }, []);
     function fetchCompany() {
-        fetch("/get/company")
+        fetch('http://localhost:5001/get/company')
             .then((response) => response.json())
             .then((data) => {
-                set_name(data["name"]);
-                set_address1(data["address1"]);
-                set_address2(data["address2"]);
-                set_address3(data["address3"]);
-                set_tel(data["tel"]);
-                set_fax(data["fax"]);
-                set_gst(data["gst"]);
-                set_bank_details(data["bank_details"]);
+                set_name(data['name']);
+                set_address1(data['address1']);
+                set_address2(data['address2']);
+                set_address3(data['address3']);
+                set_tel(data['tel']);
+                set_fax(data['fax']);
+                set_gst(data['gst']);
+                set_bank_details(data['bank_details']);
             })
             .catch((error) => {
-                console.error("Error fetching company data:", error);
+                console.error('Error fetching company data:', error);
             });
     }
     function createCompany() {
@@ -39,23 +45,23 @@ function App() {
             bank_details: bank_details,
         };
 
-        fetch("/create/company", {
-            method: "POST",
+        fetch('http://localhost:5001/create/company', {
+            method: 'POST',
             headers: {
-                "Content-Type": "application/json",
+                'Content-Type': 'application/json',
             },
             body: JSON.stringify(companyData),
         })
             .then((response) => {
                 if (response.ok) {
-                    alert("Company created successfully");
-                    location.reload()
+                    alert('Company created successfully');
+                    location.reload();
                 } else {
-                    alert("Failed to create company");
+                    alert('Failed to create company');
                 }
             })
             .catch((error) => {
-                console.error("Error:", error);
+                console.error('Error:', error);
             });
     }
     return (
@@ -163,5 +169,3 @@ function App() {
         </div>
     );
 }
-
-ReactDOM.render(<App />, document.getElementById("root"));

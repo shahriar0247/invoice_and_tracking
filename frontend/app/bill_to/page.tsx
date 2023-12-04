@@ -18,7 +18,7 @@ function App() {
     }, []);
 
     function fetchBill_to() {
-        fetch('/get/bill_to')
+        fetch('http://localhost:5001/get/bill_to')
             .then((response) => response.json())
             .then((data) => {
                 loadTable(data);
@@ -34,7 +34,7 @@ function App() {
             address2: address2,
         };
 
-        fetch('/create/bill_to', {
+        fetch('http://localhost:5001/create/bill_to', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -101,7 +101,7 @@ function App() {
 
             // Your data iteration logic with buttons
             data.forEach(function (item) {
-                var rowNode = dataTable.row.add([item.name, item.address1, item.address2, '<button class="btn btn-primary">Your Button</button>']).draw().node();
+                var rowNode = dataTable.row.add([item.name, item.address1, item.address2, '<button className="btn btn-primary">Your Button</button>']).draw().node();
 
                 // Attach click event
                 $(rowNode)

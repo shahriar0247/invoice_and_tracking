@@ -74,7 +74,7 @@ const App = () => {
         set_selected_items(updatedItems);
     };
     function fetchPurchase_Order() {
-        fetch('/get/purchase_order')
+        fetch('http://localhost:5001/get/purchase_order')
             .then((response) => response.json())
             .then((data) => {
                 loadTable(data);
@@ -93,7 +93,7 @@ const App = () => {
         });
     }
     function fetchCompany() {
-        fetch('/get/company')
+        fetch('http://localhost:5001/get/company')
             .then((response) => response.json())
             .then((data) => {
                 set_company(data);
@@ -115,7 +115,7 @@ const App = () => {
             });
     }
     function fetchVendor() {
-        fetch('/get/vendor')
+        fetch('http://localhost:5001/get/vendor')
             .then((response) => response.json())
             .then((data) => {
                 console.log(data)
@@ -136,7 +136,7 @@ const App = () => {
             });
     }
     function fetchInvoice() {
-        fetch('/get/invoice')
+        fetch('http://localhost:5001/get/invoice')
             .then((response) => response.json())
             .then((data) => {
                 set_all_invoices(data)
@@ -151,7 +151,7 @@ const App = () => {
  
     function fetchItems() {
         console.log('here 2')
-        fetch('/get/item')
+        fetch('http://localhost:5001/get/item')
             .then((response) => response.json())
             .then((data) => {
                 console.log(data)
@@ -178,7 +178,7 @@ const App = () => {
         console.log("purchase_orderData")
         console.log(purchase_orderData)
 
-        fetch('/create/purchase_order', {
+        fetch('http://localhost:5001/create/purchase_order', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -588,7 +588,7 @@ const App = () => {
     }, []);
 
     function fetchInvoice() {
-        fetch('/get/purchase_order')
+        fetch('http://localhost:5001/get/purchase_order')
             .then((response) => response.json())
             .then((data) => {
                 setData(data);
@@ -618,7 +618,7 @@ const App = () => {
                     { title: 'Date', data: 'date' },
                     {
                         title: '',
-                        data: (item) => `<a class="button" href="/view_purchase_order/${item.id}">View</a>`,
+                        data: (item) => `<a className="button" href="/view_purchase_order/${item.id}">View</a>`,
                     },
                 ],
             });
@@ -758,7 +758,7 @@ const App = () => {
 
     async function get_purchase_order_details() {
         const number = window.location.href.split('/').pop();
-        const response = await fetch('/get_purchase_order_details/' + number);
+        const response = await fetch('http://localhost:5001/get_purchase_order_details/' + number);
         const data = await response.json();
         console.log(data);
         const all_items_ = JSON.parse(data['all_items']);
@@ -810,7 +810,7 @@ const App = () => {
         set_selected_items(updatedItems);
     };
     function fetchPurchase_Order() {
-        fetch('/get/purchase_order')
+        fetch('http://localhost:5001/get/purchase_order')
             .then((response) => response.json())
             .then((data) => {
                 loadTable(data);
@@ -829,7 +829,7 @@ const App = () => {
         });
     }
     function fetchCompany() {
-        fetch('/get/company')
+        fetch('http://localhost:5001/get/company')
             .then((response) => response.json())
             .then((data) => {
                 set_company(data);
@@ -851,7 +851,7 @@ const App = () => {
             });
     }
     function fetchVendor() {
-        fetch('/get/vendor')
+        fetch('http://localhost:5001/get/vendor')
             .then((response) => response.json())
             .then((data) => {
                 set_all_vendor(data);
@@ -872,7 +872,7 @@ const App = () => {
 
     function fetchItems() {
         console.log('here 2');
-        fetch('/get/item')
+        fetch('http://localhost:5001/get/item')
             .then((response) => response.json())
             .then((data) => {
                 console.log(data);
@@ -884,7 +884,7 @@ const App = () => {
     }
 
     function fetchInvoice() {
-        fetch('/get/invoice')
+        fetch('http://localhost:5001/get/invoice')
             .then((response) => response.json())
             .then((data) => {
                 set_all_invoices(data)
@@ -910,7 +910,7 @@ const App = () => {
         console.log('purchase_orderData');
         console.log(purchase_orderData);
 
-        fetch('/create/purchase_order', {
+        fetch('http://localhost:5001/create/purchase_order', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

@@ -4,7 +4,7 @@ function App() {
     async function get_invoice_details(){
         let form_data = new FormData()
         form_data.append("bl_number", bl_number)
-        const response = await fetch("/get/one_invoice_bl", {
+        const response = await fetch("http://localhost:5001/get/one_invoice_bl", {
             method: "post",
             body: form_data
         })

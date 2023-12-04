@@ -80,7 +80,7 @@ const App = () => {
         set_selected_items(updatedItems);
     };
     function fetchInvoice() {
-        fetch('/get/invoice')
+        fetch('http://localhost:5001/get/invoice')
             .then((response) => response.json())
             .then((data) => {
                 loadTable(data);
@@ -99,7 +99,7 @@ const App = () => {
         });
     }
     function fetchCompany() {
-        fetch('/get/company')
+        fetch('http://localhost:5001/get/company')
             .then((response) => response.json())
             .then((data) => {
                 set_company(data);
@@ -121,7 +121,7 @@ const App = () => {
             });
     }
     function fetchBillTo() {
-        fetch('/get/bill_to')
+        fetch('http://localhost:5001/get/bill_to')
             .then((response) => response.json())
             .then((data) => {
                 set_all_bill_to(data);
@@ -141,7 +141,7 @@ const App = () => {
             });
     }
     function fetchShipFrom() {
-        fetch('/get/ship_from')
+        fetch('http://localhost:5001/get/ship_from')
             .then((response) => response.json())
             .then((data) => {
                 set_all_ship_from(data);
@@ -160,7 +160,7 @@ const App = () => {
             });
     }
     function fetchShipTo() {
-        fetch('/get/ship_to')
+        fetch('http://localhost:5001/get/ship_to')
             .then((response) => response.json())
             .then((data) => {
                 set_all_ship_to(data);
@@ -180,7 +180,7 @@ const App = () => {
     }
     function fetchItems() {
         console.log('here 2');
-        fetch('/get/item')
+        fetch('http://localhost:5001/get/item')
             .then((response) => response.json())
             .then((data) => {
                 console.log(data);
@@ -207,7 +207,7 @@ const App = () => {
         console.log('invoiceData');
         console.log(invoiceData);
 
-        fetch('/create/invoice', {
+        fetch('http://localhost:5001/create/invoice', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -666,7 +666,7 @@ const App = () => {
     }, []);
 
     function fetchInvoice() {
-        fetch('/get/invoice')
+        fetch('http://localhost:5001/get/invoice')
             .then((response) => response.json())
             .then((data) => {
                 setData(data);
@@ -697,7 +697,7 @@ const App = () => {
                     { title: 'Date', data: 'date' },
                     {
                         title: '',
-                        data: (item) => `<a class="button" href="/view_invoice/${item.id}">View</a>`,
+                        data: (item) => `<a className="button" href="/view_invoice/${item.id}">View</a>`,
                     },
                 ],
             });
@@ -839,7 +839,7 @@ const App = () => {
 
     async function get_invoice_details() {
         const number = window.location.href.split('/').pop();
-        const response = await fetch('/get_invoice_details/' + number);
+        const response = await fetch('http://localhost:5001/get_invoice_details/' + number);
         const data = await response.json();
         console.log(data);
         const all_items_ = JSON.parse(data['all_items']);
@@ -893,7 +893,7 @@ const App = () => {
         set_selected_items(updatedItems);
     };
     function fetchInvoice() {
-        fetch('/get/invoice')
+        fetch('http://localhost:5001/get/invoice')
             .then((response) => response.json())
             .then((data) => {
                 loadTable(data);
@@ -912,7 +912,7 @@ const App = () => {
         });
     }
     function fetchCompany() {
-        fetch('/get/company')
+        fetch('http://localhost:5001/get/company')
             .then((response) => response.json())
             .then((data) => {
                 set_company(data);
@@ -934,7 +934,7 @@ const App = () => {
             });
     }
     function fetchBillTo() {
-        fetch('/get/bill_to')
+        fetch('http://localhost:5001/get/bill_to')
             .then((response) => response.json())
             .then((data) => {
                 set_all_bill_to(data);
@@ -953,7 +953,7 @@ const App = () => {
             });
     }
     function fetchShipFrom() {
-        fetch('/get/ship_from')
+        fetch('http://localhost:5001/get/ship_from')
             .then((response) => response.json())
             .then((data) => {
                 set_all_ship_from(data);
@@ -972,7 +972,7 @@ const App = () => {
             });
     }
     function fetchShipTo() {
-        fetch('/get/ship_to')
+        fetch('http://localhost:5001/get/ship_to')
             .then((response) => response.json())
             .then((data) => {
                 set_all_ship_to(data);
@@ -992,7 +992,7 @@ const App = () => {
     }
     function fetchItems() {
         console.log('here 2');
-        fetch('/get/item')
+        fetch('http://localhost:5001/get/item')
             .then((response) => response.json())
             .then((data) => {
                 console.log(data);
@@ -1019,7 +1019,7 @@ const App = () => {
         console.log('invoiceData');
         console.log(invoiceData);
 
-        fetch('/create/invoice', {
+        fetch('http://localhost:5001/create/invoice', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

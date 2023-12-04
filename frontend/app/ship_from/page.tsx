@@ -14,7 +14,7 @@ function App() {
     }, []);
 
     function fetchShip_from() {
-        fetch("/get/ship_from")
+        fetch("http://localhost:5001/get/ship_from")
             .then((response) => response.json())
             .then((data) => {
                 loadTable(data);
@@ -30,7 +30,7 @@ function App() {
             address2: address2,
         };
 
-        fetch("/create/ship_from", {
+        fetch("http://localhost:5001/create/ship_from", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

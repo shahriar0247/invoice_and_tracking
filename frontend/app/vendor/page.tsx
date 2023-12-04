@@ -14,7 +14,7 @@ function App() {
     }, []);
 
     function fetchVendor() {
-        fetch("/get/vendor")
+        fetch("http://localhost:5001/get/vendor")
             .then((response) => response.json())
             .then((data) => {
                 loadTable(data);
@@ -30,7 +30,7 @@ function App() {
             address2: address2,
         };
 
-        fetch("/create/vendor", {
+        fetch("http://localhost:5001/create/vendor", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
