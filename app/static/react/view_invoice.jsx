@@ -514,7 +514,7 @@ const App = () => {
                                     <td>
                                         <select
                                             value={item.currency}
-                                            onChange={(e) => edit_invoice_fields(index, 'currency', parseFloat(e.target.value))}
+                                            onChange={(e) => edit_invoice_fields(index, 'currency', (e.target.value))}
                                             name=""
                                             id="">
                                             <option value="usd">USD</option>
