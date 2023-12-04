@@ -624,7 +624,6 @@ const App = () => {
                                 <th>Item</th>
                                 <th>Description</th>
                                 <th>Price</th>
-                                <th>Currency</th>
                                 <th>Quantity</th>
                                 <th>Total Price</th>
                             </tr>
@@ -635,8 +634,7 @@ const App = () => {
                                 <tr key={index}>
                                     <td>{item.name}</td>
                                     <td>{item.description}</td>
-                                    <td>{item.price}</td>
-                                    <td>{item.currency}</td>
+                                    <td>{item.price} {item.currency}</td>
                                     <td>{item.quantity}</td>
                                     <td>{item.price * item.quantity}</td>
                                 </tr>
