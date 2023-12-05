@@ -6,7 +6,7 @@
             "type": "firefox",
             "request": "launch",
             "reAttach": true,
-            "url": "http://localhost:5001",
+            "url": "http://localhost:5003",
             "pathMappings": [
                 {
                     "url": "http://localhost",

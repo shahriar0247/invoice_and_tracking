@@ -144,7 +144,7 @@ const App = () => {
     }, []);
 
     function fetchPurchaseOrders() {
-        fetch('http://localhost:5001/get/purchase_order')
+        fetch('http://localhost:5003/get/purchase_order')
             .then((response) => response.json())
             .then((data) => {
                 set_all_purchase_orders(data);
@@ -162,7 +162,7 @@ const App = () => {
     }
 
     function fetchInvoice(invoice_id_) {
-        fetch('http://localhost:5001/get_invoice_details_for_daily_accounts/' + invoice_id_)
+        fetch('http://localhost:5003/get_invoice_details_for_daily_accounts/' + invoice_id_)
             .then((response) => response.json())
             .then((data) => {
                 set_invoice_all_items(JSON.parse(data.all_items));
@@ -181,7 +181,7 @@ const App = () => {
             purchase_order_id: purchase_order_id,
         };
 
-        fetch('http://localhost:5001/create/daily_account', {
+        fetch('http://localhost:5003/create/daily_account', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -744,7 +744,7 @@ const App = () => {
     }, []);
 
     function fetchPurchaseOrders() {
-        fetch('http://localhost:5001/get/purchase_order')
+        fetch('http://localhost:5003/get/purchase_order')
             .then((response) => response.json())
             .then((data) => {
                 set_all_purchase_orders(data);
@@ -762,7 +762,7 @@ const App = () => {
     }
     async function get_purchase_order_details() {
         const number = window.location.href.split('/').pop();
-        const response = await fetch('http://localhost:5001/get_daily_account_details/' + number);
+        const response = await fetch('http://localhost:5003/get_daily_account_details/' + number);
         const data = await response.json();
         console.log(data);
         set_selected_items(JSON.parse(data['all_items']));
@@ -777,7 +777,7 @@ const App = () => {
         set_ship_to(data.invoice.ship_to);
     }
     function fetchInvoice(invoice_id_) {
-        fetch('http://localhost:5001/get_invoice_details/' + invoice_id_)
+        fetch('http://localhost:5003/get_invoice_details/' + invoice_id_)
             .then((response) => response.json())
             .then((data) => {
                 set_invoice_all_items(JSON.parse(data.all_items));
@@ -796,7 +796,7 @@ const App = () => {
             purchase_order_id: purchase_order_id,
         };
 
-        fetch('http://localhost:5001/create/daily_account', {
+        fetch('http://localhost:5003/create/daily_account', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -1121,7 +1121,7 @@ const App = () => {
     }, []);
 
     function fetchDaily_Account() {
-        fetch('http://localhost:5001/get/daily_account')
+        fetch('http://localhost:5003/get/daily_account')
             .then((response) => response.json())
             .then((data) => {
                 setData(data);
@@ -1379,7 +1379,7 @@ const App = () => {
     }, []);
 
     function fetchPurchaseOrders() {
-        fetch('http://localhost:5001/get/purchase_order')
+        fetch('http://localhost:5003/get/purchase_order')
             .then((response) => response.json())
             .then((data) => {
                 set_all_purchase_orders(data);
@@ -1397,7 +1397,7 @@ const App = () => {
     }
     async function get_purchase_order_details() {
         const number = window.location.href.split('/').pop();
-        const response = await fetch('http://localhost:5001/get_daily_account_details/' + number);
+        const response = await fetch('http://localhost:5003/get_daily_account_details/' + number);
         const data = await response.json();
         console.log(data);
         set_selected_items(JSON.parse(data['all_items']));
@@ -1412,7 +1412,7 @@ const App = () => {
         set_ship_to(data.invoice.ship_to);
     }
     function fetchInvoice(invoice_id_) {
-        fetch('http://localhost:5001/get_invoice_details/' + invoice_id_)
+        fetch('http://localhost:5003/get_invoice_details/' + invoice_id_)
             .then((response) => response.json())
             .then((data) => {
                 set_invoice_all_items(JSON.parse(data.all_items));
@@ -1431,7 +1431,7 @@ const App = () => {
             purchase_order_id: purchase_order_id,
         };
 
-        fetch('http://localhost:5001/create/daily_account', {
+        fetch('http://localhost:5003/create/daily_account', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

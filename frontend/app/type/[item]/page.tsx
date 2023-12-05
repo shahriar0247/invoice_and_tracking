@@ -17,7 +17,7 @@ export default function BillTo({ item = "bill_to", title = "Bill To" }) {
     }, []);
 
     function fetch_bill_to() {
-        fetch(`http://localhost:5001/get/type/${item}`)
+        fetch(`http://localhost:5003/get/type/${item}`)
             .then((response) => response.json())
             .then((data) => {
                 setTableData(data);
@@ -43,7 +43,7 @@ export default function BillTo({ item = "bill_to", title = "Bill To" }) {
     }
 
     function get_bill_to_details(bill_to_id) {
-        fetch(`http://localhost:5001/get/type/${item}/${bill_to_id}`)
+        fetch(`http://localhost:5003/get/type/${item}/${bill_to_id}`)
             .then((response) => response.json())
             .then((data) => {
                 set_name(data.name);
@@ -64,8 +64,8 @@ export default function BillTo({ item = "bill_to", title = "Bill To" }) {
         };
 
         const apiUrl = create_mode
-            ? `http://localhost:5001/create/type/${item}`
-            : `http://localhost:5001/edit/type/${item}/${edit_bill_to_id}`;
+            ? `http://localhost:5003/create/type/${item}`
+            : `http://localhost:5003/edit/type/${item}/${edit_bill_to_id}`;
 
         fetch(apiUrl, {
             method: create_mode ? 'POST' : 'PUT',
