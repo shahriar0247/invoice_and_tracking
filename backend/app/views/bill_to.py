@@ -94,3 +94,25 @@ def get_bill_to_one_view(type, bill_to_id):
     bill_to_object["address2"] = bill_to.address2
 
     return jsonify(bill_to_object)
+
+# ... (previous backend code)
+
+@app.route("/delete/type/<type>/<int:bill_to_id>", methods=["DELETE"])
+def delete_bill_to_view(type, bill_to_id):
+    if type == "ship_from":
+        bill_to = Ship_from.query.get(bill_to_id)
+    elif type == "bill_to":
+        bill_to = Bill_to.query.get(bill_to_id)
+    elif type == "ship_to":
+        bill_to = Ship_to.query.get(bill_to_id)
+
+    if not bill_to:
+        return jsonify({"error": "Bill_to not found"}), 404
+
+    try:
+        db.session.delete(bill_to)
+        db.session.commit()
+    except Exception as e:
+        return str(e)
+
+    return "Bill_to deleted successfully"

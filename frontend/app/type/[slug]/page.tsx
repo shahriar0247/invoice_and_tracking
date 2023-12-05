@@ -2,7 +2,19 @@
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, useDisclosure } from '@nextui-org/react';
 import React, { useEffect, useState } from 'react';
 
-export default function BillTo({ item = "bill_to", title = "Bill To" }) {
+export default function BillTo({}) {
+    var fullPath = window.location.pathname;
+    var pathParts = fullPath.split('/');
+    var item = pathParts[pathParts.length - 1];
+
+    var title = 'Bill To';
+    if (item == 'bill_to') {
+        title = 'Bill To';
+    } else if (item == 'ship_from') {
+        title = 'Ship From';
+    } else if (item == 'ship_to') {
+        title = 'Ship To';
+    }
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [name, set_name] = useState('');
     const [address1, set_address1] = useState('');
@@ -25,6 +37,20 @@ export default function BillTo({ item = "bill_to", title = "Bill To" }) {
             .catch((error) => {
                 console.error('Error fetching bill_to data:', error);
             });
+    }
+
+    function handle_delete_click(bill_to_id) {
+        const confirmDelete = window.confirm('Are you sure you want to delete this item?');
+        if (confirmDelete) {
+            fetch(`http://localhost:5003/delete/type/${item}/${bill_to_id}`, {
+                method: 'DELETE',
+            })
+                .then((response) => response.text())
+                .then((data) => {
+                    window.location.reload();
+                })
+                .catch((error) => console.error('Error deleting bill_to:', error));
+        }
     }
 
     function handle_edit_click(bill_to_id) {
@@ -63,9 +89,7 @@ export default function BillTo({ item = "bill_to", title = "Bill To" }) {
             address2: address2,
         };
 
-        const apiUrl = create_mode
-            ? `http://localhost:5003/create/type/${item}`
-            : `http://localhost:5003/edit/type/${item}/${edit_bill_to_id}`;
+        const apiUrl = create_mode ? `http://localhost:5003/create/type/${item}` : `http://localhost:5003/edit/type/${item}/${edit_bill_to_id}`;
 
         fetch(apiUrl, {
             method: create_mode ? 'POST' : 'PUT',
@@ -105,6 +129,7 @@ export default function BillTo({ item = "bill_to", title = "Bill To" }) {
                             <TableCell>{item.address2}</TableCell>
                             <TableCell>
                                 <button onClick={() => handle_edit_click(item.id)}>Edit</button>
+                                <button onClick={() => handle_delete_click(item.id)}>Delete</button>
                             </TableCell>
                         </TableRow>
                     ))}
