@@ -1,4 +1,4 @@
-function App() {
+export default function Tracking() {
     const [bl_number, set_bl_number] = React.useState("")
     const [data, set_data] = React.useState("")
     async function get_invoice_details(){
@@ -21,5 +21,3 @@ function App() {
     )
    
 }
-
-ReactDOM.render(<App />, document.getElementById("root"));

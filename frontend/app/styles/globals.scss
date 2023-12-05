@@ -202,4 +202,8 @@ textarea {
         }
     }
 }
+.max-w-md{
+    max-width: none !important;
+}
 @import './invoice_viewer.scss';
+

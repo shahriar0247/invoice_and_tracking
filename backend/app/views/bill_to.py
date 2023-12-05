@@ -53,6 +53,7 @@ def create_bill_to_view(type):
             name=data["name"],
             address1=data["address1"],
             address2=data["address2"],
+        )
         
 
     db.session.add(new_bill_to)
@@ -94,7 +95,7 @@ def get_bill_to_one_view(type, bill_to_id):
     elif type == "ship_to":
         bill_to = Ship_to.query.get(bill_to_id)
     elif type == "vendor":
-        bill_to = Vendor.query.get(bill_to_id
+        bill_to = Vendor.query.get(bill_to_id)
     
     bill_to_object = {}
     bill_to_object["id"] = bill_to.id
