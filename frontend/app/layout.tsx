@@ -22,9 +22,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <body>
                 <nav>
                     <a href="/company">Company</a>
-                    <a href="/bill_to">Bill To</a>
-                    <a href="/ship_from">Ship From</a>
-                    <a href="/ship_to">Ship To</a>
+                    <a href="/type/bill_to">Bill To</a>
+                    <a href="/type/ship_from">Ship From</a>
+                    <a href="/type/ship_to">Ship To</a>
                     <a href="/item">Items</a>
                     <a href="/invoices">Invoices</a>
                     <a href="/tracking">Tracking</a>

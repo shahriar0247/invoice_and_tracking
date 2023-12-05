@@ -14,8 +14,6 @@ migrate = Migrate(app, db)
 from .models.modals import *
 
 from .views.bill_to import *
-from .views.ship_from import *
-from .views.ship_to import *
 from .views.item import *
 from .views.company import *
 from .views.tracking import *

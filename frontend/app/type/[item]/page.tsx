@@ -2,7 +2,7 @@
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, useDisclosure } from '@nextui-org/react';
 import React, { useEffect, useState } from 'react';
 
-export default function BillTo() {
+export default function BillTo({ item = "bill_to", title = "Bill To" }) {
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [name, set_name] = useState('');
     const [address1, set_address1] = useState('');
@@ -17,7 +17,7 @@ export default function BillTo() {
     }, []);
 
     function fetch_bill_to() {
-        fetch('http://localhost:5001/get/bill_to')
+        fetch(`http://localhost:5001/get/type/${item}`)
             .then((response) => response.json())
             .then((data) => {
                 setTableData(data);
@@ -33,23 +33,19 @@ export default function BillTo() {
         onOpen();
         get_bill_to_details(bill_to_id);
     }
-    function fetchCompany() {
-        fetch('http://localhost:5001/get/company')
-            .then((response) => response.json())
-            .then((data) => {
-                set_name(data['name']);
-                set_address1(data['address1']);
-                set_address2(data['address2']);
-            })
-            .catch((error) => {
-                console.error('Error fetching company data:', error);
-            });
+
+    function handle_create_click() {
+        set_create_mode(true);
+        set_name('');
+        set_address1('');
+        set_address2('');
+        onOpen();
     }
+
     function get_bill_to_details(bill_to_id) {
-        fetch(`http://localhost:5001/get/bill_to/${bill_to_id}`)
+        fetch(`http://localhost:5001/get/type/${item}/${bill_to_id}`)
             .then((response) => response.json())
             .then((data) => {
-                console.log(data);
                 set_name(data.name);
                 set_address1(data.address1);
                 set_address2(data.address2);
@@ -67,8 +63,12 @@ export default function BillTo() {
             address2: address2,
         };
 
-        fetch(`http://localhost:5001/edit/bill_to/${edit_bill_to_id}`, {
-            method: 'PUT',
+        const apiUrl = create_mode
+            ? `http://localhost:5001/create/type/${item}`
+            : `http://localhost:5001/edit/type/${item}/${edit_bill_to_id}`;
+
+        fetch(apiUrl, {
+            method: create_mode ? 'POST' : 'PUT',
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -76,17 +76,17 @@ export default function BillTo() {
         })
             .then((response) => response.text())
             .then((data) => {
-                onClose()
-                window.location.reload()
+                onClose();
+                window.location.reload();
             })
-            .catch((error) => console.error('Error updating bill_to:', error));
+            .catch((error) => console.error('Error updating/creating bill_to:', error));
     }
 
     return (
         <div className="bill_to">
-            <h1>Bill To Details</h1>
+            <h1>{title} Details</h1>
             <div className="topbar">
-                <button onClick={() => setShowCreateModal(!showCreateModal)}>Create Bill To</button>
+                <button onClick={() => handle_create_click()}>Create {title}</button>
             </div>
             <Table>
                 <TableHeader>
@@ -117,7 +117,9 @@ export default function BillTo() {
                 <ModalContent>
                     {(onClose) => (
                         <>
-                            <ModalHeader className="flex flex-col gap-1">Modal Title</ModalHeader>
+                            <ModalHeader className="flex flex-col gap-1">
+                                {create_mode ? 'Create' : 'Edit'} {title}
+                            </ModalHeader>
                             <ModalBody>
                                 <div className="all_inputs">
                                     <div className="input_field">
@@ -167,7 +169,7 @@ export default function BillTo() {
                                 <button
                                     color="primary"
                                     onClick={() => edit_bill_to_id_(onClose)}>
-                                    Edit
+                                    {create_mode ? 'Create' : 'Edit'}
                                 </button>
                             </ModalFooter>
                         </>
