@@ -14,6 +14,8 @@ export default function BillTo({}) {
         title = 'Ship From';
     } else if (item == 'ship_to') {
         title = 'Ship To';
+    } else if (item == 'vendor') {
+        title = 'Vendor';
     }
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [name, set_name] = useState('');

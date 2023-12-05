@@ -3,7 +3,7 @@ import json
 from flask import jsonify, redirect, request
 
 from app import app, db
-from app.models.modals import Bill_to, Company, Invoice, Ship_from, Ship_to
+from app.models.modals import Bill_to, Company, Invoice, Ship_from, Ship_to, Vendor
 
 
 @app.route("/get/type/<type>")
@@ -48,6 +48,12 @@ def create_bill_to_view(type):
             address1=data["address1"],
             address2=data["address2"],
         )
+    elif type == "vendor":
+        new_bill_to = Vendor(
+            name=data["name"],
+            address1=data["address1"],
+            address2=data["address2"],
+        
 
     db.session.add(new_bill_to)
     db.session.commit()
@@ -64,6 +70,8 @@ def edit_bill_to_view(type, bill_to_id):
         bill_to = Bill_to.query.get(bill_to_id)
     elif type == "ship_to":
         bill_to = Ship_to.query.get(bill_to_id)
+    elif type == "vendor":
+        bill_to = Vendor.query.get(bill_to_id)
 
     if not bill_to:
         return jsonify({"error": "Bill_to not found"}), 404
@@ -85,7 +93,8 @@ def get_bill_to_one_view(type, bill_to_id):
         bill_to = Bill_to.query.get(bill_to_id)
     elif type == "ship_to":
         bill_to = Ship_to.query.get(bill_to_id)
-
+    elif type == "vendor":
+        bill_to = Vendor.query.get(bill_to_id
     
     bill_to_object = {}
     bill_to_object["id"] = bill_to.id
@@ -105,7 +114,8 @@ def delete_bill_to_view(type, bill_to_id):
         bill_to = Bill_to.query.get(bill_to_id)
     elif type == "ship_to":
         bill_to = Ship_to.query.get(bill_to_id)
-
+    elif type == "vendor":
+        bill_to = Vendor.query.get(bill_to_id)
     if not bill_to:
         return jsonify({"error": "Bill_to not found"}), 404
 
