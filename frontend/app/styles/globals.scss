@@ -2,7 +2,6 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
-
 $primary: rgb(57, 107, 208);
 $secondary: rgb(108, 157, 255);
 $accent: rgb(255, 66, 66);
@@ -95,6 +94,9 @@ body {
         .input {
         }
     }
+}
+.all_inputs2 {
+    grid-template-columns: 1fr 1fr 1fr;
 }
 
 button {
@@ -202,8 +204,7 @@ textarea {
         }
     }
 }
-.max-w-md{
+.max-w-md {
     max-width: none !important;
 }
 @import './invoice_viewer.scss';
-

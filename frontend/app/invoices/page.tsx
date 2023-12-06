@@ -2,10 +2,7 @@
 
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, useDisclosure } from '@nextui-org/react';
 import React from 'react';
-
-
-
-
+import { exportComponentAsPDF } from 'react-component-export-image';
 
 export default function Invoices() {
     const [data, setData] = React.useState([]);
@@ -21,7 +18,6 @@ export default function Invoices() {
             .then((data) => {
                 setData(data);
                 setUsers(getUniqueUsers(data));
-                loadTable(data);
             })
             .catch((error) => {
                 console.error('Error fetching daily_account:', error);
@@ -109,105 +105,7 @@ export default function Invoices() {
     );
 }
 
-
 function Create_invoice({ create = true }) {
-    const [all_items, set_all_items] = React.useState();
-    const [invoice_all_items, set_invoice_all_items] = React.useState([]);
-    const [purchase_orders_all_items, set_purchase_orders_all_items] = React.useState([]);
-    const [selected_items, set_selected_items] = React.useState([]);
-
-    const [purchase_orders, set_all_purchase_orders] = React.useState([]);
-    const [purchase_order_id, set_purchase_order_id] = React.useState();
-
-    const [all_invoices, set_all_invoices] = React.useState([]);
-    const [invoice_id, set_invoice_id] = React.useState();
-
-    const [total_price, set_total_price] = React.useState(0);
-    const [total_invoice_price, set_total_invoice_price] = React.useState(0);
-    const [total_purchase_order_price, set_total_purchase_order_price] = React.useState(0);
-
-    const [vendor, set_vendor] = React.useState('');
-    const [bill_to, set_bill_to] = React.useState('');
-    const [ship_to, set_ship_to] = React.useState('');
-    const [ship_from, set_ship_from] = React.useState('');
-
-    React.useEffect(() => {
-        let total_price_ = 0;
-        selected_items.map(function (item) {
-            total_price_ = total_price_ + item.price * item.quantity;
-        });
-        set_total_price(total_price_);
-    }, [selected_items]);
-
-    const edit_invoice_fields = (index, field, value) => {
-        const updatedItems = [...selected_items];
-        updatedItems[index][field] = value;
-        set_selected_items(updatedItems);
-    };
-
-    const add_new_invoice_item = (event) => {
-        let selectedItemValue = event.target.value;
-
-        if (selectedItemValue == 'none') return;
-
-        if (selectedItemValue == 'blank') {
-            set_selected_items([...selected_items, { id: 0, name: '', description: '', price: 0, quantity: 1 }]);
-            event.target.value = 'none';
-            return;
-        }
-        selectedItemValue = JSON.parse(selectedItemValue);
-        const selectedItem = all_items.find((item) => item.id === selectedItemValue.id);
-        if (selectedItem) {
-            const selectedItemJson = JSON.stringify(selectedItem);
-            set_selected_items([...selected_items, { ...selectedItem, quantity: 1 }]);
-            event.target.value = 'none';
-        } else {
-            alert('Error item not found in the list');
-        }
-    };
-    const removeItem = (index) => {
-        const updatedItems = [...selected_items];
-        updatedItems.splice(index, 1);
-        set_selected_items(updatedItems);
-    };
-    function createInvoice() {
-        const invoiceData = {
-            bill_to_id: bill_to_id,
-            ship_to_id: ship_to_id,
-            ship_from_id: ship_from_id,
-            bank_details: bank_details_information,
-            date: date,
-            terms: terms_and_conditions,
-            type: invoice_type,
-            extra_info: extra_information,
-            bl_number: bl_number,
-            all_items: selected_items,
-        };
-        console.log('invoiceData');
-        console.log(invoiceData);
-
-        fetch('http://localhost:5003/create/invoice', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(invoiceData),
-        })
-            .then((response) => {
-                if (response.ok) {
-                    alert('Invoice created successfully');
-                } else {
-                    alert('Failed to create invoice');
-                }
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-            });
-    }
-
-
-    const [showCreateModal, setShowCreateModal] = React.useState(false);
-
     const [company, set_company] = React.useState([]);
     const [all_bill_to, set_all_bill_to] = React.useState([]);
     const [all_ship_from, set_all_ship_from] = React.useState([]);
@@ -230,9 +128,12 @@ function Create_invoice({ create = true }) {
     const [ship_to_id, set_ship_to_id] = React.useState('');
     const [ship_from_id, set_ship_from_id] = React.useState('');
     const [date, set_date] = React.useState('');
+    const [due_date, set_due_date] = React.useState('');
     const [invoice_id, set_invoice_id] = React.useState('');
 
     const [total_price, set_total_price] = React.useState(0);
+
+    const invoice_viewer_ref = React.useRef(null);
 
     React.useEffect(() => {
         let total_price_ = 0;
@@ -251,7 +152,9 @@ function Create_invoice({ create = true }) {
         fetchShipTo();
         fetchItems();
         fetchInvoice();
-        get_invoice_details();
+        if (!create) {
+            get_invoice_details();
+        }
     }, []);
 
     async function get_invoice_details() {
@@ -313,20 +216,11 @@ function Create_invoice({ create = true }) {
         fetch('http://localhost:5003/get/invoice')
             .then((response) => response.json())
             .then((data) => {
-                loadTable(data);
+                // setda(data);
             })
             .catch((error) => {
                 console.error('Error fetching invoice:', error);
             });
-    }
-    function loadTable(data) {
-        $(document).ready(function () {
-            var dataTable = $('#data-table').DataTable();
-
-            data.forEach(function (item) {
-                dataTable.row.add([item.name, item.address1, item.address2]).draw();
-            });
-        });
     }
     function fetchCompany() {
         fetch('http://localhost:5003/get/company')
@@ -351,7 +245,7 @@ function Create_invoice({ create = true }) {
             });
     }
     function fetchBillTo() {
-        fetch('http://localhost:5003/get/bill_to')
+        fetch('http://localhost:5003/get/type/bill_to')
             .then((response) => response.json())
             .then((data) => {
                 set_all_bill_to(data);
@@ -370,7 +264,7 @@ function Create_invoice({ create = true }) {
             });
     }
     function fetchShipFrom() {
-        fetch('http://localhost:5003/get/ship_from')
+        fetch('http://localhost:5003/get/type/ship_from')
             .then((response) => response.json())
             .then((data) => {
                 set_all_ship_from(data);
@@ -389,7 +283,7 @@ function Create_invoice({ create = true }) {
             });
     }
     function fetchShipTo() {
-        fetch('http://localhost:5003/get/ship_to')
+        fetch('http://localhost:5003/get/type/ship_to')
             .then((response) => response.json())
             .then((data) => {
                 set_all_ship_to(data);
@@ -427,6 +321,7 @@ function Create_invoice({ create = true }) {
             ship_from_id: ship_from_id,
             bank_details: bank_details_information,
             date: date,
+            due_date: due_date,
             terms: terms_and_conditions,
             type: invoice_type,
             extra_info: extra_information,
@@ -497,47 +392,27 @@ function Create_invoice({ create = true }) {
     }
     function createPDF() {
         createInvoice();
-        var HTML_Width = $('.invoice_viewer').width();
-        var HTML_Height = $('.invoice_viewer').height();
-        var top_left_margin = 15;
-        var PDF_Width = HTML_Width + top_left_margin * 2;
-        var PDF_Height = PDF_Width * 1.5 + top_left_margin * 2;
-        var canvas_image_width = HTML_Width;
-        var canvas_image_height = HTML_Height;
-
-        var totalPDFPages = Math.ceil(HTML_Height / PDF_Height) - 1;
-
-        html2canvas($('.invoice_viewer')[0]).then(function (canvas) {
-            var imgData = canvas.toDataURL('image/jpeg', 1.0);
-            var pdf = new jsPDF('p', 'pt', [PDF_Width, PDF_Height]);
-            pdf.addImage(imgData, 'JPG', top_left_margin, top_left_margin, canvas_image_width, canvas_image_height);
-            for (var i = 1; i <= totalPDFPages; i++) {
-                pdf.addPage(PDF_Width, PDF_Height);
-                pdf.addImage(imgData, 'JPG', top_left_margin, -(PDF_Height * i) + top_left_margin * 4, canvas_image_width, canvas_image_height);
-            }
-            pdf.save('Your_PDF_Name.pdf');
-            $('.invoice_viewer').hide();
-        });
+        if (invoice_viewer_ref) {
+            exportComponentAsPDF(invoice_viewer_ref, { fileName: 'FileName' });
+        }
     }
-    
+
+    const { isOpen, onOpen, onClose } = useDisclosure();
+
     return (
         <div className="invoice">
-            {create ? <h1>Create Invoice</h1> : <h1>View Invoice</h1>}
-            {create && (
-                <div className="topbar">
-                    <button onClick={createinvoice}>Create Invoice</button>
-                </div>
-            )}
-            <div className="all_inputs">
+            <h1>Invoice Details</h1>
+
+            <div className="all_inputs all_inputs2">
                 <div className="input_field">
                     <div className="title">Bill To</div>
                     <div className="input">
                         <select
+                            value={bill_to_id}
                             onChange={(e) => {
                                 let value = e.target.value;
                                 let data = JSON.parse(value);
                                 set_bill_to_id(data.id);
-                                set_bill_to_name(data.name);
                                 set_bill_to_information(
                                     <div>
                                         <div>{data.name}</div>
@@ -547,7 +422,7 @@ function Create_invoice({ create = true }) {
                                 );
                             }}>
                             {all_bill_to.map(function (bill_to) {
-                                return <option value={JSON.stringify(bill_to)}>{bill_to.name}</option>;
+                                return <option value={bill_to.id}>{bill_to.name}</option>;
                             })}
                         </select>
                     </div>
@@ -556,6 +431,7 @@ function Create_invoice({ create = true }) {
                     <div className="title">Ship To</div>
                     <div className="input">
                         <select
+                            value={ship_to_id}
                             onChange={(e) => {
                                 let value = e.target.value;
                                 let data = JSON.parse(value);
@@ -569,7 +445,7 @@ function Create_invoice({ create = true }) {
                                 );
                             }}>
                             {all_ship_to.map(function (ship_to) {
-                                return <option value={JSON.stringify(ship_to)}>{ship_to.name}</option>;
+                                return <option value={ship_to.id}>{ship_to.name}</option>;
                             })}
                         </select>
                     </div>
@@ -578,6 +454,7 @@ function Create_invoice({ create = true }) {
                     <div className="title">Ship From</div>
                     <div className="input">
                         <select
+                            value={ship_from_id}
                             onChange={(e) => {
                                 let value = e.target.value;
                                 let data = JSON.parse(value);
@@ -591,7 +468,7 @@ function Create_invoice({ create = true }) {
                                 );
                             }}>
                             {all_ship_from.map(function (ship_from) {
-                                return <option value={JSON.stringify(ship_from)}>{ship_from.name}</option>;
+                                return <option value={ship_from.id}>{ship_from.name}</option>;
                             })}
                         </select>
                     </div>
@@ -612,9 +489,22 @@ function Create_invoice({ create = true }) {
                     <div className="title">Date</div>
                     <div className="input">
                         <input
+                            value={date}
                             type="date"
                             onChange={(e) => {
                                 set_date(e.target.value);
+                            }}
+                        />
+                    </div>
+                </div>
+                <div className="input_field">
+                    <div className="title">Due Date</div>
+                    <div className="input">
+                        <input
+                            value={due_date}
+                            type="date"
+                            onChange={(e) => {
+                                set_due_date(e.target.value);
                             }}
                         />
                     </div>
@@ -624,13 +514,13 @@ function Create_invoice({ create = true }) {
                     <div className="title">Terms</div>
                     <div className="input">
                         <textarea
+                            value={terms_and_conditions}
                             name=""
                             id=""
                             cols="30"
                             rows="10"
                             onChange={(e) => {
                                 let value = e.target.value;
-                                value = value.replace(/\n/g, '<br />');
                                 set_terms_and_conditions(value);
                             }}></textarea>
                     </div>
@@ -639,6 +529,7 @@ function Create_invoice({ create = true }) {
                     <div className="title">Type</div>
                     <div className="input">
                         <select
+                            value={invoice_type}
                             onChange={(e) => {
                                 set_invoice_type(e.target.value);
                             }}>
@@ -652,6 +543,7 @@ function Create_invoice({ create = true }) {
                     <div className="title">Extra Info</div>
                     <div className="input">
                         <textarea
+                            value={extra_information}
                             name=""
                             id=""
                             cols="30"
@@ -674,121 +566,8 @@ function Create_invoice({ create = true }) {
                     </div>
                 </div>
             </div>
-
             <div className="input_field">
                 <div className="input">
-                    <Table>
-                        <TableHeader>
-                            <TableColumn>Item</TableColumn>
-                            <TableColumn>Description</TableColumn>
-                            <TableColumn>Price per piece</TableColumn>
-                            <TableColumn>Quantity</TableColumn>
-                            <TableColumn>Total Price</TableColumn>
-                            <TableColumn>Actions</TableColumn>
-                        </TableHeader>
-                        <TableBody>
-                            {selected_items.map((item, index) => (
-                                <TableRow key={index}>
-                                    <TableCell>
-                                        <input
-                                            type="text"
-                                            value={item.name}
-                                            onChange={(e) => edit_invoice_fields(index, 'name', e.target.value)}
-                                        />
-                                    </TableCell>
-                                    <TableCell>
-                                        <input
-                                            type="text"
-                                            value={item.description}
-                                            onChange={(e) => edit_invoice_fields(index, 'description', e.target.value)}
-                                        />
-                                    </TableCell>
-                                    <TableCell>
-                                        <input
-                                            type="number"
-                                            value={item.price}
-                                            onChange={(e) => edit_invoice_fields(index, 'price', parseFloat(e.target.value))}
-                                        />
-                                    </TableCell>
-                                    <TableCell>
-                                        <input
-                                            type="number"
-                                            value={item.quantity}
-                                            onChange={(e) => edit_invoice_fields(index, 'quantity', parseInt(e.target.value))}
-                                        />
-                                    </TableCell>
-                                    <TableCell>{item.price * item.quantity}</TableCell>
-                                    <TableCell>
-                                        <button onClick={() => removeItem(index)}>Remove</button>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                    <div>Total Price: {total_price}</div>
-                    <select onChange={(e) => add_new_invoice_item(e)}>
-                        <option value="none">Select Item</option>
-                        {all_items &&
-                            all_items.map(function (item) {
-                                return (
-                                    <option value={JSON.stringify(item)}>
-                                        {item.name} - {item.price} Price
-                                    </option>
-                                );
-                            })}
-                    </select>
-
-                    <button
-                        onClick={() => {
-                            set_selected_items([...selected_items, { id: 0, name: '', description: '', price: 0, quantity: 1 }]);
-                            event.target.value = 'none';
-                        }}>
-                        New Item
-                    </button>
-                </div>
-            </div>
-            <div
-                className="invoice_viewer"
-                id="invoice_viewer">
-                <div className="logo"></div>
-                <h4>{invoice_type}</h4>
-                <div className="first_section">
-                    <div className="company_information">{company_information}</div>
-                    <div className="invoice_information">
-                        <br />
-                        <br />
-                        <div>Date: {date}</div>
-                        <div
-                            dangerouslySetInnerHTML={{
-                                __html: invoice_information.replace(/\n/g, '<br>'),
-                            }}></div>
-                    </div>
-                </div>
-                <div className="second_section">
-                    <div className="bill_to_information">
-                        <h3>Bill To</h3>
-
-                        {bill_to_information}
-                    </div>
-                    <div className="ship_from_information">
-                        <h3>Ship From</h3>
-
-                        {ship_from_information}
-                    </div>
-                </div>
-                <div className="third_section">
-                    <div className="ship_to_information">
-                        <h3>Ship To </h3>
-                        {ship_to_information}
-                    </div>
-                    <div className="extra_information">
-                        <div
-                            dangerouslySetInnerHTML={{
-                                __html: extra_information.replace(/\n/g, '<br>'),
-                            }}></div>
-                    </div>
-                </div>
-                <div className="forth_section">
                     <table
                         id="invoice-table"
                         className="table table-striped">
@@ -796,59 +575,227 @@ function Create_invoice({ create = true }) {
                             <tr>
                                 <th>Item</th>
                                 <th>Description</th>
-                                <th>Price per piece</th>
+                                <th>Price</th>
+                                <th>Currency</th>
                                 <th>Quantity</th>
                                 <th>Total Price</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
-
                         <tbody>
                             {selected_items.map((item, index) => (
                                 <tr key={index}>
-                                    <td>{item.name}</td>
-                                    <td>{item.description}</td>
                                     <td>
-                                        {item.price} {item.currency}
+                                        <input
+                                            type="text"
+                                            value={item.name}
+                                            onChange={(e) => edit_invoice_fields(index, 'name', e.target.value)}
+                                        />
                                     </td>
-                                    <td>{item.quantity}</td>
+                                    <td>
+                                        <input
+                                            type="text"
+                                            value={item.description}
+                                            onChange={(e) => edit_invoice_fields(index, 'description', e.target.value)}
+                                        />
+                                    </td>
+                                    <td>
+                                        <input
+                                            type="number"
+                                            value={item.price}
+                                            onChange={(e) => edit_invoice_fields(index, 'price', parseFloat(e.target.value))}
+                                        />
+                                    </td>
+                                    <td>
+                                        <select
+                                            value={item.currency}
+                                            onChange={(e) => edit_invoice_fields(index, 'currency', e.target.value)}
+                                            name=""
+                                            id="">
+                                            <option value="usd">USD</option>
+                                            <option value="cad">CAD</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <input
+                                            type="number"
+                                            value={item.quantity}
+                                            onChange={(e) => edit_invoice_fields(index, 'quantity', parseInt(e.target.value))}
+                                        />
+                                    </td>
                                     <td>{item.price * item.quantity}</td>
+                                    <td>
+                                        <button onClick={() => removeItem(index)}>Remove</button> {/* Button to remove item */}
+                                    </td>
                                 </tr>
                             ))}
+                            <tr>
+                                <td>
+                                    <select onChange={(e) => add_new_invoice_item(e)}>
+                                        <option value="none">New Item</option>
+                                        <option value="blank">Blank Item</option>
+                                        {all_items &&
+                                            all_items.map(function (item) {
+                                                return (
+                                                    <option value={JSON.stringify(item)}>
+                                                        {item.name} - {item.price} Price
+                                                    </option>
+                                                );
+                                            })}
+                                    </select>
+                                </td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
                         </tbody>
                         <tfoot>
                             <tr>
                                 <td></td>
                                 <td></td>
                                 <td></td>
-                                <td></td>
                                 <td>
-                                    <strong>Total Price of all Items: {total_price}</strong>
+                                    <strong>Total Price of all items: </strong>
                                 </td>
+
+                                <td> {total_price}</td>
+                                <td></td>
                             </tr>
                         </tfoot>
                     </table>
                 </div>
-                <div className="fifth_section">
-                    <>Bank Det
-                    <div
-                        dangerouslySetInnerHTML={{
-                            __html: bank_details_information.replace(/\n/g, '<br>'),
-                        }}></div>
-                </div>
-                <div className="sixth_section">
-                    <center>THANK YOU FOR SHIPPING THROUGH MIANZ WE APPRECIATE YOUR BUSINESS</center>
-                    <div className="terms_and_conditions">
-                        <strong>Terms & Conditions: </strong>
-                        <div
-                            dangerouslySetInnerHTML={{
-                                __html: terms_and_conditions.replace(/\n/g, '<br>'),
-                            }}></div>
-                    </div>
-                    <div className="name">Ahmed Mukit</div>
-                    <div className="nsf">All NSF Charges $25.00</div>
-                </div>
             </div>
-            </div>
+            <button onClick={onOpen}>View Invoice</button>
+            <button onClick={createPDF}>Create Invoice</button>
+
+            <Modal
+                isOpen={isOpen}
+                onClose={onClose}>
+                <ModalContent>
+                    <ModalHeader>Create Daily</ModalHeader>
+                    <ModalBody>
+                        <div className="invoice_viewer_container">
+                            <div
+                                ref={invoice_viewer_ref}
+                                className="invoice_viewer"
+                                id="invoice_viewer">
+                                <div className="logo"></div>
+                                <h4>{invoice_type}</h4>
+                                <div className="first_section">
+                                    <div className="company_information">{company_information}</div>
+                                    <div className="invoice_information">
+                                        <br />
+                                        <br />
+
+                                        <h3>{invoice_id}</h3>
+                                        <div>Date: {date}</div>
+                                        <div
+                                            dangerouslySetInnerHTML={{
+                                                __html: invoice_information.replace(/\n/g, '<br>'),
+                                            }}></div>
+                                    </div>
+                                </div>
+                                <div className="second_section">
+                                    <div className="bill_to_information">
+                                        <h3>Bill To</h3>
+
+                                        {bill_to_information}
+                                    </div>
+                                    <div className="ship_from_information">
+                                        <h3>Ship From</h3>
+
+                                        {ship_from_information}
+                                    </div>
+                                </div>
+                                <div className="third_section">
+                                    <div className="ship_to_information">
+                                        <h3>Ship To </h3>
+                                        {ship_to_information}
+                                    </div>
+                                    <div className="extra_information">
+                                        <div
+                                            dangerouslySetInnerHTML={{
+                                                __html: extra_information.replace(/\n/g, '<br>'),
+                                            }}></div>
+                                    </div>
+                                </div>
+                                <div className="forth_section">
+                                    <Table>
+                                        <TableHeader>
+                                            <TableColumn>Item</TableColumn>
+                                            <TableColumn>Description</TableColumn>
+                                            <TableColumn>Price per piece</TableColumn>
+                                            <TableColumn>Quantity</TableColumn>
+                                            <TableColumn>Total Price</TableColumn>
+                                            <TableColumn>Actions</TableColumn>
+                                        </TableHeader>
+                                        <TableBody>
+                                            {selected_items.map((item, index) => (
+                                                <TableRow key={index}>
+                                                    <TableCell>
+                                                        <input
+                                                            type="text"
+                                                            value={item.name}
+                                                            onChange={(e) => edit_invoice_fields(index, 'name', e.target.value)}
+                                                        />
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <input
+                                                            type="text"
+                                                            value={item.description}
+                                                            onChange={(e) => edit_invoice_fields(index, 'description', e.target.value)}
+                                                        />
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <input
+                                                            type="number"
+                                                            value={item.price}
+                                                            onChange={(e) => edit_invoice_fields(index, 'price', parseFloat(e.target.value))}
+                                                        />
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <input
+                                                            type="number"
+                                                            value={item.quantity}
+                                                            onChange={(e) => edit_invoice_fields(index, 'quantity', parseInt(e.target.value))}
+                                                        />
+                                                    </TableCell>
+                                                    <TableCell>{item.price * item.quantity}</TableCell>
+                                                    <TableCell>
+                                                        <button onClick={() => removeItem(index)}>Remove</button>
+                                                    </TableCell>
+                                                </TableRow>
+                                            ))}
+                                        </TableBody>
+                                    </Table>
+                                </div>
+                                <div className="fifth_section">
+                                    <h3>Bank Details</h3>
+                                    <div
+                                        dangerouslySetInnerHTML={{
+                                            __html: bank_details_information.replace(/\n/g, '<br>'),
+                                        }}></div>
+                                </div>
+                                <div className="sixth_section">
+                                    <center>THANK YOU FOR SHIPPING THROUGH MIANZ WE APPRECIATE YOUR BUSINESS</center>
+                                    <div className="terms_and_conditions">
+                                        <strong>Terms & Conditions: </strong>
+                                        <div
+                                            dangerouslySetInnerHTML={{
+                                                __html: terms_and_conditions.replace(/\n/g, '<br>'),
+                                            }}></div>
+                                    </div>
+                                    <div className="name">Ahmed Mukit</div>
+                                    <div className="nsf">All NSF Charges $25.00</div>
+                                </div>
+                            </div>
+                        </div>
+                    </ModalBody>
+                    <ModalFooter></ModalFooter>
+                </ModalContent>
+            </Modal>
         </div>
     );
 }

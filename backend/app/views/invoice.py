@@ -34,6 +34,7 @@ def create_invoice_view():
         ship_from_id=data["ship_from_id"],
         ship_to_id=(data["ship_to_id"]),
         date=data["date"],
+        due_date=data["due_date"],
         terms=data["terms"],
         extra_info=data["extra_info"],
         bank_details=data["bank_details"],
