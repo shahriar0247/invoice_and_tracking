@@ -28,7 +28,7 @@ export default function Invoices() {
 
     return (
         <div className="invoice">
-            <h1>Daily_Accounts</h1>
+            <h1>Invoices</h1>
             <button onClick={onOpen}>Create Invoice</button>
             <Modal
                 isOpen={isOpen}
@@ -612,9 +612,8 @@ function Create_invoice({ create = true }) {
                                         <select
                                             value={item.currency}
                                             onChange={(e) => edit_invoice_fields(index, 'currency', e.target.value)}
-                                            name=""
-                                            defaultValue={"USD"}
                                             id="">
+                                            <option value="">Select</option>
                                             <option value="USD">USD</option>
                                             <option value="CAD">CAD</option>
                                         </select>
