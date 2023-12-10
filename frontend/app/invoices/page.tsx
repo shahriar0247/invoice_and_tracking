@@ -9,37 +9,33 @@ export default function Invoices() {
     const [users, setUsers] = React.useState([]);
 
     React.useEffect(() => {
-        fetchDaily_Account();
+        fetch_invoices();
     }, []);
 
-    function fetchDaily_Account() {
-        fetch('http://localhost:5003/get/daily_account')
+    function fetch_invoices() {
+        fetch('http://localhost:5003/get/invoice')
             .then((response) => response.json())
             .then((data) => {
                 setData(data);
-                setUsers(getUniqueUsers(data));
+                // setUsers(getUniqueUsers(data));
             })
             .catch((error) => {
-                console.error('Error fetching daily_account:', error);
+                console.error('Error fetching invoices:', error);
             });
     }
 
-    function getUniqueUsers(data) {
-        // Extract unique users from the data (assuming "Bill To" is the user field)
-        const uniqueUsers = [...new Set(data.map((item) => item.bill_to))];
-        return uniqueUsers;
-    }
+ 
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     return (
         <div className="invoice">
             <h1>Daily_Accounts</h1>
-            <button onClick={onOpen}>Create Daily Account</button>
+            <button onClick={onOpen}>Create Invoice</button>
             <Modal
                 isOpen={isOpen}
                 onClose={onClose}>
                 <ModalContent>
-                    <ModalHeader>Create Daily</ModalHeader>
+                    <ModalHeader>Create Invoice</ModalHeader>
                     <ModalBody>
                         <Create_invoice />
                     </ModalBody>
@@ -80,16 +76,22 @@ export default function Invoices() {
             <Table>
                 <TableHeader>
                     <TableColumn>ID</TableColumn>
-                    <TableColumn>Invoice</TableColumn>
-                    <TableColumn>Purchase Order</TableColumn>
+                    <TableColumn>Date</TableColumn>
+                    <TableColumn>Due Date</TableColumn>
+                    <TableColumn>Bill To</TableColumn>
+                    <TableColumn>Ship To</TableColumn>
+                    <TableColumn>Ship From</TableColumn>
                     <TableColumn></TableColumn>
                 </TableHeader>
                 <TableBody>
                     {data.map((item) => (
                         <TableRow key={item.id}>
                             <TableCell>{item.id}</TableCell>
-                            <TableCell>{item.invoice_id}</TableCell>
-                            <TableCell>{item.purchase_order_id}</TableCell>
+                            <TableCell>{item.date}</TableCell>
+                            <TableCell>{item.due_date}</TableCell>
+                            <TableCell>{item.bill_to}</TableCell>
+                            <TableCell>{item.ship_to}</TableCell>
+                            <TableCell>{item.ship_from}</TableCell>
                             <TableCell>
                                 <a
                                     className="button"

@@ -20,6 +20,7 @@ def get_invoice_view():
         invoice_object["ship_to"] = Ship_to.query.get(invoice.ship_to_id).name
         invoice_object["bl_number"] = invoice.bl_number
         invoice_object["date"] = invoice.date
+        invoice_object["due_date"] = invoice.due_date
         print(invoice_object)
 
         all_invoice.append(invoice_object)
