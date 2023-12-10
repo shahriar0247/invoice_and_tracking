@@ -436,7 +436,7 @@ function Create_invoice({ create = true, invoice_id_view = '' }) {
                                 return (
                                     <option
                                         key={JSON.stringify(bill_to)}
-                                        value={bill_to.id}>
+                                        value={JSON.stringify(bill_to)}>
                                         {bill_to.name}
                                     </option>
                                 );
@@ -465,7 +465,7 @@ function Create_invoice({ create = true, invoice_id_view = '' }) {
                                 return (
                                     <option
                                         key={JSON.stringify(ship_to)}
-                                        value={ship_to.id}>
+                                        value={JSON.stringify(ship_to)}>
                                         {ship_to.name}
                                     </option>
                                 );
@@ -494,7 +494,7 @@ function Create_invoice({ create = true, invoice_id_view = '' }) {
                                 return (
                                     <option
                                         key={JSON.stringify(ship_from)}
-                                        value={ship_from.id}>
+                                        value={JSON.stringify(ship_from)}>
                                         {ship_from.name}
                                     </option>
                                 );
