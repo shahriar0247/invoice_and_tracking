@@ -183,7 +183,6 @@ export default function App() {
                                             set_price(e.target.value);
                                         }}
                                     />
-                                    {" "} {" "} {" "}CAD
                                 </div>
                             </div>
                         </div>
