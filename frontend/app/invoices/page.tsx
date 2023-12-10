@@ -4,7 +4,7 @@ import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Table, TableB
 import React from 'react';
 import { usePDF } from 'react-to-pdf';
 
-export default function Invoices({create=true, invoice_id_view=""}) {
+export default function Invoices({ create = true, invoice_id_view = '' }) {
     const [data, setData] = React.useState([]);
     const [users, setUsers] = React.useState([]);
 
@@ -26,8 +26,12 @@ export default function Invoices({create=true, invoice_id_view=""}) {
 
     const { isOpen, onOpen, onClose } = useDisclosure();
 
-    if (!create){
-        return <Create_invoice create={create} invoice_id_view={invoice_id_view}></Create_invoice>;
+    if (!create) {
+        return (
+            <Create_invoice
+                create={create}
+                invoice_id_view={invoice_id_view}></Create_invoice>
+        );
     }
     return (
         <div className="invoice">
@@ -109,7 +113,7 @@ export default function Invoices({create=true, invoice_id_view=""}) {
     );
 }
 
-function Create_invoice({ create = true, invoice_id_view = "" }) {
+function Create_invoice({ create = true, invoice_id_view = '' }) {
     const [company, set_company] = React.useState([]);
     const [all_bill_to, set_all_bill_to] = React.useState([]);
     const [all_ship_from, set_all_ship_from] = React.useState([]);
@@ -400,7 +404,7 @@ function Create_invoice({ create = true, invoice_id_view = "" }) {
     }
 
     const { isOpen, onOpen, onClose } = useDisclosure();
-
+    const [currency, set_currency] = React.useState('USD');
     return (
         <div className="invoice">
             <h1>Invoice Details</h1>
@@ -511,7 +515,20 @@ function Create_invoice({ create = true, invoice_id_view = "" }) {
                         />
                     </div>
                 </div>
-
+                <div className="input_field">
+                    <div className="title">Currency</div>
+                    <div className="input">
+                        <select
+                            value={currency}
+                            onChange={(e) => {
+                                let value = e.target.value;
+                                set_currency(value);
+                            }}>
+                            <option value="USD">USD</option>
+                            <option value="CAD">CAD</option>
+                        </select>
+                    </div>
+                </div>
                 <div className="input_field">
                     <div className="title">Terms</div>
                     <div className="input">
@@ -578,7 +595,6 @@ function Create_invoice({ create = true, invoice_id_view = "" }) {
                                 <th>Item</th>
                                 <th>Description</th>
                                 <th>Price</th>
-                                <th>Currency</th>
                                 <th>Quantity</th>
                                 <th>Total Price</th>
                                 <th>Actions</th>
@@ -607,16 +623,6 @@ function Create_invoice({ create = true, invoice_id_view = "" }) {
                                             value={item.price}
                                             onChange={(e) => edit_invoice_fields(index, 'price', parseFloat(e.target.value))}
                                         />
-                                    </td>
-                                    <td>
-                                        <select
-                                            value={item.currency}
-                                            onChange={(e) => edit_invoice_fields(index, 'currency', e.target.value)}
-                                            id="">
-                                            <option value="">Select</option>
-                                            <option value="USD">USD</option>
-                                            <option value="CAD">CAD</option>
-                                        </select>
                                     </td>
                                     <td>
                                         <input
@@ -737,16 +743,19 @@ function Create_invoice({ create = true, invoice_id_view = "" }) {
                                                     <TableCell>{item.name}</TableCell>
                                                     <TableCell>{item.description}</TableCell>
                                                     <TableCell>
-                                                        {item.price} {item.currency}
+                                                        {currency} {item.price}
                                                     </TableCell>
                                                     <TableCell>{item.quantity}</TableCell>
                                                     <TableCell>
-                                                        {item.price * item.quantity} {item.currency}
+                                                        {currency} {item.price * item.quantity}
                                                     </TableCell>
                                                 </TableRow>
                                             ))}
                                         </TableBody>
                                     </Table>
+                                    <div className="total_price_">
+                                        Total Price: {total_price} {currency}
+                                    </div>
                                 </div>
                                 <div className="fifth_section">
                                     <h3>Bank Details</h3>
