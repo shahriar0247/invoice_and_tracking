@@ -4,7 +4,7 @@ from flask_migrate import Migrate
 from flask_cors import CORS  # Import CORS from flask_cors
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://invoice_and_tracking:invoice_and_tracking@localhost:5432/invoice_and_tracking'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://invoice_and_tracking:invoice_and_tracking@127.0.0.1:5432/invoice_and_tracking'
 
 CORS(app)
 

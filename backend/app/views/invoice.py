@@ -11,7 +11,6 @@ def get_invoice_view():
 
     all_invoice = []
     all_invoices_raw = Invoice.query.all()
-    print(all_invoices_raw)
     for invoice in all_invoices_raw:
         invoice_object = {}
         invoice_object["id"] = invoice.id 
@@ -19,9 +18,9 @@ def get_invoice_view():
         invoice_object["ship_from"] = Ship_from.query.get(invoice.ship_from_id).name
         invoice_object["ship_to"] = Ship_to.query.get(invoice.ship_to_id).name
         invoice_object["bl_number"] = invoice.bl_number
+        invoice_object["type"] = invoice.type
         invoice_object["date"] = invoice.date
         invoice_object["due_date"] = invoice.due_date
-        print(invoice_object)
 
         all_invoice.append(invoice_object)
 
@@ -51,7 +50,7 @@ def create_invoice_view():
     return "Invoice created successfully"
 
 
-@app.route("/delete/invoice/<int:invoice_id>", methods=["DELETE"])
+@app.route("/delete/invoice/<invoice_id>", methods=["DELETE"])
 def delete_invoice(invoice_id):
     invoice = Invoice.query.get(invoice_id)
     

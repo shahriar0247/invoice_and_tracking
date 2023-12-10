@@ -6,7 +6,9 @@ import { usePDF } from 'react-to-pdf';
 
 export default function Invoices({ create = true, invoice_id_view = '' }) {
     const [data, setData] = React.useState([]);
+    const [all_data, set_all_data] = React.useState([]);
     const [users, setUsers] = React.useState([]);
+    const [search_term, set_search_term] = React.useState('');
 
     React.useEffect(() => {
         fetch_invoices();
@@ -17,7 +19,8 @@ export default function Invoices({ create = true, invoice_id_view = '' }) {
             .then((response) => response.json())
             .then((data) => {
                 setData(data);
-                // setUsers(getUniqueUsers(data));
+                set_all_data(data);
+                setUsers(getUniqueUsers(data));
             })
             .catch((error) => {
                 console.error('Error fetching invoices:', error);
@@ -25,6 +28,40 @@ export default function Invoices({ create = true, invoice_id_view = '' }) {
     }
 
     const { isOpen, onOpen, onClose } = useDisclosure();
+    function getUniqueUsers(data) {
+        const uniqueUsers = [...new Set(data.map((item) => item.bill_to))];
+        return uniqueUsers;
+    }
+    function deleteInvoice(invoiceId) {
+        fetch(`http://35.188.81.32:5003/delete/invoice/${invoiceId}`, {
+            method: 'DELETE',
+        })
+            .then((response) => {
+                if (response.ok) {
+                    alert('Invoice deleted successfully');
+                    window.location.reload()
+                } else {
+                    alert('Failed to delete invoice');
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+    }
+    function search() {
+        var filteredData = all_data.filter(function (invoice) {
+            return Object.values(invoice).some(function (value) {
+                if (value) {
+                    return value.toLowerCase().includes(search_term);
+                }
+            });
+        });
+
+        setData(filteredData);
+    }
+    React.useEffect(() => {
+        search();
+    }, [search_term]);
 
     if (!create) {
         return (
@@ -49,10 +86,11 @@ export default function Invoices({ create = true, invoice_id_view = '' }) {
                 </ModalContent>
             </Modal>
 
+            <h1>All Filters</h1>
             <div className="all_filters">
                 <div>
                     <label>User:</label>
-                    <select id="user-filter">
+                    <select onChange={(e) => set_search_term(e.target.value)}>
                         <option value="">All</option>
                         {users.map((user, index) => (
                             <option
@@ -70,7 +108,6 @@ export default function Invoices({ create = true, invoice_id_view = '' }) {
                         id="min-date"
                     />
                 </div>
-
                 <div>
                     <label>To:</label>
                     <input
@@ -78,10 +115,27 @@ export default function Invoices({ create = true, invoice_id_view = '' }) {
                         id="max-date"
                     />
                 </div>
+                <div>
+                    <label>Search: </label>
+                    <input
+                        type="text"
+                        value={search_term}
+                        onChange={(e) => {
+                            set_search_term(e.target.value);
+                        }}
+                    />
+                </div>
+                <button
+                    onClick={() => {
+                        set_search_term('');
+                    }}>
+                    Clear Search
+                </button>
             </div>
             <Table>
                 <TableHeader>
                     <TableColumn>ID</TableColumn>
+                    <TableColumn>Type</TableColumn>
                     <TableColumn>Date</TableColumn>
                     <TableColumn>Bill To</TableColumn>
                     <TableColumn>B/L Number</TableColumn>
@@ -91,7 +145,8 @@ export default function Invoices({ create = true, invoice_id_view = '' }) {
                     {data.map((item) => (
                         <TableRow key={item.id}>
                             <TableCell>{item.id}</TableCell>
-                            <TableCell>{new Date(item.date).toLocaleDateString("en-US", { weekday: "short", day: "numeric", month: "short", year: "numeric" })}</TableCell>
+                            <TableCell>{item.type}</TableCell>
+                            <TableCell>{new Date(item.date).toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}</TableCell>
                             <TableCell>{item.bill_to}</TableCell>
                             <TableCell>{item.bl_number}</TableCell>
                             <TableCell>
@@ -100,6 +155,7 @@ export default function Invoices({ create = true, invoice_id_view = '' }) {
                                     href={`/invoices/${item.id}`}>
                                     View
                                 </a>
+                                <button onClick={() => {deleteInvoice(item.id)}}>Delete</button>
                             </TableCell>
                         </TableRow>
                     ))}
@@ -178,6 +234,27 @@ function Create_invoice({ create = true, invoice_id_view = '' }) {
         set_ship_to_id(data.ship_to.id);
         set_ship_from(JSON.stringify(data.ship_from));
         set_ship_from_id(data.ship_from.id);
+        set_bill_to_information(
+            <div>
+                <div>{data.bill_to.name}</div>
+                <div>{data.bill_to.address1}</div>
+                <div>{data.bill_to.address2}</div>
+            </div>
+        );
+        set_ship_to_information(
+            <div>
+                <div>{data.ship_to.name}</div>
+                <div>{data.ship_to.address1}</div>
+                <div>{data.ship_to.address2}</div>
+            </div>
+        );
+        set_ship_from_information(
+            <div>
+                <div>{data.ship_from.name}</div>
+                <div>{data.ship_from.address1}</div>
+                <div>{data.ship_from.address2}</div>
+            </div>
+        );
         set_invoice_type(data.type);
         set_terms_and_conditions(data.terms);
         set_extra_information(data.extra_info);
@@ -359,47 +436,7 @@ function Create_invoice({ create = true, invoice_id_view = '' }) {
                 console.error('Error:', error);
             });
     }
-    function deleteInvoice(invoiceId) {
-        fetch(`/delete/invoice/${invoiceId}`, {
-            method: 'DELETE',
-        })
-            .then((response) => {
-                if (response.ok) {
-                    alert('Invoice deleted successfully');
-                } else {
-                    alert('Failed to delete invoice');
-                }
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-            });
-    }
-    function editInvoice(invoiceId) {
-        const updatedInvoiceData = {
-            date: '2023-11-07', // Replace with updated data
-            terms: 'Net 45', // Replace with updated data
-            invoice1: 'Jane Smith', // Replace with updated data
-            // Add other fields as needed
-        };
 
-        fetch(`/edit/invoice/${invoiceId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(updatedInvoiceData),
-        })
-            .then((response) => {
-                if (response.ok) {
-                    alert('Invoice updated successfully');
-                } else {
-                    alert('Failed to update invoice');
-                }
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-            });
-    }
     const { toPDF, targetRef } = usePDF({ filename: invoice_id + '.pdf' });
 
     function createPDF() {
@@ -483,7 +520,7 @@ function Create_invoice({ create = true, invoice_id_view = '' }) {
                                 let value = e.target.value;
                                 let data = JSON.parse(value);
                                 set_ship_from_id(data.id);
-                                set_ship_from(value)
+                                set_ship_from(value);
                                 set_ship_from_information(
                                     <div>
                                         <div>{data.name}</div>
