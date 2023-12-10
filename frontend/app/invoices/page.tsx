@@ -763,6 +763,7 @@ function Create_invoice({ create = true, invoice_id_view = '' }) {
                                         <h1>{invoice_id}</h1>
                                         <div>Date: {date}</div>
                                         <div>Due Date: {due_date}</div>
+                                        <div>B/L Number: {bl_number}</div>
                                         <div
                                             dangerouslySetInnerHTML={{
                                                 __html: invoice_information.replace(/\n/g, '<br>'),
