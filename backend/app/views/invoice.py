@@ -31,6 +31,7 @@ def get_invoice_view():
 def create_invoice_view():
     data = request.json  
     new_invoice = Invoice(
+        id=(data["id"]),
         bill_to_id=(data["bill_to_id"]),
         ship_from_id=data["ship_from_id"],
         ship_to_id=(data["ship_to_id"]),
@@ -90,9 +91,34 @@ def get_invoice_details_view_(invoice_number):
     invoice = Invoice.query.get(invoice_number)
     invoice_object = {}
     invoice_object["id"] = invoice.id 
-    invoice_object["bill_to"] = invoice.bill_to_id
-    invoice_object["ship_from"] = invoice.ship_from_id
-    invoice_object["ship_to"] = invoice.ship_to_id
+    bill_to = Bill_to.query.get(invoice.bill_to_id)
+    bill_to_object = {}
+    bill_to_object["id"] = bill_to.id
+    bill_to_object["name"] = bill_to.name
+    bill_to_object["address1"] = bill_to.address1
+    bill_to_object["address2"] = bill_to.address2
+    invoice_object["bill_to"] = bill_to_object
+    
+    
+    ship_from = Ship_from.query.get(invoice.ship_from_id)
+    ship_from_object = {}
+    ship_from_object["id"] = ship_from.id
+    ship_from_object["name"] = ship_from.name
+    ship_from_object["address1"] = ship_from.address1
+    ship_from_object["address2"] = ship_from.address2
+    invoice_object["ship_from"] = ship_from_object
+    
+    
+    
+    ship_to = Ship_to.query.get(invoice.ship_to_id)
+    ship_to_object = {}
+    ship_to_object["id"] = ship_to.id
+    ship_to_object["name"] = ship_to.name
+    ship_to_object["address1"] = ship_to.address1
+    ship_to_object["address2"] = ship_to.address2
+    invoice_object["ship_to"] = ship_to_object
+    
+    
     invoice_object["bl_number"] = invoice.bl_number
     invoice_object["date"] = invoice.date
     invoice_object["type"] = invoice.type

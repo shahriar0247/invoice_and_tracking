@@ -83,21 +83,17 @@ export default function Invoices({ create = true, invoice_id_view = '' }) {
                 <TableHeader>
                     <TableColumn>ID</TableColumn>
                     <TableColumn>Date</TableColumn>
-                    <TableColumn>Due Date</TableColumn>
                     <TableColumn>Bill To</TableColumn>
-                    <TableColumn>Ship To</TableColumn>
-                    <TableColumn>Ship From</TableColumn>
+                    <TableColumn>B/L Number</TableColumn>
                     <TableColumn></TableColumn>
                 </TableHeader>
                 <TableBody>
                     {data.map((item) => (
                         <TableRow key={item.id}>
                             <TableCell>{item.id}</TableCell>
-                            <TableCell>{item.date}</TableCell>
-                            <TableCell>{item.due_date}</TableCell>
+                            <TableCell>{new Date(item.date).toLocaleDateString("en-US", { weekday: "short", day: "numeric", month: "short", year: "numeric" })}</TableCell>
                             <TableCell>{item.bill_to}</TableCell>
-                            <TableCell>{item.ship_to}</TableCell>
-                            <TableCell>{item.ship_from}</TableCell>
+                            <TableCell>{item.bl_number}</TableCell>
                             <TableCell>
                                 <a
                                     className="button"
@@ -133,8 +129,11 @@ function Create_invoice({ create = true, invoice_id_view = '' }) {
     const [invoice_type, set_invoice_type] = React.useState('First Quote');
     const [bl_number, set_bl_number] = React.useState('');
     const [bill_to_id, set_bill_to_id] = React.useState('');
+    const [bill_to, set_bill_to] = React.useState('');
     const [ship_to_id, set_ship_to_id] = React.useState('');
+    const [ship_to, set_ship_to] = React.useState('');
     const [ship_from_id, set_ship_from_id] = React.useState('');
+    const [ship_from, set_ship_from] = React.useState('');
     const [date, set_date] = React.useState(getFormattedDate());
     const [due_date, set_due_date] = React.useState(getFormattedDate());
     const [invoice_id, set_invoice_id] = React.useState(`INV - ${Math.floor(Math.random() * (9999999 - 1000000 + 1)) + 1000000}`);
@@ -171,18 +170,19 @@ function Create_invoice({ create = true, invoice_id_view = '' }) {
     async function get_invoice_details() {
         const response = await fetch('http://35.188.81.32:5003/get_invoice_details/' + invoice_id_view);
         const data = await response.json();
-        console.log(data);
         const all_items_ = JSON.parse(data['all_items']);
         set_selected_items(all_items_);
-        set_bill_to_id(data.bill_to);
-        set_ship_to_id(data.ship_to);
-        set_ship_from_id(data.ship_from);
+        set_bill_to(JSON.stringify(data.bill_to));
+        set_bill_to_id(data.bill_to.id);
+        set_ship_to(JSON.stringify(data.ship_to));
+        set_ship_to_id(data.ship_to.id);
+        set_ship_from(JSON.stringify(data.ship_from));
+        set_ship_from_id(data.ship_from.id);
         set_invoice_type(data.type);
         set_terms_and_conditions(data.terms);
         set_extra_information(data.extra_info);
         set_bank_details_information(data.bank_details);
         set_bl_number(data.bl_number);
-        set_invoice_id(data.id);
 
         const dateObject = new Date(data.date);
         const year = dateObject.getFullYear();
@@ -339,8 +339,6 @@ function Create_invoice({ create = true, invoice_id_view = '' }) {
             bl_number: bl_number,
             all_items: selected_items,
         };
-        console.log('invoiceData');
-        console.log(invoiceData);
 
         fetch('http://35.188.81.32:5003/create/invoice', {
             method: 'POST',
@@ -352,6 +350,7 @@ function Create_invoice({ create = true, invoice_id_view = '' }) {
             .then((response) => {
                 if (response.ok) {
                     alert('Invoice created successfully');
+                    window.location.href = '/invoices';
                 } else {
                     alert('Failed to create invoice');
                 }
@@ -419,10 +418,12 @@ function Create_invoice({ create = true, invoice_id_view = '' }) {
                     <div className="title">Bill To</div>
                     <div className="input">
                         <select
+                            value={bill_to}
                             onChange={(e) => {
                                 let value = e.target.value;
                                 let data = JSON.parse(value);
                                 set_bill_to_id(data.id);
+                                set_bill_to(value);
                                 set_bill_to_information(
                                     <div>
                                         <div>{data.name}</div>
@@ -447,10 +448,12 @@ function Create_invoice({ create = true, invoice_id_view = '' }) {
                     <div className="title">Ship To</div>
                     <div className="input">
                         <select
+                            value={ship_to}
                             onChange={(e) => {
                                 let value = e.target.value;
                                 let data = JSON.parse(value);
                                 set_ship_to_id(data.id);
+                                set_ship_to(value);
                                 set_ship_to_information(
                                     <div>
                                         <div>{data.name}</div>
@@ -475,10 +478,12 @@ function Create_invoice({ create = true, invoice_id_view = '' }) {
                     <div className="title">Ship From</div>
                     <div className="input">
                         <select
+                            value={ship_from}
                             onChange={(e) => {
                                 let value = e.target.value;
                                 let data = JSON.parse(value);
                                 set_ship_from_id(data.id);
+                                set_ship_from(value)
                                 set_ship_from_information(
                                     <div>
                                         <div>{data.name}</div>
@@ -641,7 +646,7 @@ function Create_invoice({ create = true, invoice_id_view = '' }) {
                                         <input
                                             type="number"
                                             value={item.price}
-                                            onChange={(e) => edit_invoice_fields(index, 'price', parseFloat(e.target.value))}
+                                            onChange={(e) => edit_invoice_fields(index, 'price', parseFloat(e.target.value).toFixed(2))}
                                         />
                                     </td>
                                     <td>
@@ -651,7 +656,7 @@ function Create_invoice({ create = true, invoice_id_view = '' }) {
                                             onChange={(e) => edit_invoice_fields(index, 'quantity', parseInt(e.target.value))}
                                         />
                                     </td>
-                                    <td>{item.price * item.quantity}</td>
+                                    <td>{(item.price * item.quantity).toFixed(2)}</td>
                                     <td>
                                         <button onClick={() => removeItem(index)}>Remove</button> {/* Button to remove item */}
                                     </td>
@@ -690,7 +695,7 @@ function Create_invoice({ create = true, invoice_id_view = '' }) {
                                     <strong>Total Price of all items: </strong>
                                 </td>
 
-                                <td> {total_price}</td>
+                                <td> {total_price.toFixed(2)}</td>
                                 <td></td>
                             </tr>
                         </tfoot>
@@ -766,18 +771,18 @@ function Create_invoice({ create = true, invoice_id_view = '' }) {
                                                     <TableCell>{item.name}</TableCell>
                                                     <TableCell>{item.description}</TableCell>
                                                     <TableCell>
-                                                        {currency} {item.price}
+                                                        {currency} {item.price.toFixed(2)}
                                                     </TableCell>
                                                     <TableCell>{item.quantity}</TableCell>
                                                     <TableCell>
-                                                        {currency} {item.price * item.quantity}
+                                                        {currency} {(item.price * item.quantity).toFixed(2)}
                                                     </TableCell>
                                                 </TableRow>
                                             ))}
                                         </TableBody>
                                     </Table>
                                     <div className="total_price_">
-                                        Total Price: {total_price} {currency}
+                                        Total Price: {total_price.toFixed(2)} {currency}
                                     </div>
                                 </div>
                                 <div className="fifth_section">
