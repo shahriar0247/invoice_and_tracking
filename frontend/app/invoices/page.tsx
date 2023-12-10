@@ -148,9 +148,7 @@ function Create_invoice({ create = true, invoice_id_view = '' }) {
         });
         set_total_price(total_price_);
     }, [selected_items]);
-    React.useEffect(() => {
-        console.log(bill_to_id);
-    });
+  ;
     React.useEffect(() => {
         fetchCompany();
         fetchBillTo();
@@ -428,7 +426,7 @@ function Create_invoice({ create = true, invoice_id_view = '' }) {
                                 );
                             }}>
                             {all_bill_to.map(function (bill_to) {
-                                return <option value={bill_to.id}>{bill_to.name}</option>;
+                                return <option key={JSON.stringify(bill_to)} value={bill_to.id}>{bill_to.name}</option>;
                             })}
                         </select>
                     </div>
@@ -451,7 +449,7 @@ function Create_invoice({ create = true, invoice_id_view = '' }) {
                                 );
                             }}>
                             {all_ship_to.map(function (ship_to) {
-                                return <option value={ship_to.id}>{ship_to.name}</option>;
+                                return <option key={JSON.stringify(ship_to)} value={ship_to.id}>{ship_to.name}</option>;
                             })}
                         </select>
                     </div>
@@ -474,7 +472,7 @@ function Create_invoice({ create = true, invoice_id_view = '' }) {
                                 );
                             }}>
                             {all_ship_from.map(function (ship_from) {
-                                return <option value={ship_from.id}>{ship_from.name}</option>;
+                                return <option key={JSON.stringify(ship_from)} value={ship_from.id}>{ship_from.name}</option>;
                             })}
                         </select>
                     </div>
@@ -645,7 +643,7 @@ function Create_invoice({ create = true, invoice_id_view = '' }) {
                                         {all_items &&
                                             all_items.map(function (item) {
                                                 return (
-                                                    <option value={JSON.stringify(item)}>
+                                                    <option key={JSON.stringify(item)} value={JSON.stringify(item)}>
                                                         {item.name} - {item.price} Price
                                                     </option>
                                                 );

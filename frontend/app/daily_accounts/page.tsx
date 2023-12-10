@@ -247,7 +247,7 @@ function Create_Daily_Account({ create = true }) {
                                 {purchase_orders &&
                                     purchase_orders.map(function (po) {
                                         return (
-                                            <option value={JSON.stringify(po)}>
+                                            <option  key={JSON.stringify(po)} value={JSON.stringify(po)}>
                                                 {po.id} - {po.vendor} - {po.date}
                                             </option>
                                         );
@@ -381,7 +381,7 @@ function Create_Daily_Account({ create = true }) {
                         {all_items &&
                             all_items.map(function (item) {
                                 return (
-                                    <option value={JSON.stringify(item)}>
+                                    <option key={JSON.stringify(item)} value={JSON.stringify(item)}>
                                         {item.name} - {item.price} Price
                                     </option>
                                 );
