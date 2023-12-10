@@ -25,3 +25,6 @@ frontend/.npm
 frontend/.node_repl_history
 frontend/.next
 frontend/node_modules
+
+.DS_Store
+*/.DS_Store

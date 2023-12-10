@@ -13,7 +13,7 @@ export default function Invoices({ create = true, invoice_id_view = '' }) {
     }, []);
 
     function fetch_invoices() {
-        fetch('http://localhost:5003/get/invoice')
+        fetch('http://35.188.81.32:5003/get/invoice')
             .then((response) => response.json())
             .then((data) => {
                 setData(data);
@@ -164,7 +164,7 @@ function Create_invoice({ create = true, invoice_id_view = '' }) {
     }, []);
 
     async function get_invoice_details() {
-        const response = await fetch('http://localhost:5003/get_invoice_details/' + invoice_id_view);
+        const response = await fetch('http://35.188.81.32:5003/get_invoice_details/' + invoice_id_view);
         const data = await response.json();
         console.log(data);
         const all_items_ = JSON.parse(data['all_items']);
@@ -218,7 +218,7 @@ function Create_invoice({ create = true, invoice_id_view = '' }) {
         set_selected_items(updatedItems);
     };
     function fetchInvoice() {
-        fetch('http://localhost:5003/get/invoice')
+        fetch('http://35.188.81.32:5003/get/invoice')
             .then((response) => response.json())
             .then((data) => {
                 // setda(data);
@@ -228,7 +228,7 @@ function Create_invoice({ create = true, invoice_id_view = '' }) {
             });
     }
     function fetchCompany() {
-        fetch('http://localhost:5003/get/company')
+        fetch('http://35.188.81.32:5003/get/company')
             .then((response) => response.json())
             .then((data) => {
                 set_company(data);
@@ -250,7 +250,7 @@ function Create_invoice({ create = true, invoice_id_view = '' }) {
             });
     }
     function fetchBillTo() {
-        fetch('http://localhost:5003/get/type/bill_to')
+        fetch('http://35.188.81.32:5003/get/type/bill_to')
             .then((response) => response.json())
             .then((data) => {
                 set_all_bill_to(data);
@@ -269,7 +269,7 @@ function Create_invoice({ create = true, invoice_id_view = '' }) {
             });
     }
     function fetchShipFrom() {
-        fetch('http://localhost:5003/get/type/ship_from')
+        fetch('http://35.188.81.32:5003/get/type/ship_from')
             .then((response) => response.json())
             .then((data) => {
                 set_all_ship_from(data);
@@ -288,7 +288,7 @@ function Create_invoice({ create = true, invoice_id_view = '' }) {
             });
     }
     function fetchShipTo() {
-        fetch('http://localhost:5003/get/type/ship_to')
+        fetch('http://35.188.81.32:5003/get/type/ship_to')
             .then((response) => response.json())
             .then((data) => {
                 set_all_ship_to(data);
@@ -308,7 +308,7 @@ function Create_invoice({ create = true, invoice_id_view = '' }) {
     }
     function fetchItems() {
         console.log('here 2');
-        fetch('http://localhost:5003/get/item')
+        fetch('http://35.188.81.32:5003/get/item')
             .then((response) => response.json())
             .then((data) => {
                 console.log(data);
@@ -337,7 +337,7 @@ function Create_invoice({ create = true, invoice_id_view = '' }) {
         console.log('invoiceData');
         console.log(invoiceData);
 
-        fetch('http://localhost:5003/create/invoice', {
+        fetch('http://35.188.81.32:5003/create/invoice', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

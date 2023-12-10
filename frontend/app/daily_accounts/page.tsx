@@ -152,7 +152,7 @@ function Create_Daily_Account({ create = true }) {
     }, []);
 
     function fetchPurchaseOrders() {
-        fetch('http://localhost:5003/get/purchase_order')
+        fetch('http://35.188.81.32:5003/get/purchase_order')
             .then((response) => response.json())
             .then((data) => {
                 set_all_purchase_orders(data);
@@ -170,7 +170,7 @@ function Create_Daily_Account({ create = true }) {
     }
     async function get_purchase_order_details() {
         const number = window.location.href.split('/').pop();
-        const response = await fetch('http://localhost:5003/get_daily_account_details/' + number);
+        const response = await fetch('http://35.188.81.32:5003/get_daily_account_details/' + number);
         const data = await response.json();
         console.log(data);
         set_selected_items(JSON.parse(data['all_items']));
@@ -185,7 +185,7 @@ function Create_Daily_Account({ create = true }) {
         set_ship_to(data.invoice.ship_to);
     }
     function fetchInvoice(invoice_id_) {
-        fetch('http://localhost:5003/get_invoice_details_for_daily_accounts/' + invoice_id_)
+        fetch('http://35.188.81.32:5003/get_invoice_details_for_daily_accounts/' + invoice_id_)
             .then((response) => response.json())
             .then((data) => {
                 set_invoice_all_items(JSON.parse(data.all_items));
@@ -203,7 +203,7 @@ function Create_Daily_Account({ create = true }) {
             purchase_order_id: purchase_order_id,
         };
 
-        fetch('http://localhost:5003/create/daily_account', {
+        fetch('http://35.188.81.32:5003/create/daily_account', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -524,7 +524,7 @@ export default function Daily_Accounts() {
     }, []);
 
     function fetchDaily_Account() {
-        fetch('http://localhost:5003/get/daily_account')
+        fetch('http://35.188.81.32:5003/get/daily_account')
             .then((response) => response.json())
             .then((data) => {
                 setData(data);

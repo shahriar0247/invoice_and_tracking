@@ -4,7 +4,7 @@ export default function Tracking() {
     async function get_invoice_details(){
         let form_data = new FormData()
         form_data.append("bl_number", bl_number)
-        const response = await fetch("http://localhost:5003/get/one_invoice_bl", {
+        const response = await fetch("http://35.188.81.32:5003/get/one_invoice_bl", {
             method: "post",
             body: form_data
         })
