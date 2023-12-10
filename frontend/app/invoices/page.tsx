@@ -135,8 +135,8 @@ function Create_invoice({ create = true, invoice_id_view = '' }) {
     const [bill_to_id, set_bill_to_id] = React.useState('');
     const [ship_to_id, set_ship_to_id] = React.useState('');
     const [ship_from_id, set_ship_from_id] = React.useState('');
-    const [date, set_date] = React.useState('');
-    const [due_date, set_due_date] = React.useState('');
+    const [date, set_date] = React.useState(getFormattedDate());
+    const [due_date, set_due_date] = React.useState(getFormattedDate());
     const [invoice_id, set_invoice_id] = React.useState(`INV - ${Math.floor(Math.random() * (9999999 - 1000000 + 1)) + 1000000}`);
 
     const [total_price, set_total_price] = React.useState(0);
@@ -148,7 +148,6 @@ function Create_invoice({ create = true, invoice_id_view = '' }) {
         });
         set_total_price(total_price_);
     }, [selected_items]);
-  ;
     React.useEffect(() => {
         fetchCompany();
         fetchBillTo();
@@ -160,6 +159,14 @@ function Create_invoice({ create = true, invoice_id_view = '' }) {
             get_invoice_details();
         }
     }, []);
+
+    function getFormattedDate() {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = (today.getMonth() + 1).toString().padStart(2, '0');
+        const day = today.getDate().toString().padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
 
     async function get_invoice_details() {
         const response = await fetch('http://35.188.81.32:5003/get_invoice_details/' + invoice_id_view);
@@ -426,7 +433,13 @@ function Create_invoice({ create = true, invoice_id_view = '' }) {
                                 );
                             }}>
                             {all_bill_to.map(function (bill_to) {
-                                return <option key={JSON.stringify(bill_to)} value={bill_to.id}>{bill_to.name}</option>;
+                                return (
+                                    <option
+                                        key={JSON.stringify(bill_to)}
+                                        value={bill_to.id}>
+                                        {bill_to.name}
+                                    </option>
+                                );
                             })}
                         </select>
                     </div>
@@ -449,7 +462,13 @@ function Create_invoice({ create = true, invoice_id_view = '' }) {
                                 );
                             }}>
                             {all_ship_to.map(function (ship_to) {
-                                return <option key={JSON.stringify(ship_to)} value={ship_to.id}>{ship_to.name}</option>;
+                                return (
+                                    <option
+                                        key={JSON.stringify(ship_to)}
+                                        value={ship_to.id}>
+                                        {ship_to.name}
+                                    </option>
+                                );
                             })}
                         </select>
                     </div>
@@ -472,7 +491,13 @@ function Create_invoice({ create = true, invoice_id_view = '' }) {
                                 );
                             }}>
                             {all_ship_from.map(function (ship_from) {
-                                return <option key={JSON.stringify(ship_from)} value={ship_from.id}>{ship_from.name}</option>;
+                                return (
+                                    <option
+                                        key={JSON.stringify(ship_from)}
+                                        value={ship_from.id}>
+                                        {ship_from.name}
+                                    </option>
+                                );
                             })}
                         </select>
                     </div>
@@ -643,7 +668,9 @@ function Create_invoice({ create = true, invoice_id_view = '' }) {
                                         {all_items &&
                                             all_items.map(function (item) {
                                                 return (
-                                                    <option key={JSON.stringify(item)} value={JSON.stringify(item)}>
+                                                    <option
+                                                        key={JSON.stringify(item)}
+                                                        value={JSON.stringify(item)}>
                                                         {item.name} - {item.price} Price
                                                     </option>
                                                 );
