@@ -24,7 +24,6 @@ export default function Invoices() {
             });
     }
 
- 
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     return (
@@ -131,7 +130,7 @@ function Create_invoice({ create = true }) {
     const [ship_from_id, set_ship_from_id] = React.useState('');
     const [date, set_date] = React.useState('');
     const [due_date, set_due_date] = React.useState('');
-    const [invoice_id, set_invoice_id] = React.useState('');
+    const [invoice_id, set_invoice_id] = React.useState(`INV - ${Math.floor(Math.random() * (9999999 - 1000000 + 1)) + 1000000}`);
 
     const [total_price, set_total_price] = React.useState(0);
 
@@ -318,6 +317,7 @@ function Create_invoice({ create = true }) {
 
     function createInvoice() {
         const invoiceData = {
+            id: invoice_id,
             bill_to_id: bill_to_id,
             ship_to_id: ship_to_id,
             ship_from_id: ship_from_id,
@@ -613,9 +613,10 @@ function Create_invoice({ create = true }) {
                                             value={item.currency}
                                             onChange={(e) => edit_invoice_fields(index, 'currency', e.target.value)}
                                             name=""
+                                            defaultValue={"USD"}
                                             id="">
-                                            <option value="usd">USD</option>
-                                            <option value="cad">CAD</option>
+                                            <option value="USD">USD</option>
+                                            <option value="CAD">CAD</option>
                                         </select>
                                     </td>
                                     <td>
@@ -728,45 +729,21 @@ function Create_invoice({ create = true }) {
                                         <TableHeader>
                                             <TableColumn>Item</TableColumn>
                                             <TableColumn>Description</TableColumn>
-                                            <TableColumn>Price per piece</TableColumn>
+                                            <TableColumn>Price</TableColumn>
                                             <TableColumn>Quantity</TableColumn>
                                             <TableColumn>Total Price</TableColumn>
-                                            <TableColumn>Actions</TableColumn>
                                         </TableHeader>
                                         <TableBody>
                                             {selected_items.map((item, index) => (
                                                 <TableRow key={index}>
+                                                    <TableCell>{item.name}</TableCell>
+                                                    <TableCell>{item.description}</TableCell>
                                                     <TableCell>
-                                                        <input
-                                                            type="text"
-                                                            value={item.name}
-                                                            onChange={(e) => edit_invoice_fields(index, 'name', e.target.value)}
-                                                        />
+                                                        {item.price} {item.currency}
                                                     </TableCell>
+                                                    <TableCell>{item.quantity}</TableCell>
                                                     <TableCell>
-                                                        <input
-                                                            type="text"
-                                                            value={item.description}
-                                                            onChange={(e) => edit_invoice_fields(index, 'description', e.target.value)}
-                                                        />
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        <input
-                                                            type="number"
-                                                            value={item.price}
-                                                            onChange={(e) => edit_invoice_fields(index, 'price', parseFloat(e.target.value))}
-                                                        />
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        <input
-                                                            type="number"
-                                                            value={item.quantity}
-                                                            onChange={(e) => edit_invoice_fields(index, 'quantity', parseInt(e.target.value))}
-                                                        />
-                                                    </TableCell>
-                                                    <TableCell>{item.price * item.quantity}</TableCell>
-                                                    <TableCell>
-                                                        <button onClick={() => removeItem(index)}>Remove</button>
+                                                        {item.price * item.quantity} {item.currency}
                                                     </TableCell>
                                                 </TableRow>
                                             ))}
