@@ -2,9 +2,9 @@
 
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, useDisclosure } from '@nextui-org/react';
 import React from 'react';
-import { exportComponentAsPDF } from 'react-component-export-image';
+import { usePDF } from 'react-to-pdf';
 
-export default function Invoices() {
+export default function Invoices({create=true, invoice_id_view=""}) {
     const [data, setData] = React.useState([]);
     const [users, setUsers] = React.useState([]);
 
@@ -26,6 +26,9 @@ export default function Invoices() {
 
     const { isOpen, onOpen, onClose } = useDisclosure();
 
+    if (!create){
+        return <Create_invoice create={create} invoice_id_view={invoice_id_view}></Create_invoice>;
+    }
     return (
         <div className="invoice">
             <h1>Invoices</h1>
@@ -94,7 +97,7 @@ export default function Invoices() {
                             <TableCell>
                                 <a
                                     className="button"
-                                    href={`/view_daily_account/${item.id}`}>
+                                    href={`/invoices/${item.id}`}>
                                     View
                                 </a>
                             </TableCell>
@@ -106,7 +109,7 @@ export default function Invoices() {
     );
 }
 
-function Create_invoice({ create = true }) {
+function Create_invoice({ create = true, invoice_id_view = "" }) {
     const [company, set_company] = React.useState([]);
     const [all_bill_to, set_all_bill_to] = React.useState([]);
     const [all_ship_from, set_all_ship_from] = React.useState([]);
@@ -134,8 +137,6 @@ function Create_invoice({ create = true }) {
 
     const [total_price, set_total_price] = React.useState(0);
 
-    const invoice_viewer_ref = React.useRef(null);
-
     React.useEffect(() => {
         let total_price_ = 0;
         selected_items.map(function (item) {
@@ -159,8 +160,7 @@ function Create_invoice({ create = true }) {
     }, []);
 
     async function get_invoice_details() {
-        const number = window.location.href.split('/').pop();
-        const response = await fetch('http://localhost:5003/get_invoice_details/' + number);
+        const response = await fetch('http://localhost:5003/get_invoice_details/' + invoice_id_view);
         const data = await response.json();
         console.log(data);
         const all_items_ = JSON.parse(data['all_items']);
@@ -392,11 +392,11 @@ function Create_invoice({ create = true }) {
                 console.error('Error:', error);
             });
     }
+    const { toPDF, targetRef } = usePDF({ filename: invoice_id + '.pdf' });
+
     function createPDF() {
         createInvoice();
-        if (invoice_viewer_ref) {
-            exportComponentAsPDF(invoice_viewer_ref, { fileName: 'FileName' });
-        }
+        toPDF();
     }
 
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -670,7 +670,6 @@ function Create_invoice({ create = true }) {
                 </div>
             </div>
             <button onClick={onOpen}>View Invoice</button>
-            <button onClick={createPDF}>Create Invoice</button>
 
             <Modal
                 isOpen={isOpen}
@@ -680,7 +679,7 @@ function Create_invoice({ create = true }) {
                     <ModalBody>
                         <div className="invoice_viewer_container">
                             <div
-                                ref={invoice_viewer_ref}
+                                ref={targetRef}
                                 className="invoice_viewer"
                                 id="invoice_viewer">
                                 <div className="logo"></div>
@@ -691,7 +690,7 @@ function Create_invoice({ create = true }) {
                                         <br />
                                         <br />
 
-                                        <h3>{invoice_id}</h3>
+                                        <h1>{invoice_id}</h1>
                                         <div>Date: {date}</div>
                                         <div
                                             dangerouslySetInnerHTML={{
@@ -771,7 +770,9 @@ function Create_invoice({ create = true }) {
                             </div>
                         </div>
                     </ModalBody>
-                    <ModalFooter></ModalFooter>
+                    <ModalFooter>
+                        <button onClick={createPDF}>Create Invoice</button>
+                    </ModalFooter>
                 </ModalContent>
             </Modal>
         </div>
