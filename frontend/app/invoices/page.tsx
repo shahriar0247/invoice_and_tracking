@@ -427,7 +427,6 @@ function Create_invoice({ create = true, invoice_id_view = '' }) {
             .then((response) => {
                 if (response.ok) {
                     alert('Invoice created successfully');
-                    window.location.href = '/invoices';
                 } else {
                     alert('Failed to create invoice');
                 }
@@ -442,6 +441,7 @@ function Create_invoice({ create = true, invoice_id_view = '' }) {
     function createPDF() {
         createInvoice();
         toPDF();
+        window.location.href = '/invoices';
     }
 
     const { isOpen, onOpen, onClose } = useDisclosure();
