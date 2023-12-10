@@ -441,7 +441,7 @@ function Create_invoice({ create = true, invoice_id_view = '' }) {
     function createPDF() {
         createInvoice();
         toPDF();
-        window.location.href = '/invoices';
+        // window.location.href = '/invoices';
     }
 
     const { isOpen, onOpen, onClose } = useDisclosure();
