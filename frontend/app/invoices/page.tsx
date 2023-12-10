@@ -419,7 +419,6 @@ function Create_invoice({ create = true, invoice_id_view = '' }) {
                     <div className="title">Bill To</div>
                     <div className="input">
                         <select
-                            value={bill_to_id}
                             onChange={(e) => {
                                 let value = e.target.value;
                                 let data = JSON.parse(value);
@@ -448,7 +447,6 @@ function Create_invoice({ create = true, invoice_id_view = '' }) {
                     <div className="title">Ship To</div>
                     <div className="input">
                         <select
-                            value={ship_to_id}
                             onChange={(e) => {
                                 let value = e.target.value;
                                 let data = JSON.parse(value);
@@ -477,7 +475,6 @@ function Create_invoice({ create = true, invoice_id_view = '' }) {
                     <div className="title">Ship From</div>
                     <div className="input">
                         <select
-                            value={ship_from_id}
                             onChange={(e) => {
                                 let value = e.target.value;
                                 let data = JSON.parse(value);
