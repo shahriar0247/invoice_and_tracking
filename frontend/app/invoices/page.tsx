@@ -713,7 +713,7 @@ function Create_invoice({ create = true, invoice_id_view = '', edit = false }) {
                                             onChange={(e) => edit_invoice_fields(index, 'quantity', parseFloat(e.target.value))}
                                         />
                                     </td>
-                                    <td>{(item.price * item.quantity).toFixed(2)}</td>
+                                    <td>{(item.price * item.quantity)}</td>
                                     <td>
                                         <button onClick={() => removeItem(index)}>Remove</button> {/* Button to remove item */}
                                     </td>
@@ -752,7 +752,7 @@ function Create_invoice({ create = true, invoice_id_view = '', edit = false }) {
                                     <strong>Total Price of all items: </strong>
                                 </td>
 
-                                <td> {currency} {total_price.toFixed(2)}</td>
+                                <td> {currency} {total_price}</td>
                                 <td></td>
                             </tr>
                         </tfoot>
@@ -829,18 +829,18 @@ function Create_invoice({ create = true, invoice_id_view = '', edit = false }) {
                                                     <TableCell>{item.name}</TableCell>
                                                     <TableCell>{item.description}</TableCell>
                                                     <TableCell>
-                                                        {currency} {Number.isInteger(item.price) && item.price.toFixed(2)}
+                                                        {currency} {Number.isInteger(item.price) && item.price}
                                                     </TableCell>
                                                     <TableCell>{item.quantity}</TableCell>
                                                     <TableCell>
-                                                        {currency} {(item.price * item.quantity).toFixed(2)}
+                                                        {currency} {(item.price * item.quantity)}
                                                     </TableCell>
                                                 </TableRow>
                                             ))}
                                         </TableBody>
                                     </Table>
                                     <div className="total_price_">
-                                        Total Price: {total_price.toFixed(2)} {currency}
+                                        Total Price: {total_price} {currency}
                                     </div>
                                 </div>
                                 <div className="fifth_section">
