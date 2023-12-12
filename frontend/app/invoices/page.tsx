@@ -702,15 +702,15 @@ function Create_invoice({ create = true, invoice_id_view = '', edit = false }) {
                                     <td>
                                         <input
                                             type="number"
-                                            value={item.price}
-                                            onChange={(e) => edit_invoice_fields(index, 'price', parseFloat(e.target.value).toFixed(2))}
+                                            value={item.price.toFixed(2)}
+                                            onChange={(e) => edit_invoice_fields(index, 'price', parseFloat(e.target.value))}
                                         />
                                     </td>
                                     <td>
                                         <input
                                             type="number"
                                             value={item.quantity}
-                                            onChange={(e) => edit_invoice_fields(index, 'quantity', parseInt(e.target.value))}
+                                            onChange={(e) => edit_invoice_fields(index, 'quantity', parseFloat(e.target.value))}
                                         />
                                     </td>
                                     <td>{(item.price * item.quantity).toFixed(2)}</td>
@@ -829,7 +829,7 @@ function Create_invoice({ create = true, invoice_id_view = '', edit = false }) {
                                                     <TableCell>{item.name}</TableCell>
                                                     <TableCell>{item.description}</TableCell>
                                                     <TableCell>
-                                                        {currency} {item.price.toFixed(2)}
+                                                        {currency} {Number.isInteger(item.price) && item.price.toFixed(2)}
                                                     </TableCell>
                                                     <TableCell>{item.quantity}</TableCell>
                                                     <TableCell>
