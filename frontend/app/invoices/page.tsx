@@ -142,7 +142,7 @@ export default function Invoices({ create = true, invoice_id_view = '' }) {
             <Create_invoice
                 edit={edit}
                 create={create}
-                onCloseParent={onClose} 
+                onCloseParent={onClose}
                 fetch_invoices={fetch_invoices}
                 invoice_id_view={invoice_id_view}></Create_invoice>
         );
@@ -157,7 +157,10 @@ export default function Invoices({ create = true, invoice_id_view = '' }) {
                 <ModalContent>
                     <ModalHeader>Create Invoice</ModalHeader>
                     <ModalBody>
-                        <Create_invoice fetch_invoices={fetch_invoices} onCloseParent={onClose} />
+                        <Create_invoice
+                            fetch_invoices={fetch_invoices}
+                            onCloseParent={onClose}
+                        />
                     </ModalBody>
                     <ModalFooter></ModalFooter>
                 </ModalContent>
@@ -373,7 +376,7 @@ export default function Invoices({ create = true, invoice_id_view = '' }) {
     );
 }
 
-function Create_invoice({ create = true, invoice_id_view = '', edit = false, fetch_invoices, onCloseParent}) {
+function Create_invoice({ create = true, invoice_id_view = '', edit = false, fetch_invoices, onCloseParent }) {
     const [company, set_company] = React.useState([]);
     const [all_bill_to, set_all_bill_to] = React.useState([]);
     const [all_ship_from, set_all_ship_from] = React.useState([]);
@@ -430,8 +433,8 @@ function Create_invoice({ create = true, invoice_id_view = '', edit = false, fet
         const day = today.getDate().toString().padStart(2, '0');
         return `${year}-${month}-${day}`;
     }
-    function fetch_invoices_handler(){
-        fetch_invoices()
+    function fetch_invoices_handler() {
+        fetch_invoices();
     }
 
     async function get_invoice_details() {
@@ -655,16 +658,15 @@ function Create_invoice({ create = true, invoice_id_view = '', edit = false, fet
             });
     }
 
-    const { toPDF, targetRef } = usePDF({ filename: invoice_id + '.pdf' });
+    const { toPDF, targetRef } = usePDF({ filename: invoice_id + ' - Bill To -' + bill_to.name + ' Date: ' + date + '.pdf' });
 
     function createPDF() {
         createInvoice();
         toPDF();
         fetch_invoices_handler();
-        onClose()
+        onClose();
         set_invoice_id(`INV - ${Math.floor(Math.random() * (9999999 - 1000000 + 1)) + 1000000}`);
-        onCloseParent()
-
+        onCloseParent();
     }
 
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -1074,6 +1076,7 @@ function Create_invoice({ create = true, invoice_id_view = '', edit = false, fet
                     </ModalBody>
                     <ModalFooter>
                         <button onClick={createPDF}>Create Invoice</button>
+                        <button onClick={toPDF}>Download Invoice</button>
                     </ModalFooter>
                 </ModalContent>
             </Modal>
