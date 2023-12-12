@@ -702,7 +702,7 @@ function Create_invoice({ create = true, invoice_id_view = '', edit = false }) {
                                     <td>
                                         <input
                                             type="number"
-                                            value={item.price.toFixed(2)}
+                                            value={item.price}
                                             onChange={(e) => edit_invoice_fields(index, 'price', parseFloat(e.target.value))}
                                         />
                                     </td>
@@ -752,7 +752,7 @@ function Create_invoice({ create = true, invoice_id_view = '', edit = false }) {
                                     <strong>Total Price of all items: </strong>
                                 </td>
 
-                                <td> {total_price.toFixed(2)}</td>
+                                <td> {currency} {total_price.toFixed(2)}</td>
                                 <td></td>
                             </tr>
                         </tfoot>
