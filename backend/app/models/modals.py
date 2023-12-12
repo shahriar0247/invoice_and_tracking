@@ -66,7 +66,7 @@ class Invoice(db.Model):
     departure = db.Column(db.String(1200), nullable=True)
     location_status = db.Column(db.String(1200), nullable=True)
     custom_tracking = db.Column(db.String(1200), nullable=True)
-    BL = db.Column(db.String(1200), nullable=True)
+    status = db.Column(db.String(1200), nullable=True)
     Deli = db.Column(db.String(1200), nullable=True)
     Manifest = db.Column(db.String(1200), nullable=True)
 

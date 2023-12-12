@@ -5,11 +5,54 @@ import React from 'react';
 import { usePDF } from 'react-to-pdf';
 
 export default function Invoices({ create = true, invoice_id_view = '' }) {
-    const [data, setData] = React.useState([]);
+    const [data1, setData1] = React.useState([]);
+    const [data2, setData2] = React.useState([]);
+    const [data3, setData3] = React.useState([]);
     const [all_data, set_all_data] = React.useState([]);
     const [users, setUsers] = React.useState([]);
     const [search_term, set_search_term] = React.useState('');
     const [edit, set_edit] = React.useState(false);
+
+    const [minDate, setMinDate] = React.useState('');
+    const [maxDate, setMaxDate] = React.useState('');
+
+    const [dateFilter, setDateFilter] = React.useState(''); // State to store selected date filter
+
+    const handleDateFilterChange = (filter) => {
+        setDateFilter(filter);
+
+        const today = new Date();
+        let newMinDate = '';
+        let newMaxDate = '';
+
+        switch (filter) {
+            case 'all':
+                newMinDate = '';
+                newMaxDate = '';
+                break;
+            case 'today':
+                newMinDate = today.toISOString().split('T')[0];
+                newMaxDate = today.toISOString().split('T')[0];
+                break;
+            case 'yesterday':
+                const yesterday = new Date(today);
+                yesterday.setDate(today.getDate() - 1);
+                newMinDate = yesterday.toISOString().split('T')[0];
+                newMaxDate = yesterday.toISOString().split('T')[0];
+                break;
+            case 'last7days':
+                const last7Days = new Date(today);
+                last7Days.setDate(today.getDate() - 6);
+                newMinDate = last7Days.toISOString().split('T')[0];
+                newMaxDate = today.toISOString().split('T')[0];
+                break;
+            default:
+                break;
+        }
+
+        setMinDate(newMinDate);
+        setMaxDate(newMaxDate);
+    };
 
     React.useEffect(() => {
         fetch_invoices();
@@ -27,7 +70,10 @@ export default function Invoices({ create = true, invoice_id_view = '' }) {
         fetch('http://35.188.81.32:5003/get/invoice')
             .then((response) => response.json())
             .then((data) => {
-                setData(data);
+                setData1(data.filter((item) => item.type === 'First Quote'));
+                setData2(data.filter((item) => item.type === 'Final Quote'));
+                setData3(data.filter((item) => item.type === 'Invoice'));
+
                 set_all_data(data);
                 setUsers(getUniqueUsers(data));
             })
@@ -66,17 +112,38 @@ export default function Invoices({ create = true, invoice_id_view = '' }) {
             });
         });
 
-        setData(filteredData);
+        setData1(filteredData.filter((item) => item.type === 'First Quote'));
+        setData2(filteredData.filter((item) => item.type === 'Final Quote'));
+        setData3(filteredData.filter((item) => item.type === 'Invoice'));
     }
+
     React.useEffect(() => {
         search();
-    }, [search_term]);
+
+        var filteredData = all_data.filter(function (invoice) {
+            return (
+                (minDate === '' || new Date(invoice.date) >= new Date(minDate)) &&
+                (maxDate === '' || new Date(invoice.date) <= new Date(maxDate)) &&
+                Object.values(invoice).some(function (value) {
+                    if (value) {
+                        return value.toLowerCase().includes(search_term);
+                    }
+                })
+            );
+        });
+
+        setData1(filteredData.filter((item) => item.type === 'First Quote'));
+        setData2(filteredData.filter((item) => item.type === 'Final Quote'));
+        setData3(filteredData.filter((item) => item.type === 'Invoice'));
+    }, [minDate, maxDate, search_term]);
 
     if (!create) {
         return (
             <Create_invoice
                 edit={edit}
                 create={create}
+                onCloseParent={onClose} 
+                fetch_invoices={fetch_invoices}
                 invoice_id_view={invoice_id_view}></Create_invoice>
         );
     }
@@ -90,7 +157,7 @@ export default function Invoices({ create = true, invoice_id_view = '' }) {
                 <ModalContent>
                     <ModalHeader>Create Invoice</ModalHeader>
                     <ModalBody>
-                        <Create_invoice />
+                        <Create_invoice fetch_invoices={fetch_invoices} onCloseParent={onClose} />
                     </ModalBody>
                     <ModalFooter></ModalFooter>
                 </ModalContent>
@@ -116,6 +183,10 @@ export default function Invoices({ create = true, invoice_id_view = '' }) {
                     <input
                         type="date"
                         id="min-date"
+                        value={minDate}
+                        onChange={(e) => {
+                            setMinDate(e.target.value);
+                        }}
                     />
                 </div>
                 <div>
@@ -123,7 +194,23 @@ export default function Invoices({ create = true, invoice_id_view = '' }) {
                     <input
                         type="date"
                         id="max-date"
+                        value={maxDate}
+                        onChange={(e) => {
+                            setMaxDate(e.target.value);
+                        }}
                     />
+                </div>
+                <div>
+                    <label>Date Filter:</label>
+                    <select
+                        value={dateFilter}
+                        onChange={(e) => handleDateFilterChange(e.target.value)}
+                        clearable>
+                        <option value="all">All</option>
+                        <option value="today">Today</option>
+                        <option value="yesterday">Yesterday</option>
+                        <option value="last7days">Last 7 Days</option>
+                    </select>
                 </div>
                 <div>
                     <label>Search: </label>
@@ -134,14 +221,15 @@ export default function Invoices({ create = true, invoice_id_view = '' }) {
                             set_search_term(e.target.value);
                         }}
                     />
+                    <button
+                        onClick={() => {
+                            set_search_term('');
+                        }}>
+                        Clear Search
+                    </button>
                 </div>
-                <button
-                    onClick={() => {
-                        set_search_term('');
-                    }}>
-                    Clear Search
-                </button>
             </div>
+            <h2>All First Quotes</h2>
             <Table>
                 <TableHeader>
                     <TableColumn>ID</TableColumn>
@@ -151,9 +239,10 @@ export default function Invoices({ create = true, invoice_id_view = '' }) {
                     <TableColumn>B/L Number</TableColumn>
                     <TableColumn></TableColumn>
                     <TableColumn></TableColumn>
+                    <TableColumn></TableColumn>
                 </TableHeader>
                 <TableBody>
-                    {data.map((item) => (
+                    {data1.map((item) => (
                         <TableRow key={item.id}>
                             <TableCell>{item.id}</TableCell>
                             <TableCell>{item.type}</TableCell>
@@ -165,6 +254,107 @@ export default function Invoices({ create = true, invoice_id_view = '' }) {
                                     className="button"
                                     href={`/invoices/${item.id}?edit=true`}>
                                     Edit
+                                </a>
+                            </TableCell>
+                            <TableCell>
+                                <a
+                                    className="button"
+                                    href={`/invoices/tracking/${item.id}`}>
+                                    Tracking
+                                </a>
+                            </TableCell>
+                            <TableCell>
+                                <button
+                                    onClick={() => {
+                                        deleteInvoice(item.id);
+                                    }}>
+                                    Delete
+                                </button>
+                            </TableCell>
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
+            <h2>All Final Quotes</h2>
+
+            <Table>
+                <TableHeader>
+                    <TableColumn>ID</TableColumn>
+                    <TableColumn>Type</TableColumn>
+                    <TableColumn>Date</TableColumn>
+                    <TableColumn>Bill To</TableColumn>
+                    <TableColumn>B/L Number</TableColumn>
+                    <TableColumn></TableColumn>
+                    <TableColumn></TableColumn>
+                    <TableColumn></TableColumn>
+                </TableHeader>
+                <TableBody>
+                    {data2.map((item) => (
+                        <TableRow key={item.id}>
+                            <TableCell>{item.id}</TableCell>
+                            <TableCell>{item.type}</TableCell>
+                            <TableCell>{new Date(item.date).toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}</TableCell>
+                            <TableCell>{item.bill_to}</TableCell>
+                            <TableCell>{item.bl_number}</TableCell>
+                            <TableCell>
+                                <a
+                                    className="button"
+                                    href={`/invoices/${item.id}?edit=true`}>
+                                    Edit
+                                </a>
+                            </TableCell>
+                            <TableCell>
+                                <a
+                                    className="button"
+                                    href={`/invoices/tracking/${item.id}`}>
+                                    Tracking
+                                </a>
+                            </TableCell>
+                            <TableCell>
+                                <button
+                                    onClick={() => {
+                                        deleteInvoice(item.id);
+                                    }}>
+                                    Delete
+                                </button>
+                            </TableCell>
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
+            <h2>All Invoices</h2>
+
+            <Table>
+                <TableHeader>
+                    <TableColumn>ID</TableColumn>
+                    <TableColumn>Type</TableColumn>
+                    <TableColumn>Date</TableColumn>
+                    <TableColumn>Bill To</TableColumn>
+                    <TableColumn>B/L Number</TableColumn>
+                    <TableColumn></TableColumn>
+                    <TableColumn></TableColumn>
+                    <TableColumn></TableColumn>
+                </TableHeader>
+                <TableBody>
+                    {data3.map((item) => (
+                        <TableRow key={item.id}>
+                            <TableCell>{item.id}</TableCell>
+                            <TableCell>{item.type}</TableCell>
+                            <TableCell>{new Date(item.date).toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}</TableCell>
+                            <TableCell>{item.bill_to}</TableCell>
+                            <TableCell>{item.bl_number}</TableCell>
+                            <TableCell>
+                                <a
+                                    className="button"
+                                    href={`/invoices/${item.id}?edit=true`}>
+                                    Edit
+                                </a>
+                            </TableCell>
+                            <TableCell>
+                                <a
+                                    className="button"
+                                    href={`/invoices/tracking/${item.id}`}>
+                                    Tracking
                                 </a>
                             </TableCell>
                             <TableCell>
@@ -183,7 +373,7 @@ export default function Invoices({ create = true, invoice_id_view = '' }) {
     );
 }
 
-function Create_invoice({ create = true, invoice_id_view = '', edit = false }) {
+function Create_invoice({ create = true, invoice_id_view = '', edit = false, fetch_invoices, onCloseParent}) {
     const [company, set_company] = React.useState([]);
     const [all_bill_to, set_all_bill_to] = React.useState([]);
     const [all_ship_from, set_all_ship_from] = React.useState([]);
@@ -240,6 +430,9 @@ function Create_invoice({ create = true, invoice_id_view = '', edit = false }) {
         const day = today.getDate().toString().padStart(2, '0');
         return `${year}-${month}-${day}`;
     }
+    function fetch_invoices_handler(){
+        fetch_invoices()
+    }
 
     async function get_invoice_details() {
         const response = await fetch('http://35.188.81.32:5003/get_invoice_details/' + invoice_id_view);
@@ -280,11 +473,17 @@ function Create_invoice({ create = true, invoice_id_view = '', edit = false }) {
         set_bank_details_information(data.bank_details);
         set_bl_number(data.bl_number);
 
-        const dateObject = new Date(data.date);
-        const year = dateObject.getFullYear();
-        const month = (dateObject.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based, so add 1
-        const day = dateObject.getDate().toString().padStart(2, '0');
+        var dateObject = new Date(data.date);
+        var year = dateObject.getFullYear();
+        var month = (dateObject.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based, so add 1
+        var day = dateObject.getDate().toString().padStart(2, '0');
         set_date(`${year}-${month}-${day}`);
+
+        dateObject = new Date(data.due_date);
+        year = dateObject.getFullYear();
+        month = (dateObject.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based, so add 1
+        day = dateObject.getDate().toString().padStart(2, '0');
+        set_due_date(`${year}-${month}-${day}`);
     }
 
     const edit_invoice_fields = (index, field, value) => {
@@ -461,7 +660,11 @@ function Create_invoice({ create = true, invoice_id_view = '', edit = false }) {
     function createPDF() {
         createInvoice();
         toPDF();
-        // window.location.href = '/invoices';
+        fetch_invoices_handler();
+        onClose()
+        set_invoice_id(`INV - ${Math.floor(Math.random() * (9999999 - 1000000 + 1)) + 1000000}`);
+        onCloseParent()
+
     }
 
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -469,6 +672,7 @@ function Create_invoice({ create = true, invoice_id_view = '', edit = false }) {
     return (
         <div className="invoice">
             <h1>Invoice Details</h1>
+            <h2>{invoice_id}</h2>
 
             <div className="all_inputs all_inputs2">
                 <div className="input_field">
@@ -713,7 +917,7 @@ function Create_invoice({ create = true, invoice_id_view = '', edit = false }) {
                                             onChange={(e) => edit_invoice_fields(index, 'quantity', parseFloat(e.target.value))}
                                         />
                                     </td>
-                                    <td>{(item.price * item.quantity)}</td>
+                                    <td>{(item.price * item.quantity).toFixed(2)}</td>
                                     <td>
                                         <button onClick={() => removeItem(index)}>Remove</button> {/* Button to remove item */}
                                     </td>
@@ -752,7 +956,10 @@ function Create_invoice({ create = true, invoice_id_view = '', edit = false }) {
                                     <strong>Total Price of all items: </strong>
                                 </td>
 
-                                <td> {currency} {total_price}</td>
+                                <td>
+                                    {' '}
+                                    {currency} {total_price}
+                                </td>
                                 <td></td>
                             </tr>
                         </tfoot>
@@ -829,11 +1036,11 @@ function Create_invoice({ create = true, invoice_id_view = '', edit = false }) {
                                                     <TableCell>{item.name}</TableCell>
                                                     <TableCell>{item.description}</TableCell>
                                                     <TableCell>
-                                                        {currency} {Number.isInteger(item.price) && item.price}
+                                                        {currency} {item.price.toFixed(2)}
                                                     </TableCell>
                                                     <TableCell>{item.quantity}</TableCell>
                                                     <TableCell>
-                                                        {currency} {(item.price * item.quantity)}
+                                                        {currency} {(item.price * item.quantity).toFixed(2)}
                                                     </TableCell>
                                                 </TableRow>
                                             ))}

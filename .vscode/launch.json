@@ -9,7 +9,7 @@
             "url": "http://35.188.81.32:5003",
             "pathMappings": [
                 {
-                    "url": "http://35.188.81.32",
+                    "url": "http://http://35.188.81.32/",
                     "path": "${workspaceFolder}"
                 }
             ]
@@ -18,7 +18,7 @@
             "name": "Python: Flask",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/run.py",
+            "program": "${workspaceFolder}/backend/run.py",
             "args": [],
             "stopOnEntry": false,
             "cwd": "${workspaceFolder}",

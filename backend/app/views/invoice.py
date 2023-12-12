@@ -33,10 +33,23 @@ def create_invoice_view(invoice_id):
 
     invoice = Invoice.query.get(invoice_id)
     
-    if invoice:
-        db.session.delete(invoice)
-        db.session.commit()
 
+    if invoice and data['edit']:
+        invoice.bill_to_id = data.get("bill_to_id", invoice.bill_to_id)
+        invoice.ship_from_id = data.get("ship_from_id", invoice.ship_from_id)
+        invoice.ship_to_id = data.get("ship_to_id", invoice.ship_to_id)
+        invoice.date = data.get("date", invoice.date)
+        invoice.due_date = data.get("due_date", invoice.due_date)
+        invoice.terms = data.get("terms", invoice.terms)
+        invoice.extra_info = data.get("extra_info", invoice.extra_info)
+        invoice.bank_details = data.get("bank_details", invoice.bank_details)
+        invoice.bl_number = data.get("bl_number", invoice.bl_number)
+        invoice.type = data.get("type", invoice.type)
+        invoice.all_items = json.dumps(data.get("all_items", json.loads(invoice.all_items)))
+
+        db.session.commit()
+        
+        return "Invoice updated successfully"
     
     new_invoice = Invoice(
         id=(data["id"]),
@@ -129,11 +142,23 @@ def get_invoice_details_view_(invoice_number):
     
     invoice_object["bl_number"] = invoice.bl_number
     invoice_object["date"] = invoice.date
+    invoice_object["due_date"] = invoice.due_date
     invoice_object["type"] = invoice.type
     invoice_object["terms"] = invoice.terms
     invoice_object["extra_info"] = invoice.extra_info
     invoice_object["all_items"] = invoice.all_items
     invoice_object["bank_details"] = invoice.bank_details
+    
+    
+    
+    invoice_object["container"] = invoice.container
+    invoice_object["departure"] = invoice.departure
+    invoice_object["location_status"] = invoice.location_status
+    invoice_object["custom_tracking"] = invoice.custom_tracking
+    invoice_object["Deli"] = invoice.Deli
+    invoice_object["Manifest"] = invoice.Manifest
+    invoice_object["status"] = invoice.status
+
 
     return jsonify(invoice_object)
 
@@ -154,3 +179,28 @@ def get_invoice_details_for_daily_accounts_view(invoice_number):
     invoice_object["bank_details"] = invoice.bank_details
 
     return jsonify(invoice_object)
+
+
+@app.route("/save/invoice/tracking", methods=["POST"])
+def save_tracking():
+    data = request.json  
+    
+
+    invoice = Invoice.query.get(data['id'])
+    
+
+    if invoice:
+        invoice.container = data.get("container", invoice.container)
+        invoice.departure = data.get("departure", invoice.departure)
+        invoice.location_status = data.get("location_status", invoice.location_status)
+        invoice.custom_tracking = data.get("custom_tracking", invoice.custom_tracking)
+        invoice.status = data.get("", invoice.status)
+        invoice.Deli = data.get("Deli", invoice.Deli)
+        invoice.Manifest = data.get("Manifest", invoice.Manifest)
+
+        db.session.commit()
+        
+        return "Tracking updated successfully"
+    return "Invoice not found" 
+
+
