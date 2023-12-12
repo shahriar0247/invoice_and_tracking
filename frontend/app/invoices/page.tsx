@@ -9,9 +9,18 @@ export default function Invoices({ create = true, invoice_id_view = '' }) {
     const [all_data, set_all_data] = React.useState([]);
     const [users, setUsers] = React.useState([]);
     const [search_term, set_search_term] = React.useState('');
+    const [edit, set_edit] = React.useState(false);
 
     React.useEffect(() => {
         fetch_invoices();
+
+        try {
+            const urlParams = new URLSearchParams(window.location.search);
+            const edit = urlParams.get('edit');
+            set_edit(edit === 'true');
+        } catch (error) {
+            console.log(error);
+        }
     }, []);
 
     function fetch_invoices() {
@@ -39,7 +48,7 @@ export default function Invoices({ create = true, invoice_id_view = '' }) {
             .then((response) => {
                 if (response.ok) {
                     alert('Invoice deleted successfully');
-                    window.location.reload()
+                    window.location.reload();
                 } else {
                     alert('Failed to delete invoice');
                 }
@@ -66,6 +75,7 @@ export default function Invoices({ create = true, invoice_id_view = '' }) {
     if (!create) {
         return (
             <Create_invoice
+                edit={edit}
                 create={create}
                 invoice_id_view={invoice_id_view}></Create_invoice>
         );
@@ -140,6 +150,7 @@ export default function Invoices({ create = true, invoice_id_view = '' }) {
                     <TableColumn>Bill To</TableColumn>
                     <TableColumn>B/L Number</TableColumn>
                     <TableColumn></TableColumn>
+                    <TableColumn></TableColumn>
                 </TableHeader>
                 <TableBody>
                     {data.map((item) => (
@@ -152,10 +163,17 @@ export default function Invoices({ create = true, invoice_id_view = '' }) {
                             <TableCell>
                                 <a
                                     className="button"
-                                    href={`/invoices/${item.id}`}>
-                                    View
+                                    href={`/invoices/${item.id}?edit=true`}>
+                                    Edit
                                 </a>
-                                <button onClick={() => {deleteInvoice(item.id)}}>Delete</button>
+                            </TableCell>
+                            <TableCell>
+                                <button
+                                    onClick={() => {
+                                        deleteInvoice(item.id);
+                                    }}>
+                                    Delete
+                                </button>
                             </TableCell>
                         </TableRow>
                     ))}
@@ -165,7 +183,7 @@ export default function Invoices({ create = true, invoice_id_view = '' }) {
     );
 }
 
-function Create_invoice({ create = true, invoice_id_view = '' }) {
+function Create_invoice({ create = true, invoice_id_view = '', edit = false }) {
     const [company, set_company] = React.useState([]);
     const [all_bill_to, set_all_bill_to] = React.useState([]);
     const [all_ship_from, set_all_ship_from] = React.useState([]);
@@ -227,6 +245,7 @@ function Create_invoice({ create = true, invoice_id_view = '' }) {
         const response = await fetch('http://35.188.81.32:5003/get_invoice_details/' + invoice_id_view);
         const data = await response.json();
         const all_items_ = JSON.parse(data['all_items']);
+        set_invoice_id(data.id);
         set_selected_items(all_items_);
         set_bill_to(JSON.stringify(data.bill_to));
         set_bill_to_id(data.bill_to.id);
@@ -415,9 +434,10 @@ function Create_invoice({ create = true, invoice_id_view = '' }) {
             extra_info: extra_information,
             bl_number: bl_number,
             all_items: selected_items,
+            edit: edit,
         };
 
-        fetch('http://35.188.81.32:5003/create/invoice', {
+        fetch('http://35.188.81.32:5003/create/invoice/' + invoice_id, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

@@ -9,7 +9,7 @@ $accent: rgb(255, 66, 66);
 body {
     font-family: Arial, Helvetica, sans-serif;
     display: grid;
-    grid-template-columns: 300px auto;
+    grid-template-columns: 150px auto;
     height: 100vh;
 
     h1,
@@ -28,20 +28,15 @@ body {
         justify-content: center;
         height: max-content;
         box-shadow: 0px 0px 10px 1px rgba(0, 0, 0, 0.319);
-        padding-top: 20px;
-        padding-bottom: 20px;
+        padding: 20px;
         margin-top: 15vh;
         position: fixed;
-        width: 300px;
-        margin-left: 20px;
-
+        width: 180px;
         a {
             color: white;
             text-decoration: none;
             background-color: $primary;
-            width: 200px;
-            padding-left: 20px;
-            padding-right: 20px;
+            width: 150px;
             padding-top: 15px;
             padding-bottom: 15px;
             margin-bottom: 5px;
@@ -71,10 +66,10 @@ body {
 
         .table {
             box-shadow: 2px 2px 5px 1px rgba(0, 0, 0, 0.4);
+           
         }
     }
 }
-
 .all_inputs {
     display: grid;
     grid-template-columns: 1fr;

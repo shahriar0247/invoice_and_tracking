@@ -4,7 +4,7 @@ import json
 from flask import jsonify, redirect, request
 
 from app import app, db
-from app.models.modals import Bill_to, Company, Invoice, Ship_from, Ship_to
+from app.models.modals import Bill_to, Purchase_Order, Invoice, Ship_from, Ship_to
 
 @app.route("/get/invoice")
 def get_invoice_view():
@@ -26,9 +26,18 @@ def get_invoice_view():
 
     return jsonify(all_invoice)
 
-@app.route("/create/invoice", methods=["POST"])
-def create_invoice_view():
+@app.route("/create/invoice/<invoice_id>", methods=["POST"])
+def create_invoice_view(invoice_id):
     data = request.json  
+    
+
+    invoice = Invoice.query.get(invoice_id)
+    
+    if invoice:
+        db.session.delete(invoice)
+        db.session.commit()
+
+    
     new_invoice = Invoice(
         id=(data["id"]),
         bill_to_id=(data["bill_to_id"]),
