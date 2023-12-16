@@ -4,14 +4,13 @@ import json
 from flask import jsonify, redirect, request
 
 from app import app, db
-from app.models.modals import Bill_to, Company, Invoice, Ship_from, Ship_to
+from app.models.modals import Bill_to, Purchase_Order, Invoice, Ship_from, Ship_to
 
 @app.route("/get/invoice")
 def get_invoice_view():
 
     all_invoice = []
     all_invoices_raw = Invoice.query.all()
-    print(all_invoices_raw)
     for invoice in all_invoices_raw:
         invoice_object = {}
         invoice_object["id"] = invoice.id 
@@ -19,17 +18,41 @@ def get_invoice_view():
         invoice_object["ship_from"] = Ship_from.query.get(invoice.ship_from_id).name
         invoice_object["ship_to"] = Ship_to.query.get(invoice.ship_to_id).name
         invoice_object["bl_number"] = invoice.bl_number
+        invoice_object["type"] = invoice.type
         invoice_object["date"] = invoice.date
-        print(invoice_object)
+        invoice_object["due_date"] = invoice.due_date
 
         all_invoice.append(invoice_object)
 
     return jsonify(all_invoice)
 
-@app.route("/create/invoice", methods=["POST"])
-def create_invoice_view():
+@app.route("/create/invoice/<invoice_id>", methods=["POST"])
+def create_invoice_view(invoice_id):
     data = request.json  
+    
+
+    invoice = Invoice.query.get(invoice_id)
+    
+
+    if invoice and data['edit']:
+        invoice.bill_to_id = data.get("bill_to_id", invoice.bill_to_id)
+        invoice.ship_from_id = data.get("ship_from_id", invoice.ship_from_id)
+        invoice.ship_to_id = data.get("ship_to_id", invoice.ship_to_id)
+        invoice.date = data.get("date", invoice.date)
+        invoice.due_date = data.get("due_date", invoice.due_date)
+        invoice.terms = data.get("terms", invoice.terms)
+        invoice.extra_info = data.get("extra_info", invoice.extra_info)
+        invoice.bank_details = data.get("bank_details", invoice.bank_details)
+        invoice.bl_number = data.get("bl_number", invoice.bl_number)
+        invoice.type = data.get("type", invoice.type)
+        invoice.all_items = json.dumps(data.get("all_items", json.loads(invoice.all_items)))
+
+        db.session.commit()
+        
+        return "Invoice updated successfully"
+    
     new_invoice = Invoice(
+        id=(data["id"]),
         bill_to_id=(data["bill_to_id"]),
         ship_from_id=data["ship_from_id"],
         ship_to_id=(data["ship_to_id"]),
@@ -49,7 +72,7 @@ def create_invoice_view():
     return "Invoice created successfully"
 
 
-@app.route("/delete/invoice/<int:invoice_id>", methods=["DELETE"])
+@app.route("/delete/invoice/<invoice_id>", methods=["DELETE"])
 def delete_invoice(invoice_id):
     invoice = Invoice.query.get(invoice_id)
     
@@ -89,16 +112,53 @@ def get_invoice_details_view_(invoice_number):
     invoice = Invoice.query.get(invoice_number)
     invoice_object = {}
     invoice_object["id"] = invoice.id 
-    invoice_object["bill_to"] = invoice.bill_to_id
-    invoice_object["ship_from"] = invoice.ship_from_id
-    invoice_object["ship_to"] = invoice.ship_to_id
+    bill_to = Bill_to.query.get(invoice.bill_to_id)
+    bill_to_object = {}
+    bill_to_object["id"] = bill_to.id
+    bill_to_object["name"] = bill_to.name
+    bill_to_object["address1"] = bill_to.address1
+    bill_to_object["address2"] = bill_to.address2
+    invoice_object["bill_to"] = bill_to_object
+    
+    
+    ship_from = Ship_from.query.get(invoice.ship_from_id)
+    ship_from_object = {}
+    ship_from_object["id"] = ship_from.id
+    ship_from_object["name"] = ship_from.name
+    ship_from_object["address1"] = ship_from.address1
+    ship_from_object["address2"] = ship_from.address2
+    invoice_object["ship_from"] = ship_from_object
+    
+    
+    
+    ship_to = Ship_to.query.get(invoice.ship_to_id)
+    ship_to_object = {}
+    ship_to_object["id"] = ship_to.id
+    ship_to_object["name"] = ship_to.name
+    ship_to_object["address1"] = ship_to.address1
+    ship_to_object["address2"] = ship_to.address2
+    invoice_object["ship_to"] = ship_to_object
+    
+    
     invoice_object["bl_number"] = invoice.bl_number
     invoice_object["date"] = invoice.date
+    invoice_object["due_date"] = invoice.due_date
     invoice_object["type"] = invoice.type
     invoice_object["terms"] = invoice.terms
     invoice_object["extra_info"] = invoice.extra_info
     invoice_object["all_items"] = invoice.all_items
     invoice_object["bank_details"] = invoice.bank_details
+    
+    
+    
+    invoice_object["container"] = invoice.container
+    invoice_object["departure"] = invoice.departure
+    invoice_object["location_status"] = invoice.location_status
+    invoice_object["custom_tracking"] = invoice.custom_tracking
+    invoice_object["Deli"] = invoice.Deli
+    invoice_object["Manifest"] = invoice.Manifest
+    invoice_object["status"] = invoice.status
+
 
     return jsonify(invoice_object)
 
@@ -119,3 +179,28 @@ def get_invoice_details_for_daily_accounts_view(invoice_number):
     invoice_object["bank_details"] = invoice.bank_details
 
     return jsonify(invoice_object)
+
+
+@app.route("/save/invoice/tracking", methods=["POST"])
+def save_tracking():
+    data = request.json  
+    
+
+    invoice = Invoice.query.get(data['id'])
+    
+
+    if invoice:
+        invoice.container = data.get("container", invoice.container)
+        invoice.departure = data.get("departure", invoice.departure)
+        invoice.location_status = data.get("location_status", invoice.location_status)
+        invoice.custom_tracking = data.get("custom_tracking", invoice.custom_tracking)
+        invoice.status = data.get("", invoice.status)
+        invoice.Deli = data.get("Deli", invoice.Deli)
+        invoice.Manifest = data.get("Manifest", invoice.Manifest)
+
+        db.session.commit()
+        
+        return "Tracking updated successfully"
+    return "Invoice not found" 
+
+

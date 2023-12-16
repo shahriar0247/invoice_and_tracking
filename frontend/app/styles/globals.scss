@@ -9,7 +9,7 @@ $accent: rgb(255, 66, 66);
 body {
     font-family: Arial, Helvetica, sans-serif;
     display: grid;
-    grid-template-columns: 300px auto;
+    grid-template-columns: 200px auto;
     height: 100vh;
 
     h1,
@@ -22,26 +22,29 @@ body {
         margin: 20px;
         margin-left: 0px;
     }
+    h1{
+        font-size: 30px;
+    }
+    h2{
+        font-size: 25px;
+    }
 
     nav {
         display: grid;
         justify-content: center;
         height: max-content;
         box-shadow: 0px 0px 10px 1px rgba(0, 0, 0, 0.319);
-        padding-top: 20px;
-        padding-bottom: 20px;
-        margin-top: 15vh;
+        padding: 20px;
+        height: 500px;
+        margin-top: calc(50vh - 250px);
+        margin-left: 25px;
         position: fixed;
-        width: 300px;
-        margin-left: 20px;
-
+        width: 180px;
         a {
             color: white;
             text-decoration: none;
             background-color: $primary;
-            width: 200px;
-            padding-left: 20px;
-            padding-right: 20px;
+            width: 150px;
             padding-top: 15px;
             padding-bottom: 15px;
             margin-bottom: 5px;
@@ -71,10 +74,10 @@ body {
 
         .table {
             box-shadow: 2px 2px 5px 1px rgba(0, 0, 0, 0.4);
+           
         }
     }
 }
-
 .all_inputs {
     display: grid;
     grid-template-columns: 1fr;
@@ -135,6 +138,8 @@ button:hover {
     text-decoration: none;
     display: flex;
     align-items: center;
+    text-align: center;
+    justify-content: center;
 }
 
 .button:hover,
@@ -190,11 +195,14 @@ textarea {
 .invoice {
     .all_filters {
         display: grid;
-        grid-auto-flow: column;
-        width: max-content;
+        grid-template-columns: 1fr 1fr 1fr;
         margin: auto;
+        margin-top: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0px 0px 10px 1px rgba(0, 0, 0, 0.144);
         margin-right: 0px;
         align-items: center;
+        padding: 20px;
         label {
             margin-right: 10px;
         }
@@ -206,5 +214,10 @@ textarea {
 }
 .max-w-md {
     max-width: none !important;
+}
+
+input:read-only{
+    background-color: rgb(209, 209, 209);
+    color: #222222
 }
 @import './invoice_viewer.scss';

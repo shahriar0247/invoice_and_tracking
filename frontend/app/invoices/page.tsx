@@ -2,55 +2,175 @@
 
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, useDisclosure } from '@nextui-org/react';
 import React from 'react';
-import { exportComponentAsPDF } from 'react-component-export-image';
+import { usePDF } from 'react-to-pdf';
 
-export default function Invoices() {
-    const [data, setData] = React.useState([]);
+export default function Invoices({ create = true, invoice_id_view = '' }) {
+    const [data1, setData1] = React.useState([]);
+    const [data2, setData2] = React.useState([]);
+    const [data3, setData3] = React.useState([]);
+    const [all_data, set_all_data] = React.useState([]);
     const [users, setUsers] = React.useState([]);
+    const [search_term, set_search_term] = React.useState('');
+    const [edit, set_edit] = React.useState(false);
+
+    const [minDate, setMinDate] = React.useState('');
+    const [maxDate, setMaxDate] = React.useState('');
+
+    const [dateFilter, setDateFilter] = React.useState(''); // State to store selected date filter
+
+    const handleDateFilterChange = (filter) => {
+        setDateFilter(filter);
+
+        const today = new Date();
+        let newMinDate = '';
+        let newMaxDate = '';
+
+        switch (filter) {
+            case 'all':
+                newMinDate = '';
+                newMaxDate = '';
+                break;
+            case 'today':
+                newMinDate = today.toISOString().split('T')[0];
+                newMaxDate = today.toISOString().split('T')[0];
+                break;
+            case 'yesterday':
+                const yesterday = new Date(today);
+                yesterday.setDate(today.getDate() - 1);
+                newMinDate = yesterday.toISOString().split('T')[0];
+                newMaxDate = yesterday.toISOString().split('T')[0];
+                break;
+            case 'last7days':
+                const last7Days = new Date(today);
+                last7Days.setDate(today.getDate() - 6);
+                newMinDate = last7Days.toISOString().split('T')[0];
+                newMaxDate = today.toISOString().split('T')[0];
+                break;
+            default:
+                break;
+        }
+
+        setMinDate(newMinDate);
+        setMaxDate(newMaxDate);
+    };
 
     React.useEffect(() => {
-        fetchDaily_Account();
+        fetch_invoices();
+
+        try {
+            const urlParams = new URLSearchParams(window.location.search);
+            const edit = urlParams.get('edit');
+            set_edit(edit === 'true');
+        } catch (error) {
+            console.log(error);
+        }
     }, []);
 
-    function fetchDaily_Account() {
-        fetch('http://localhost:5003/get/daily_account')
+    function fetch_invoices() {
+        fetch('http://35.188.81.32:5003/get/invoice')
             .then((response) => response.json())
             .then((data) => {
-                setData(data);
+                setData1(data.filter((item) => item.type === 'First Quote'));
+                setData2(data.filter((item) => item.type === 'Final Quote'));
+                setData3(data.filter((item) => item.type === 'Invoice'));
+
+                set_all_data(data);
                 setUsers(getUniqueUsers(data));
             })
             .catch((error) => {
-                console.error('Error fetching daily_account:', error);
+                console.error('Error fetching invoices:', error);
             });
     }
 
+    const { isOpen, onOpen, onClose } = useDisclosure();
     function getUniqueUsers(data) {
-        // Extract unique users from the data (assuming "Bill To" is the user field)
         const uniqueUsers = [...new Set(data.map((item) => item.bill_to))];
         return uniqueUsers;
     }
-    const { isOpen, onOpen, onClose } = useDisclosure();
+    function deleteInvoice(invoiceId) {
+        fetch(`http://35.188.81.32:5003/delete/invoice/${invoiceId}`, {
+            method: 'DELETE',
+        })
+            .then((response) => {
+                if (response.ok) {
+                    alert('Invoice deleted successfully');
+                    window.location.reload();
+                } else {
+                    alert('Failed to delete invoice');
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+    }
+    function search() {
+        var filteredData = all_data.filter(function (invoice) {
+            return Object.values(invoice).some(function (value) {
+                if (value) {
+                    return value.toLowerCase().includes(search_term);
+                }
+            });
+        });
 
+        setData1(filteredData.filter((item) => item.type === 'First Quote'));
+        setData2(filteredData.filter((item) => item.type === 'Final Quote'));
+        setData3(filteredData.filter((item) => item.type === 'Invoice'));
+    }
+
+    React.useEffect(() => {
+        search();
+
+        var filteredData = all_data.filter(function (invoice) {
+            return (
+                (minDate === '' || new Date(invoice.date) >= new Date(minDate)) &&
+                (maxDate === '' || new Date(invoice.date) <= new Date(maxDate)) &&
+                Object.values(invoice).some(function (value) {
+                    if (value) {
+                        return value.toLowerCase().includes(search_term);
+                    }
+                })
+            );
+        });
+
+        setData1(filteredData.filter((item) => item.type === 'First Quote'));
+        setData2(filteredData.filter((item) => item.type === 'Final Quote'));
+        setData3(filteredData.filter((item) => item.type === 'Invoice'));
+    }, [minDate, maxDate, search_term]);
+
+    if (!create) {
+        return (
+            <Create_invoice
+                edit={edit}
+                create={create}
+                onCloseParent={onClose}
+                fetch_invoices={fetch_invoices}
+                invoice_id_view={invoice_id_view}></Create_invoice>
+        );
+    }
     return (
         <div className="invoice">
-            <h1>Daily_Accounts</h1>
-            <button onClick={onOpen}>Create Daily Account</button>
+            <h1>Invoices</h1>
+            <button onClick={onOpen}>Create Invoice</button>
             <Modal
                 isOpen={isOpen}
                 onClose={onClose}>
                 <ModalContent>
-                    <ModalHeader>Create Daily</ModalHeader>
+                    <ModalHeader>Create Invoice</ModalHeader>
                     <ModalBody>
-                        <Create_invoice />
+                        <Create_invoice
+                            fetch_invoices={fetch_invoices}
+                            onCloseParent={onClose}
+                        />
                     </ModalBody>
                     <ModalFooter></ModalFooter>
                 </ModalContent>
             </Modal>
 
+            <h1>All Filters</h1>
             <div className="all_filters">
                 <div>
                     <label>User:</label>
-                    <select id="user-filter">
+                    <select onChange={(e) => set_search_term(e.target.value)}>
                         <option value="">All</option>
                         {users.map((user, index) => (
                             <option
@@ -66,36 +186,187 @@ export default function Invoices() {
                     <input
                         type="date"
                         id="min-date"
+                        value={minDate}
+                        onChange={(e) => {
+                            setMinDate(e.target.value);
+                        }}
                     />
                 </div>
-
                 <div>
                     <label>To:</label>
                     <input
                         type="date"
                         id="max-date"
+                        value={maxDate}
+                        onChange={(e) => {
+                            setMaxDate(e.target.value);
+                        }}
                     />
                 </div>
+                <div>
+                    <label>Date Filter:</label>
+                    <select
+                        value={dateFilter}
+                        onChange={(e) => handleDateFilterChange(e.target.value)}
+                        clearable>
+                        <option value="all">All</option>
+                        <option value="today">Today</option>
+                        <option value="yesterday">Yesterday</option>
+                        <option value="last7days">Last 7 Days</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Search: </label>
+                    <input
+                        type="text"
+                        value={search_term}
+                        onChange={(e) => {
+                            set_search_term(e.target.value);
+                        }}
+                    />
+                    <button
+                        onClick={() => {
+                            set_search_term('');
+                        }}>
+                        Clear Search
+                    </button>
+                </div>
             </div>
+            <h2>All First Quotes</h2>
             <Table>
                 <TableHeader>
                     <TableColumn>ID</TableColumn>
-                    <TableColumn>Invoice</TableColumn>
-                    <TableColumn>Purchase Order</TableColumn>
+                    <TableColumn>Type</TableColumn>
+                    <TableColumn>Date</TableColumn>
+                    <TableColumn>Bill To</TableColumn>
+                    <TableColumn>B/L Number</TableColumn>
+                    <TableColumn></TableColumn>
+                    <TableColumn></TableColumn>
                     <TableColumn></TableColumn>
                 </TableHeader>
                 <TableBody>
-                    {data.map((item) => (
+                    {data1.map((item) => (
                         <TableRow key={item.id}>
                             <TableCell>{item.id}</TableCell>
-                            <TableCell>{item.invoice_id}</TableCell>
-                            <TableCell>{item.purchase_order_id}</TableCell>
+                            <TableCell>{item.type}</TableCell>
+                            <TableCell>{new Date(item.date).toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}</TableCell>
+                            <TableCell>{item.bill_to}</TableCell>
+                            <TableCell>{item.bl_number}</TableCell>
                             <TableCell>
                                 <a
                                     className="button"
-                                    href={`/view_daily_account/${item.id}`}>
-                                    View
+                                    href={`/invoices/${item.id}?edit=true`}>
+                                    Edit
                                 </a>
+                            </TableCell>
+                            <TableCell>
+                                <a
+                                    className="button"
+                                    href={`/invoices/tracking/${item.id}`}>
+                                    Tracking
+                                </a>
+                            </TableCell>
+                            <TableCell>
+                                <button
+                                    onClick={() => {
+                                        deleteInvoice(item.id);
+                                    }}>
+                                    Delete
+                                </button>
+                            </TableCell>
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
+            <h2>All Final Quotes</h2>
+
+            <Table>
+                <TableHeader>
+                    <TableColumn>ID</TableColumn>
+                    <TableColumn>Type</TableColumn>
+                    <TableColumn>Date</TableColumn>
+                    <TableColumn>Bill To</TableColumn>
+                    <TableColumn>B/L Number</TableColumn>
+                    <TableColumn></TableColumn>
+                    <TableColumn></TableColumn>
+                    <TableColumn></TableColumn>
+                </TableHeader>
+                <TableBody>
+                    {data2.map((item) => (
+                        <TableRow key={item.id}>
+                            <TableCell>{item.id}</TableCell>
+                            <TableCell>{item.type}</TableCell>
+                            <TableCell>{new Date(item.date).toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}</TableCell>
+                            <TableCell>{item.bill_to}</TableCell>
+                            <TableCell>{item.bl_number}</TableCell>
+                            <TableCell>
+                                <a
+                                    className="button"
+                                    href={`/invoices/${item.id}?edit=true`}>
+                                    Edit
+                                </a>
+                            </TableCell>
+                            <TableCell>
+                                <a
+                                    className="button"
+                                    href={`/invoices/tracking/${item.id}`}>
+                                    Tracking
+                                </a>
+                            </TableCell>
+                            <TableCell>
+                                <button
+                                    onClick={() => {
+                                        deleteInvoice(item.id);
+                                    }}>
+                                    Delete
+                                </button>
+                            </TableCell>
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
+            <h2>All Invoices</h2>
+
+            <Table>
+                <TableHeader>
+                    <TableColumn>ID</TableColumn>
+                    <TableColumn>Type</TableColumn>
+                    <TableColumn>Date</TableColumn>
+                    <TableColumn>Bill To</TableColumn>
+                    <TableColumn>B/L Number</TableColumn>
+                    <TableColumn></TableColumn>
+                    <TableColumn></TableColumn>
+                    <TableColumn></TableColumn>
+                </TableHeader>
+                <TableBody>
+                    {data3.map((item) => (
+                        <TableRow key={item.id}>
+                            <TableCell>{item.id}</TableCell>
+                            <TableCell>{item.type}</TableCell>
+                            <TableCell>{new Date(item.date).toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}</TableCell>
+                            <TableCell>{item.bill_to}</TableCell>
+                            <TableCell>{item.bl_number}</TableCell>
+                            <TableCell>
+                                <a
+                                    className="button"
+                                    href={`/invoices/${item.id}?edit=true`}>
+                                    Edit
+                                </a>
+                            </TableCell>
+                            <TableCell>
+                                <a
+                                    className="button"
+                                    href={`/invoices/tracking/${item.id}`}>
+                                    Tracking
+                                </a>
+                            </TableCell>
+                            <TableCell>
+                                <button
+                                    onClick={() => {
+                                        deleteInvoice(item.id);
+                                    }}>
+                                    Delete
+                                </button>
                             </TableCell>
                         </TableRow>
                     ))}
@@ -105,7 +376,7 @@ export default function Invoices() {
     );
 }
 
-function Create_invoice({ create = true }) {
+function Create_invoice({ create = true, invoice_id_view = '', edit = false, fetch_invoices, onCloseParent }) {
     const [company, set_company] = React.useState([]);
     const [all_bill_to, set_all_bill_to] = React.useState([]);
     const [all_ship_from, set_all_ship_from] = React.useState([]);
@@ -125,15 +396,16 @@ function Create_invoice({ create = true }) {
     const [invoice_type, set_invoice_type] = React.useState('First Quote');
     const [bl_number, set_bl_number] = React.useState('');
     const [bill_to_id, set_bill_to_id] = React.useState('');
+    const [bill_to, set_bill_to] = React.useState('');
     const [ship_to_id, set_ship_to_id] = React.useState('');
+    const [ship_to, set_ship_to] = React.useState('');
     const [ship_from_id, set_ship_from_id] = React.useState('');
-    const [date, set_date] = React.useState('');
-    const [due_date, set_due_date] = React.useState('');
-    const [invoice_id, set_invoice_id] = React.useState('');
+    const [ship_from, set_ship_from] = React.useState('');
+    const [date, set_date] = React.useState(getFormattedDate());
+    const [due_date, set_due_date] = React.useState(getFormattedDate());
+    const [invoice_id, set_invoice_id] = React.useState(`INV - ${Math.floor(Math.random() * (9999999 - 1000000 + 1)) + 1000000}`);
 
     const [total_price, set_total_price] = React.useState(0);
-
-    const invoice_viewer_ref = React.useRef(null);
 
     React.useEffect(() => {
         let total_price_ = 0;
@@ -142,9 +414,6 @@ function Create_invoice({ create = true }) {
         });
         set_total_price(total_price_);
     }, [selected_items]);
-    React.useEffect(() => {
-        console.log(bill_to_id);
-    });
     React.useEffect(() => {
         fetchCompany();
         fetchBillTo();
@@ -157,28 +426,67 @@ function Create_invoice({ create = true }) {
         }
     }, []);
 
+    function getFormattedDate() {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = (today.getMonth() + 1).toString().padStart(2, '0');
+        const day = today.getDate().toString().padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+    function fetch_invoices_handler() {
+        fetch_invoices();
+    }
+
     async function get_invoice_details() {
-        const number = window.location.href.split('/').pop();
-        const response = await fetch('http://localhost:5003/get_invoice_details/' + number);
+        const response = await fetch('http://35.188.81.32:5003/get_invoice_details/' + invoice_id_view);
         const data = await response.json();
-        console.log(data);
         const all_items_ = JSON.parse(data['all_items']);
+        set_invoice_id(data.id);
         set_selected_items(all_items_);
-        set_bill_to_id(data.bill_to);
-        set_ship_to_id(data.ship_to);
-        set_ship_from_id(data.ship_from);
+        set_bill_to(JSON.stringify(data.bill_to));
+        set_bill_to_id(data.bill_to.id);
+        set_ship_to(JSON.stringify(data.ship_to));
+        set_ship_to_id(data.ship_to.id);
+        set_ship_from(JSON.stringify(data.ship_from));
+        set_ship_from_id(data.ship_from.id);
+        set_bill_to_information(
+            <div>
+                <div>{data.bill_to.name}</div>
+                <div>{data.bill_to.address1}</div>
+                <div>{data.bill_to.address2}</div>
+            </div>
+        );
+        set_ship_to_information(
+            <div>
+                <div>{data.ship_to.name}</div>
+                <div>{data.ship_to.address1}</div>
+                <div>{data.ship_to.address2}</div>
+            </div>
+        );
+        set_ship_from_information(
+            <div>
+                <div>{data.ship_from.name}</div>
+                <div>{data.ship_from.address1}</div>
+                <div>{data.ship_from.address2}</div>
+            </div>
+        );
         set_invoice_type(data.type);
         set_terms_and_conditions(data.terms);
         set_extra_information(data.extra_info);
         set_bank_details_information(data.bank_details);
         set_bl_number(data.bl_number);
-        set_invoice_id(data.id);
 
-        const dateObject = new Date(data.date);
-        const year = dateObject.getFullYear();
-        const month = (dateObject.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based, so add 1
-        const day = dateObject.getDate().toString().padStart(2, '0');
+        var dateObject = new Date(data.date);
+        var year = dateObject.getFullYear();
+        var month = (dateObject.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based, so add 1
+        var day = dateObject.getDate().toString().padStart(2, '0');
         set_date(`${year}-${month}-${day}`);
+
+        dateObject = new Date(data.due_date);
+        year = dateObject.getFullYear();
+        month = (dateObject.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based, so add 1
+        day = dateObject.getDate().toString().padStart(2, '0');
+        set_due_date(`${year}-${month}-${day}`);
     }
 
     const edit_invoice_fields = (index, field, value) => {
@@ -213,7 +521,7 @@ function Create_invoice({ create = true }) {
         set_selected_items(updatedItems);
     };
     function fetchInvoice() {
-        fetch('http://localhost:5003/get/invoice')
+        fetch('http://35.188.81.32:5003/get/invoice')
             .then((response) => response.json())
             .then((data) => {
                 // setda(data);
@@ -223,7 +531,7 @@ function Create_invoice({ create = true }) {
             });
     }
     function fetchCompany() {
-        fetch('http://localhost:5003/get/company')
+        fetch('http://35.188.81.32:5003/get/company')
             .then((response) => response.json())
             .then((data) => {
                 set_company(data);
@@ -245,7 +553,7 @@ function Create_invoice({ create = true }) {
             });
     }
     function fetchBillTo() {
-        fetch('http://localhost:5003/get/type/bill_to')
+        fetch('http://35.188.81.32:5003/get/type/bill_to')
             .then((response) => response.json())
             .then((data) => {
                 set_all_bill_to(data);
@@ -264,7 +572,7 @@ function Create_invoice({ create = true }) {
             });
     }
     function fetchShipFrom() {
-        fetch('http://localhost:5003/get/type/ship_from')
+        fetch('http://35.188.81.32:5003/get/type/ship_from')
             .then((response) => response.json())
             .then((data) => {
                 set_all_ship_from(data);
@@ -283,7 +591,7 @@ function Create_invoice({ create = true }) {
             });
     }
     function fetchShipTo() {
-        fetch('http://localhost:5003/get/type/ship_to')
+        fetch('http://35.188.81.32:5003/get/type/ship_to')
             .then((response) => response.json())
             .then((data) => {
                 set_all_ship_to(data);
@@ -303,7 +611,7 @@ function Create_invoice({ create = true }) {
     }
     function fetchItems() {
         console.log('here 2');
-        fetch('http://localhost:5003/get/item')
+        fetch('http://35.188.81.32:5003/get/item')
             .then((response) => response.json())
             .then((data) => {
                 console.log(data);
@@ -316,6 +624,7 @@ function Create_invoice({ create = true }) {
 
     function createInvoice() {
         const invoiceData = {
+            id: invoice_id,
             bill_to_id: bill_to_id,
             ship_to_id: ship_to_id,
             ship_from_id: ship_from_id,
@@ -327,11 +636,10 @@ function Create_invoice({ create = true }) {
             extra_info: extra_information,
             bl_number: bl_number,
             all_items: selected_items,
+            edit: edit,
         };
-        console.log('invoiceData');
-        console.log(invoiceData);
 
-        fetch('http://localhost:5003/create/invoice', {
+        fetch('http://35.188.81.32:5003/create/invoice/' + invoice_id, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -349,70 +657,36 @@ function Create_invoice({ create = true }) {
                 console.error('Error:', error);
             });
     }
-    function deleteInvoice(invoiceId) {
-        fetch(`/delete/invoice/${invoiceId}`, {
-            method: 'DELETE',
-        })
-            .then((response) => {
-                if (response.ok) {
-                    alert('Invoice deleted successfully');
-                } else {
-                    alert('Failed to delete invoice');
-                }
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-            });
-    }
-    function editInvoice(invoiceId) {
-        const updatedInvoiceData = {
-            date: '2023-11-07', // Replace with updated data
-            terms: 'Net 45', // Replace with updated data
-            invoice1: 'Jane Smith', // Replace with updated data
-            // Add other fields as needed
-        };
 
-        fetch(`/edit/invoice/${invoiceId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(updatedInvoiceData),
-        })
-            .then((response) => {
-                if (response.ok) {
-                    alert('Invoice updated successfully');
-                } else {
-                    alert('Failed to update invoice');
-                }
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-            });
-    }
+    const { toPDF, targetRef } = usePDF({ filename: invoice_id + ' - Bill To -' + bill_to.name + ' Date: ' + date + '.pdf' });
+
     function createPDF() {
         createInvoice();
-        if (invoice_viewer_ref) {
-            exportComponentAsPDF(invoice_viewer_ref, { fileName: 'FileName' });
-        }
+        toPDF();
+        fetch_invoices_handler();
+        onClose();
+        set_invoice_id(`INV - ${Math.floor(Math.random() * (9999999 - 1000000 + 1)) + 1000000}`);
+        onCloseParent();
     }
 
     const { isOpen, onOpen, onClose } = useDisclosure();
-
+    const [currency, set_currency] = React.useState('USD');
     return (
         <div className="invoice">
             <h1>Invoice Details</h1>
+            <h2>{invoice_id}</h2>
 
             <div className="all_inputs all_inputs2">
                 <div className="input_field">
                     <div className="title">Bill To</div>
                     <div className="input">
                         <select
-                            value={bill_to_id}
+                            value={bill_to}
                             onChange={(e) => {
                                 let value = e.target.value;
                                 let data = JSON.parse(value);
                                 set_bill_to_id(data.id);
+                                set_bill_to(value);
                                 set_bill_to_information(
                                     <div>
                                         <div>{data.name}</div>
@@ -422,7 +696,13 @@ function Create_invoice({ create = true }) {
                                 );
                             }}>
                             {all_bill_to.map(function (bill_to) {
-                                return <option value={bill_to.id}>{bill_to.name}</option>;
+                                return (
+                                    <option
+                                        key={JSON.stringify(bill_to)}
+                                        value={JSON.stringify(bill_to)}>
+                                        {bill_to.name}
+                                    </option>
+                                );
                             })}
                         </select>
                     </div>
@@ -431,11 +711,12 @@ function Create_invoice({ create = true }) {
                     <div className="title">Ship To</div>
                     <div className="input">
                         <select
-                            value={ship_to_id}
+                            value={ship_to}
                             onChange={(e) => {
                                 let value = e.target.value;
                                 let data = JSON.parse(value);
                                 set_ship_to_id(data.id);
+                                set_ship_to(value);
                                 set_ship_to_information(
                                     <div>
                                         <div>{data.name}</div>
@@ -445,7 +726,13 @@ function Create_invoice({ create = true }) {
                                 );
                             }}>
                             {all_ship_to.map(function (ship_to) {
-                                return <option value={ship_to.id}>{ship_to.name}</option>;
+                                return (
+                                    <option
+                                        key={JSON.stringify(ship_to)}
+                                        value={JSON.stringify(ship_to)}>
+                                        {ship_to.name}
+                                    </option>
+                                );
                             })}
                         </select>
                     </div>
@@ -454,11 +741,12 @@ function Create_invoice({ create = true }) {
                     <div className="title">Ship From</div>
                     <div className="input">
                         <select
-                            value={ship_from_id}
+                            value={ship_from}
                             onChange={(e) => {
                                 let value = e.target.value;
                                 let data = JSON.parse(value);
                                 set_ship_from_id(data.id);
+                                set_ship_from(value);
                                 set_ship_from_information(
                                     <div>
                                         <div>{data.name}</div>
@@ -468,7 +756,13 @@ function Create_invoice({ create = true }) {
                                 );
                             }}>
                             {all_ship_from.map(function (ship_from) {
-                                return <option value={ship_from.id}>{ship_from.name}</option>;
+                                return (
+                                    <option
+                                        key={JSON.stringify(ship_from)}
+                                        value={JSON.stringify(ship_from)}>
+                                        {ship_from.name}
+                                    </option>
+                                );
                             })}
                         </select>
                     </div>
@@ -509,7 +803,20 @@ function Create_invoice({ create = true }) {
                         />
                     </div>
                 </div>
-
+                <div className="input_field">
+                    <div className="title">Currency</div>
+                    <div className="input">
+                        <select
+                            value={currency}
+                            onChange={(e) => {
+                                let value = e.target.value;
+                                set_currency(value);
+                            }}>
+                            <option value="USD">USD</option>
+                            <option value="CAD">CAD</option>
+                        </select>
+                    </div>
+                </div>
                 <div className="input_field">
                     <div className="title">Terms</div>
                     <div className="input">
@@ -576,7 +883,6 @@ function Create_invoice({ create = true }) {
                                 <th>Item</th>
                                 <th>Description</th>
                                 <th>Price</th>
-                                <th>Currency</th>
                                 <th>Quantity</th>
                                 <th>Total Price</th>
                                 <th>Actions</th>
@@ -607,23 +913,13 @@ function Create_invoice({ create = true }) {
                                         />
                                     </td>
                                     <td>
-                                        <select
-                                            value={item.currency}
-                                            onChange={(e) => edit_invoice_fields(index, 'currency', e.target.value)}
-                                            name=""
-                                            id="">
-                                            <option value="usd">USD</option>
-                                            <option value="cad">CAD</option>
-                                        </select>
-                                    </td>
-                                    <td>
                                         <input
                                             type="number"
                                             value={item.quantity}
-                                            onChange={(e) => edit_invoice_fields(index, 'quantity', parseInt(e.target.value))}
+                                            onChange={(e) => edit_invoice_fields(index, 'quantity', parseFloat(e.target.value))}
                                         />
                                     </td>
-                                    <td>{item.price * item.quantity}</td>
+                                    <td>{(item.price * item.quantity).toFixed(2)}</td>
                                     <td>
                                         <button onClick={() => removeItem(index)}>Remove</button> {/* Button to remove item */}
                                     </td>
@@ -637,7 +933,9 @@ function Create_invoice({ create = true }) {
                                         {all_items &&
                                             all_items.map(function (item) {
                                                 return (
-                                                    <option value={JSON.stringify(item)}>
+                                                    <option
+                                                        key={JSON.stringify(item)}
+                                                        value={JSON.stringify(item)}>
                                                         {item.name} - {item.price} Price
                                                     </option>
                                                 );
@@ -660,7 +958,10 @@ function Create_invoice({ create = true }) {
                                     <strong>Total Price of all items: </strong>
                                 </td>
 
-                                <td> {total_price}</td>
+                                <td>
+                                    {' '}
+                                    {currency} {total_price}
+                                </td>
                                 <td></td>
                             </tr>
                         </tfoot>
@@ -668,7 +969,6 @@ function Create_invoice({ create = true }) {
                 </div>
             </div>
             <button onClick={onOpen}>View Invoice</button>
-            <button onClick={createPDF}>Create Invoice</button>
 
             <Modal
                 isOpen={isOpen}
@@ -678,7 +978,7 @@ function Create_invoice({ create = true }) {
                     <ModalBody>
                         <div className="invoice_viewer_container">
                             <div
-                                ref={invoice_viewer_ref}
+                                ref={targetRef}
                                 className="invoice_viewer"
                                 id="invoice_viewer">
                                 <div className="logo"></div>
@@ -689,8 +989,10 @@ function Create_invoice({ create = true }) {
                                         <br />
                                         <br />
 
-                                        <h3>{invoice_id}</h3>
+                                        <h1>{invoice_id}</h1>
                                         <div>Date: {date}</div>
+                                        <div>Due Date: {due_date}</div>
+                                        <div>B/L Number: {bl_number}</div>
                                         <div
                                             dangerouslySetInnerHTML={{
                                                 __html: invoice_information.replace(/\n/g, '<br>'),
@@ -726,50 +1028,29 @@ function Create_invoice({ create = true }) {
                                         <TableHeader>
                                             <TableColumn>Item</TableColumn>
                                             <TableColumn>Description</TableColumn>
-                                            <TableColumn>Price per piece</TableColumn>
+                                            <TableColumn>Price</TableColumn>
                                             <TableColumn>Quantity</TableColumn>
                                             <TableColumn>Total Price</TableColumn>
-                                            <TableColumn>Actions</TableColumn>
                                         </TableHeader>
                                         <TableBody>
                                             {selected_items.map((item, index) => (
                                                 <TableRow key={index}>
+                                                    <TableCell>{item.name}</TableCell>
+                                                    <TableCell>{item.description}</TableCell>
                                                     <TableCell>
-                                                        <input
-                                                            type="text"
-                                                            value={item.name}
-                                                            onChange={(e) => edit_invoice_fields(index, 'name', e.target.value)}
-                                                        />
+                                                        {currency} {item.price.toFixed(2)}
                                                     </TableCell>
+                                                    <TableCell>{item.quantity}</TableCell>
                                                     <TableCell>
-                                                        <input
-                                                            type="text"
-                                                            value={item.description}
-                                                            onChange={(e) => edit_invoice_fields(index, 'description', e.target.value)}
-                                                        />
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        <input
-                                                            type="number"
-                                                            value={item.price}
-                                                            onChange={(e) => edit_invoice_fields(index, 'price', parseFloat(e.target.value))}
-                                                        />
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        <input
-                                                            type="number"
-                                                            value={item.quantity}
-                                                            onChange={(e) => edit_invoice_fields(index, 'quantity', parseInt(e.target.value))}
-                                                        />
-                                                    </TableCell>
-                                                    <TableCell>{item.price * item.quantity}</TableCell>
-                                                    <TableCell>
-                                                        <button onClick={() => removeItem(index)}>Remove</button>
+                                                        {currency} {(item.price * item.quantity).toFixed(2)}
                                                     </TableCell>
                                                 </TableRow>
                                             ))}
                                         </TableBody>
                                     </Table>
+                                    <div className="total_price_">
+                                        Total Price: {total_price} {currency}
+                                    </div>
                                 </div>
                                 <div className="fifth_section">
                                     <h3>Bank Details</h3>
@@ -793,7 +1074,10 @@ function Create_invoice({ create = true }) {
                             </div>
                         </div>
                     </ModalBody>
-                    <ModalFooter></ModalFooter>
+                    <ModalFooter>
+                        <button onClick={createPDF}>Create Invoice</button>
+                        <button onClick={toPDF}>Download Invoice</button>
+                    </ModalFooter>
                 </ModalContent>
             </Modal>
         </div>

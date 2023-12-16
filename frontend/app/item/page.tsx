@@ -34,7 +34,7 @@ export default function App() {
         setEditItemId(itemId);
         onOpen();
         // Fetch item details for editing
-        fetch(`http://localhost:5003/get/item/${itemId}`)
+        fetch(`http://35.188.81.32:5003/get/item/${itemId}`)
             .then((response) => response.json())
             .then((data) => {
                 set_name(data.name);
@@ -51,7 +51,7 @@ export default function App() {
     }, []);
 
     function fetchItem() {
-        fetch("http://localhost:5003/get/item")
+        fetch("http://35.188.81.32:5003/get/item")
             .then((response) => response.json())
             .then((data) => {
                 setTableData(data);
@@ -68,7 +68,7 @@ export default function App() {
             price: price,
         };
 
-        fetch("http://localhost:5003/create/item", {
+        fetch("http://35.188.81.32:5003/create/item", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -96,7 +96,7 @@ export default function App() {
             price: price,
         };
 
-        fetch(`http://localhost:5003/edit/item/${editItemId}`, {
+        fetch(`http://35.188.81.32:5003/edit/item/${editItemId}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
@@ -183,7 +183,6 @@ export default function App() {
                                             set_price(e.target.value);
                                         }}
                                     />
-                                    {" "} {" "} {" "}CAD
                                 </div>
                             </div>
                         </div>
