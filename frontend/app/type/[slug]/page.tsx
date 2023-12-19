@@ -31,7 +31,7 @@ export default function BillTo({}) {
     }, []);
 
     function fetch_bill_to() {
-        fetch(`http://35.188.81.32:5003/get/type/${item}`)
+        fetch(`http://35.209.219.229:5003/get/type/${item}`)
             .then((response) => response.json())
             .then((data) => {
                 setTableData(data);
@@ -44,7 +44,7 @@ export default function BillTo({}) {
     function handle_delete_click(bill_to_id) {
         const confirmDelete = window.confirm('Are you sure you want to delete this item?');
         if (confirmDelete) {
-            fetch(`http://35.188.81.32:5003/delete/type/${item}/${bill_to_id}`, {
+            fetch(`http://35.209.219.229:5003/delete/type/${item}/${bill_to_id}`, {
                 method: 'DELETE',
             })
                 .then((response) => response.text())
@@ -71,7 +71,7 @@ export default function BillTo({}) {
     }
 
     function get_bill_to_details(bill_to_id) {
-        fetch(`http://35.188.81.32:5003/get/type/${item}/${bill_to_id}`)
+        fetch(`http://35.209.219.229:5003/get/type/${item}/${bill_to_id}`)
             .then((response) => response.json())
             .then((data) => {
                 set_name(data.name);
@@ -91,7 +91,7 @@ export default function BillTo({}) {
             address2: address2,
         };
 
-        const apiUrl = create_mode ? `http://35.188.81.32:5003/create/type/${item}` : `http://35.188.81.32:5003/edit/type/${item}/${edit_bill_to_id}`;
+        const apiUrl = create_mode ? `http://35.209.219.229:5003/create/type/${item}` : `http://35.209.219.229:5003/edit/type/${item}/${edit_bill_to_id}`;
 
         fetch(apiUrl, {
             method: create_mode ? 'POST' : 'PUT',

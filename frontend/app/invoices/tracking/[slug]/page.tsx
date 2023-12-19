@@ -32,7 +32,7 @@ export default function Create_tracking({}) {
     }, []);
 
     async function get_tracking_details() {
-        const response = await fetch('http://35.188.81.32:5003/get_invoice_details/' + invoice_id);
+        const response = await fetch('http://35.209.219.229:5003/get_invoice_details/' + invoice_id);
         const data = await response.json();
         set_container(data.container);
         set_departure(data.departure);
@@ -65,7 +65,7 @@ export default function Create_tracking({}) {
     }
 
     function fetchTracking() {
-        fetch('http://35.188.81.32:5003/get/tracking')
+        fetch('http://35.209.219.229:5003/get/tracking')
             .then((response) => response.json())
             .then((data) => {
                 // setda(data);
@@ -87,7 +87,7 @@ export default function Create_tracking({}) {
             Manifest: Manifest,
         };
 
-        fetch('http://35.188.81.32:5003/save/invoice/tracking', {
+        fetch('http://35.209.219.229:5003/save/invoice/tracking', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

@@ -6,10 +6,10 @@
             "type": "firefox",
             "request": "launch",
             "reAttach": true,
-            "url": "http://35.188.81.32:5003",
+            "url": "http://35.209.219.229:5003",
             "pathMappings": [
                 {
-                    "url": "http://http://35.188.81.32/",
+                    "url": "http://http://35.209.219.229/",
                     "path": "${workspaceFolder}"
                 }
             ]

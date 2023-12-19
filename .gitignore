@@ -6,6 +6,7 @@ backend/htmlcov/
 backend/docs/_build/
 backend/dist/
 backend/venv/
+backend/*.pyc
 
 frontend/logs
 frontend/*.log
@@ -28,3 +29,4 @@ frontend/node_modules
 
 .DS_Store
 */.DS_Store
+test
