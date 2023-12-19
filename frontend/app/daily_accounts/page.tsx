@@ -364,7 +364,7 @@ function Create_Daily_Account({ create = true }) {
                                         <input
                                             type="number"
                                             value={item.quantity}
-                                            onChange={(e) => edit_daily_account_fields(index, 'quantity', parseInt(e.target.value))}
+                                            onChange={(e) => edit_daily_account_fields(index, 'quantity', parseFloat(e.target.value))}
                                         />
                                     </TableCell>
                                     <TableCell>{item.price * item.quantity}</TableCell>
@@ -440,7 +440,7 @@ function Create_Daily_Account({ create = true }) {
                                         <input
                                             type="number"
                                             value={item.quantity}
-                                            onChange={(e) => edit_invoice_fields(index, 'quantity', parseInt(e.target.value))}
+                                            onChange={(e) => edit_invoice_fields(index, 'quantity', parseFloat(e.target.value))}
                                         />
                                     </TableCell>
                                     <TableCell>{item.price * item.quantity}</TableCell>
@@ -497,7 +497,7 @@ function Create_Daily_Account({ create = true }) {
                                         <input
                                             type="number"
                                             value={item.quantity}
-                                            onChange={(e) => edit_purchase_order_fields(index, 'quantity', parseInt(e.target.value))}
+                                            onChange={(e) => edit_purchase_order_fields(index, 'quantity', parseFloat(e.target.value))}
                                         />
                                     </TableCell>
                                     <TableCell>{item.price * item.quantity}</TableCell>

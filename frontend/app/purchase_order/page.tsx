@@ -626,7 +626,7 @@ function Create_purchase_order({ create = true, purchase_order_id_view = '' }) {
                                         <input
                                             type="number"
                                             value={item.quantity}
-                                            onChange={(e) => edit_purchase_order_fields(index, 'quantity', parseInt(e.target.value))}
+                                            onChange={(e) => edit_purchase_order_fields(index, 'quantity', parseFloat(e.target.value))}
                                         />
                                     </td>
                                     <td>{item.price * item.quantity}</td>
