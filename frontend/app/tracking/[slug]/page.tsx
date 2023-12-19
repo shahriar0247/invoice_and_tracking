@@ -2,7 +2,6 @@
 
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, useDisclosure } from '@nextui-org/react';
 import React from 'react';
-import { usePDF } from 'react-to-pdf';
 
 export default function Create_tracking({}) {
     var fullPath = window.location.pathname;

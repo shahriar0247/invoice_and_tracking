@@ -10,7 +10,7 @@ export default function Invoices({ create = true, invoice_id_view = '' }) {
     const [data3, setData3] = React.useState([]);
     const [all_data, set_all_data] = React.useState([]);
     const [users, setUsers] = React.useState([]);
-    const [search_term, set_search_term] = React.useState('');
+    const [bill_to_search_term, set_bill_to_search_term] = React.useState('');
     const [edit, set_edit] = React.useState(false);
 
     const [minDate, setMinDate] = React.useState('');
@@ -44,6 +44,18 @@ export default function Invoices({ create = true, invoice_id_view = '' }) {
                 const last7Days = new Date(today);
                 last7Days.setDate(today.getDate() - 6);
                 newMinDate = last7Days.toISOString().split('T')[0];
+                newMaxDate = today.toISOString().split('T')[0];
+                break;
+            case 'last30days':
+                const last30days = new Date(today);
+                last30days.setDate(today.getDate() - 6);
+                newMinDate = last30days.toISOString().split('T')[0];
+                newMaxDate = today.toISOString().split('T')[0];
+                break;
+            case 'last7days':
+                const last60days = new Date(today);
+                last60days.setDate(today.getDate() - 6);
+                newMinDate = last60days.toISOString().split('T')[0];
                 newMaxDate = today.toISOString().split('T')[0];
                 break;
             default:
@@ -103,39 +115,56 @@ export default function Invoices({ create = true, invoice_id_view = '' }) {
                 console.error('Error:', error);
             });
     }
-    function search() {
+    function filter() {
         var filteredData = all_data.filter(function (invoice) {
-            return Object.values(invoice).some(function (value) {
-                if (value) {
-                    return value.toLowerCase().includes(search_term);
-                }
-            });
+            if (invoice.bill_to.includes(bill_to_search_term)) {
+                return true;
+            }
         });
 
-        setData1(filteredData.filter((item) => item.type === 'First Quote'));
-        setData2(filteredData.filter((item) => item.type === 'Final Quote'));
-        setData3(filteredData.filter((item) => item.type === 'Invoice'));
-    }
-
-    React.useEffect(() => {
-        search();
-
-        var filteredData = all_data.filter(function (invoice) {
+        var filteredData2 = filteredData.filter(function (invoice) {
             return (
                 (minDate === '' || new Date(invoice.date) >= new Date(minDate)) &&
                 (maxDate === '' || new Date(invoice.date) <= new Date(maxDate)) &&
                 Object.values(invoice).some(function (value) {
                     if (value) {
-                        return value.toLowerCase().includes(search_term);
+                        return value.toLowerCase().includes(bill_to_search_term);
                     }
                 })
             );
         });
 
-        setData1(filteredData.filter((item) => item.type === 'First Quote'));
-        setData2(filteredData.filter((item) => item.type === 'Final Quote'));
-        setData3(filteredData.filter((item) => item.type === 'Invoice'));
-    }, [minDate, maxDate, search_term]);
+        console.log(filteredData2.filter((item) => item.type === 'Invoice'));
+        setData1(filteredData2.filter((item) => item.type === 'First Quote'));
+        setData2(filteredData2.filter((item) => item.type === 'Final Quote'));
+        setData3(filteredData2.filter((item) => item.type === 'Invoice'));
+    }
+
+    React.useEffect(() => {
+        filter();
+    }, [minDate, maxDate, bill_to_search_term]);
+
+    function change_invoice_status(id, status) {
+        const data = {
+            id: id,
+            status: status,
+        };
+        fetch(`http://localhost:5003/invoice/change_status`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
+            .then((response) => {
+                if (response.ok) {
+                } else {
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+    }
 
     if (!create) {
         return (
@@ -169,8 +198,8 @@ export default function Invoices({ create = true, invoice_id_view = '' }) {
             <h1>All Filters</h1>
             <div className="all_filters">
                 <div>
-                    <label>User:</label>
-                    <select onChange={(e) => set_search_term(e.target.value)}>
+                    <label>Bill To Search:</label>
+                    <select onChange={(e) => set_bill_to_search_term(e.target.value)}>
                         <option value="">All</option>
                         {users.map((user, index) => (
                             <option
@@ -181,30 +210,9 @@ export default function Invoices({ create = true, invoice_id_view = '' }) {
                         ))}
                     </select>
                 </div>
+
                 <div>
-                    <label>From:</label>
-                    <input
-                        type="date"
-                        id="min-date"
-                        value={minDate}
-                        onChange={(e) => {
-                            setMinDate(e.target.value);
-                        }}
-                    />
-                </div>
-                <div>
-                    <label>To:</label>
-                    <input
-                        type="date"
-                        id="max-date"
-                        value={maxDate}
-                        onChange={(e) => {
-                            setMaxDate(e.target.value);
-                        }}
-                    />
-                </div>
-                <div>
-                    <label>Date Filter:</label>
+                    <label>Date Search:</label>
                     <select
                         value={dateFilter}
                         onChange={(e) => handleDateFilterChange(e.target.value)}
@@ -213,165 +221,81 @@ export default function Invoices({ create = true, invoice_id_view = '' }) {
                         <option value="today">Today</option>
                         <option value="yesterday">Yesterday</option>
                         <option value="last7days">Last 7 Days</option>
+                        <option value="last30days">Last 30 Days</option>
+                        <option value="last60days">Last 60 Days</option>
                     </select>
                 </div>
-                <div>
-                    <label>Search: </label>
-                    <input
-                        type="text"
-                        value={search_term}
-                        onChange={(e) => {
-                            set_search_term(e.target.value);
-                        }}
-                    />
-                    <button
-                        onClick={() => {
-                            set_search_term('');
-                        }}>
-                        Clear Search
-                    </button>
-                </div>
             </div>
-            <h2>All First Quotes</h2>
-            <Table>
-                <TableHeader>
-                    <TableColumn>ID</TableColumn>
-                    <TableColumn>Type</TableColumn>
-                    <TableColumn>Date</TableColumn>
-                    <TableColumn>Bill To</TableColumn>
-                    <TableColumn>B/L Number</TableColumn>
-                    <TableColumn></TableColumn>
-                    <TableColumn></TableColumn>
-                    <TableColumn></TableColumn>
-                </TableHeader>
-                <TableBody>
-                    {data1.map((item) => (
-                        <TableRow key={item.id}>
-                            <TableCell>{item.id}</TableCell>
-                            <TableCell>{item.type}</TableCell>
-                            <TableCell>{new Date(item.date).toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}</TableCell>
-                            <TableCell>{item.bill_to}</TableCell>
-                            <TableCell>{item.bl_number}</TableCell>
-                            <TableCell>
-                                <a
-                                    className="button"
-                                    href={`/invoices/${item.id}?edit=true`}>
-                                    Edit
-                                </a>
-                            </TableCell>
-                            <TableCell>
-                                <a
-                                    className="button"
-                                    href={`/invoices/tracking/${item.id}`}>
-                                    Tracking
-                                </a>
-                            </TableCell>
-                            <TableCell>
-                                <button
-                                    onClick={() => {
-                                        deleteInvoice(item.id);
-                                    }}>
-                                    Delete
-                                </button>
-                            </TableCell>
-                        </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
-            <h2>All Final Quotes</h2>
+            {[
+                {
+                    name: 'All Invoices',
+                    data: data3,
+                },
+                {
+                    name: 'All First Quotes',
+                    data: data1,
+                },
+                {
+                    name: 'All Final Quotes',
+                    data: data2,
+                },
+            ].map((value, index) => {
+                return (
+                    <div key={value.name}>
+                        <h2>{value.name}</h2>
+                        <Table>
+                            <TableHeader>
+                                <TableColumn>ID</TableColumn>
+                                <TableColumn>Description</TableColumn>
+                                <TableColumn>Date</TableColumn>
+                                <TableColumn>Bill To</TableColumn>
+                                <TableColumn>B/L Number</TableColumn>
+                                <TableColumn>Invoice Status</TableColumn>
+                                <TableColumn></TableColumn>
+                                <TableColumn></TableColumn>
+                            </TableHeader>
+                            <TableBody>
+                                {value.data.map((item) => (
+                                    <TableRow key={item.id}>
+                                        <TableCell>{item.id}</TableCell>
+                                        <TableCell>{item.description}</TableCell>
+                                        <TableCell>{new Date(item.date).toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}</TableCell>
+                                        <TableCell>{item.bill_to}</TableCell>
+                                        <TableCell>{item.bl_number}</TableCell>
 
-            <Table>
-                <TableHeader>
-                    <TableColumn>ID</TableColumn>
-                    <TableColumn>Type</TableColumn>
-                    <TableColumn>Date</TableColumn>
-                    <TableColumn>Bill To</TableColumn>
-                    <TableColumn>B/L Number</TableColumn>
-                    <TableColumn></TableColumn>
-                    <TableColumn></TableColumn>
-                    <TableColumn></TableColumn>
-                </TableHeader>
-                <TableBody>
-                    {data2.map((item) => (
-                        <TableRow key={item.id}>
-                            <TableCell>{item.id}</TableCell>
-                            <TableCell>{item.type}</TableCell>
-                            <TableCell>{new Date(item.date).toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}</TableCell>
-                            <TableCell>{item.bill_to}</TableCell>
-                            <TableCell>{item.bl_number}</TableCell>
-                            <TableCell>
-                                <a
-                                    className="button"
-                                    href={`/invoices/${item.id}?edit=true`}>
-                                    Edit
-                                </a>
-                            </TableCell>
-                            <TableCell>
-                                <a
-                                    className="button"
-                                    href={`/invoices/tracking/${item.id}`}>
-                                    Tracking
-                                </a>
-                            </TableCell>
-                            <TableCell>
-                                <button
-                                    onClick={() => {
-                                        deleteInvoice(item.id);
-                                    }}>
-                                    Delete
-                                </button>
-                            </TableCell>
-                        </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
-            <h2>All Invoices</h2>
-
-            <Table>
-                <TableHeader>
-                    <TableColumn>ID</TableColumn>
-                    <TableColumn>Type</TableColumn>
-                    <TableColumn>Date</TableColumn>
-                    <TableColumn>Bill To</TableColumn>
-                    <TableColumn>B/L Number</TableColumn>
-                    <TableColumn></TableColumn>
-                    <TableColumn></TableColumn>
-                    <TableColumn></TableColumn>
-                </TableHeader>
-                <TableBody>
-                    {data3.map((item) => (
-                        <TableRow key={item.id}>
-                            <TableCell>{item.id}</TableCell>
-                            <TableCell>{item.type}</TableCell>
-                            <TableCell>{new Date(item.date).toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}</TableCell>
-                            <TableCell>{item.bill_to}</TableCell>
-                            <TableCell>{item.bl_number}</TableCell>
-                            <TableCell>
-                                <a
-                                    className="button"
-                                    href={`/invoices/${item.id}?edit=true`}>
-                                    Edit
-                                </a>
-                            </TableCell>
-                            <TableCell>
-                                <a
-                                    className="button"
-                                    href={`/invoices/tracking/${item.id}`}>
-                                    Tracking
-                                </a>
-                            </TableCell>
-                            <TableCell>
-                                <button
-                                    onClick={() => {
-                                        deleteInvoice(item.id);
-                                    }}>
-                                    Delete
-                                </button>
-                            </TableCell>
-                        </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
+                                        <TableCell>
+                                            <select
+                                                defaultValue={item.invoice_status}
+                                                onChange={(e) => {
+                                                    change_invoice_status(item.id, e.target.value);
+                                                }}>
+                                                <option value="pending">Pending</option>
+                                                <option value="paid">Paid</option>
+                                                <option value="partial">Partial</option>
+                                            </select>
+                                        </TableCell>
+                                        <TableCell>
+                                            <a
+                                                className="button"
+                                                href={`/invoices/${item.id}?edit=true`}>
+                                                Edit
+                                            </a>
+                                        </TableCell>
+                                        <TableCell>
+                                            <button
+                                                onClick={() => {
+                                                    deleteInvoice(item.id);
+                                                }}>
+                                                Delete
+                                            </button>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </div>
+                );
+            })}
         </div>
     );
 }
@@ -390,6 +314,8 @@ function Create_invoice({ create = true, invoice_id_view = '', edit = false, fet
     const [ship_from_information, set_ship_from_information] = React.useState('');
     const [ship_to_information, set_ship_to_information] = React.useState('');
     const [extra_information, set_extra_information] = React.useState('');
+    const [description, set_description] = React.useState('');
+    const [invoice_status, set_invoice_status] = React.useState('');
     const [bank_details_information, set_bank_details_information] = React.useState('');
 
     const [terms_and_conditions, set_terms_and_conditions] = React.useState('');
@@ -473,6 +399,8 @@ function Create_invoice({ create = true, invoice_id_view = '', edit = false, fet
         set_invoice_type(data.type);
         set_terms_and_conditions(data.terms);
         set_extra_information(data.extra_info);
+        set_invoice_status(data.invoice_status);
+        set_description(data.description);
         set_bank_details_information(data.bank_details);
         set_bl_number(data.bl_number);
 
@@ -634,6 +562,8 @@ function Create_invoice({ create = true, invoice_id_view = '', edit = false, fet
             terms: terms_and_conditions,
             type: invoice_type,
             extra_info: extra_information,
+            invoice_status: invoice_status,
+            description: description,
             bl_number: bl_number,
             all_items: selected_items,
             edit: edit,
@@ -818,6 +748,18 @@ function Create_invoice({ create = true, invoice_id_view = '', edit = false, fet
                     </div>
                 </div>
                 <div className="input_field">
+                    <div className="title">Description</div>
+                    <div className="input">
+                        <input
+                            type="text"
+                            value={description}
+                            onChange={(e) => {
+                                set_description(e.target.value);
+                            }}
+                        />
+                    </div>
+                </div>
+                <div className="input_field">
                     <div className="title">Terms</div>
                     <div className="input">
                         <textarea
@@ -858,6 +800,21 @@ function Create_invoice({ create = true, invoice_id_view = '', edit = false, fet
                             onChange={(e) => {
                                 set_extra_information(e.target.value);
                             }}></textarea>
+                    </div>
+                </div>
+                <div className="input_field">
+                    <div className="title">Invoice Status</div>
+                    <div className="input">
+                        <select
+                            value={invoice_status}
+                            defaultValue={"pending"}
+                            onChange={(e) => {
+                                set_invoice_status(e.target.value);
+                            }}>
+                            <option value="pending">Pending</option>
+                            <option value="paid">Paid</option>
+                            <option value="partial">Partial</option>
+                        </select>
                     </div>
                 </div>
                 <div className="input_field">
@@ -993,6 +950,8 @@ function Create_invoice({ create = true, invoice_id_view = '', edit = false, fet
                                         <div>Date: {date}</div>
                                         <div>Due Date: {due_date}</div>
                                         <div>B/L Number: {bl_number}</div>
+                                        <div>Description: {description}</div>
+                                        <div>Invoice Status: {invoice_status}</div>
                                         <div
                                             dangerouslySetInnerHTML={{
                                                 __html: invoice_information.replace(/\n/g, '<br>'),

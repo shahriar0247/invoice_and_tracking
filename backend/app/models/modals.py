@@ -56,19 +56,21 @@ class Invoice(db.Model):
     date = db.Column(db.DateTime, nullable=True)
     due_date = db.Column(db.DateTime, nullable=True)
     terms = db.Column(db.String(1200), nullable=True)
+    invoice_status = db.Column(db.String(1200), nullable=True)
+    description = db.Column(db.String(1200), nullable=True)
     extra_info = db.Column(db.String(1200), nullable=True)
     bl_number = db.Column(db.String(1200), nullable=True)
     bank_details = db.Column(db.String(1200), nullable=True)
     type = db.Column(db.String(1200), nullable=True)
 
     # tracking params
-    container = db.Column(db.String(1200), nullable=True)
-    departure = db.Column(db.String(1200), nullable=True)
-    location_status = db.Column(db.String(1200), nullable=True)
-    custom_tracking = db.Column(db.String(1200), nullable=True)
-    status = db.Column(db.String(1200), nullable=True)
-    Deli = db.Column(db.String(1200), nullable=True)
-    Manifest = db.Column(db.String(1200), nullable=True)
+    # container = db.Column(db.String(1200), nullable=True)
+    # departure = db.Column(db.String(1200), nullable=True)
+    # location_status = db.Column(db.String(1200), nullable=True)
+    # custom_tracking = db.Column(db.String(1200), nullable=True)
+    # status = db.Column(db.String(1200), nullable=True)
+    # Deli = db.Column(db.String(1200), nullable=True)
+    # Manifest = db.Column(db.String(1200), nullable=True)
 
     def __init__(self, *args, **kwargs):
         if not kwargs.get('id'):
