@@ -6,6 +6,7 @@ backend/htmlcov/
 backend/docs/_build/
 backend/dist/
 backend/venv/
+backend/*.pyc
 
 frontend/logs
 frontend/*.log
