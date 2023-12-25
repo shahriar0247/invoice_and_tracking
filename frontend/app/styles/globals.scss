@@ -22,10 +22,12 @@ body {
         margin: 20px;
         margin-left: 0px;
     }
-    h1{
+
+    h1 {
         font-size: 30px;
     }
-    h2{
+
+    h2 {
         font-size: 25px;
     }
 
@@ -40,6 +42,7 @@ body {
         margin-left: 25px;
         position: fixed;
         width: 180px;
+
         a {
             color: white;
             text-decoration: none;
@@ -61,10 +64,15 @@ body {
         }
     }
 
+    input:read-only {
+        background-color: rgb(230, 230, 230);
+    }
+
     main {
         margin: 50px;
         margin-top: 0px;
         height: 80vh;
+
         .topbar {
             width: max-content;
             margin: auto;
@@ -74,10 +82,11 @@ body {
 
         .table {
             box-shadow: 2px 2px 5px 1px rgba(0, 0, 0, 0.4);
-           
+
         }
     }
 }
+
 .all_inputs {
     display: grid;
     grid-template-columns: 1fr;
@@ -94,10 +103,10 @@ body {
             margin-top: 9px;
         }
 
-        .input {
-        }
+        .input {}
     }
 }
+
 .all_inputs2 {
     grid-template-columns: 1fr 1fr 1fr;
 }
@@ -184,7 +193,7 @@ textarea {
     padding: 10px;
 }
 
-.bootstrap-select > button.dropdown-toggle {
+.bootstrap-select>button.dropdown-toggle {
     width: auto;
 }
 
@@ -203,21 +212,20 @@ textarea {
         margin-right: 0px;
         align-items: center;
         padding: 20px;
+
         label {
             margin-right: 10px;
         }
+
         input {
             min-width: 200px !important;
             max-width: 220px !important;
         }
     }
 }
+
 .max-w-md {
     max-width: none !important;
 }
 
-input:read-only{
-    background-color: rgb(209, 209, 209);
-    color: #222222
-}
 @import './invoice_viewer.scss';

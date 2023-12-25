@@ -3,21 +3,92 @@
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, useDisclosure } from '@nextui-org/react';
 import React from 'react';
 import { usePDF } from 'react-to-pdf';
+import { Accordion, AccordionItem } from '@nextui-org/react';
 
-export default function Purchase_orders({ create = true, purchase_order_id_view = '' }) {
-    const [data, setData] = React.useState([]);
+export default function Purchase_Orders({ create = true, purchase_order_id_view = '' }) {
+    const [data1, setData1] = React.useState([]);
+    const [data2, setData2] = React.useState([]);
+    const [data3, setData3] = React.useState([]);
+    const [all_data, set_all_data] = React.useState([]);
     const [users, setUsers] = React.useState([]);
+    const [bill_to_search_term, set_bill_to_search_term] = React.useState('');
+    const [edit, set_edit] = React.useState(false);
+
+    const [minDate, setMinDate] = React.useState('');
+    const [maxDate, setMaxDate] = React.useState('');
+
+    const [dateFilter, setDateFilter] = React.useState(''); // State to store selected date filter
+
+    const handleDateFilterChange = (filter) => {
+        setDateFilter(filter);
+
+        const today = new Date();
+        let newMinDate = '';
+        let newMaxDate = '';
+
+        switch (filter) {
+            case 'all':
+                newMinDate = '';
+                newMaxDate = '';
+                break;
+            case 'today':
+                newMinDate = today.toISOString().split('T')[0];
+                newMaxDate = today.toISOString().split('T')[0];
+                break;
+            case 'yesterday':
+                const yesterday = new Date(today);
+                yesterday.setDate(today.getDate() - 1);
+                newMinDate = yesterday.toISOString().split('T')[0];
+                newMaxDate = yesterday.toISOString().split('T')[0];
+                break;
+            case 'last7days':
+                const last7Days = new Date(today);
+                last7Days.setDate(today.getDate() - 6);
+                newMinDate = last7Days.toISOString().split('T')[0];
+                newMaxDate = today.toISOString().split('T')[0];
+                break;
+            case 'last30days':
+                const last30days = new Date(today);
+                last30days.setDate(today.getDate() - 6);
+                newMinDate = last30days.toISOString().split('T')[0];
+                newMaxDate = today.toISOString().split('T')[0];
+                break;
+            case 'last7days':
+                const last60days = new Date(today);
+                last60days.setDate(today.getDate() - 6);
+                newMinDate = last60days.toISOString().split('T')[0];
+                newMaxDate = today.toISOString().split('T')[0];
+                break;
+            default:
+                break;
+        }
+
+        setMinDate(newMinDate);
+        setMaxDate(newMaxDate);
+    };
 
     React.useEffect(() => {
         fetch_purchase_orders();
+
+        try {
+            const urlParams = new URLSearchParams(window.location.search);
+            const edit = urlParams.get('edit');
+            set_edit(edit === 'true');
+        } catch (error) {
+            console.log(error);
+        }
     }, []);
 
     function fetch_purchase_orders() {
         fetch('http://localhost:5003/get/purchase_order')
             .then((response) => response.json())
             .then((data) => {
-                setData(data);
-                // setUsers(getUniqueUsers(data));
+                setData1(data.filter((item) => item.type === 'First Quote'));
+                setData2(data.filter((item) => item.type === 'Final Quote'));
+                setData3(data.filter((item) => item.type === 'Purchase_Order'));
+
+                set_all_data(data);
+                setUsers(getUniqueUsers(data));
             })
             .catch((error) => {
                 console.error('Error fetching purchase_orders:', error);
@@ -25,34 +96,111 @@ export default function Purchase_orders({ create = true, purchase_order_id_view 
     }
 
     const { isOpen, onOpen, onClose } = useDisclosure();
+    function getUniqueUsers(data) {
+        const uniqueUsers = [...new Set(data.map((item) => item.bill_to))];
+        return uniqueUsers;
+    }
+    function deletePurchase_Order(purchase_orderId) {
+        fetch(`http://localhost:5003/delete/purchase_order/${purchase_orderId}`, {
+            method: 'DELETE',
+        })
+            .then((response) => {
+                if (response.ok) {
+                    alert('Purchase_Order deleted successfully');
+                    window.location.reload();
+                } else {
+                    alert('Failed to delete purchase_order');
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+    }
+    function filter() {
+        var filteredData = all_data.filter(function (purchase_order) {
+            if (purchase_order.bill_to.includes(bill_to_search_term)) {
+                return true;
+            }
+        });
+
+        var filteredData2 = filteredData.filter(function (purchase_order) {
+            return (
+                (minDate === '' || new Date(purchase_order.date) >= new Date(minDate)) &&
+                (maxDate === '' || new Date(purchase_order.date) <= new Date(maxDate)) &&
+                Object.values(purchase_order).some(function (value) {
+                    if (value) {
+                        return value.toLowerCase().includes(bill_to_search_term);
+                    }
+                })
+            );
+        });
+
+        console.log(filteredData2.filter((item) => item.type === 'Purchase_Order'));
+        setData1(filteredData2.filter((item) => item.type === 'First Quote'));
+        setData2(filteredData2.filter((item) => item.type === 'Final Quote'));
+        setData3(filteredData2.filter((item) => item.type === 'Purchase_Order'));
+    }
+
+    React.useEffect(() => {
+        filter();
+    }, [minDate, maxDate, bill_to_search_term]);
+
+    function change_purchase_order_status(id, status) {
+        const data = {
+            id: id,
+            status: status,
+        };
+        fetch(`http://localhost:5003/purchase_order/change_status`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
+            .then((response) => {
+                if (response.ok) {
+                } else {
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+    }
 
     if (!create) {
         return (
             <Create_purchase_order
+                edit={edit}
                 create={create}
+                onCloseParent={onClose}
+                fetch_purchase_orders={fetch_purchase_orders}
                 purchase_order_id_view={purchase_order_id_view}></Create_purchase_order>
         );
     }
     return (
-        <div className="purchase_order">
-            <h1>Purchase_orders</h1>
-            <button onClick={onOpen}>Create Purchase_order</button>
+        <div className="invoice">
+            <h1>Purchase Orders</h1>
+            <button onClick={onOpen}>Create Purchase Order</button>
             <Modal
                 isOpen={isOpen}
                 onClose={onClose}>
                 <ModalContent>
-                    <ModalHeader>Create Purchase_order</ModalHeader>
+                    <ModalHeader>Create Purchase_Order</ModalHeader>
                     <ModalBody>
-                        <Create_purchase_order />
+                        <Create_purchase_order
+                            fetch_purchase_orders={fetch_purchase_orders}
+                            onCloseParent={onClose}
+                        />
                     </ModalBody>
                     <ModalFooter></ModalFooter>
                 </ModalContent>
             </Modal>
 
+            <h1>All Filters</h1>
             <div className="all_filters">
                 <div>
-                    <label>User:</label>
-                    <select id="user-filter">
+                    <label>Bill To Search:</label>
+                    <select onChange={(e) => set_bill_to_search_term(e.target.value)}>
                         <option value="">All</option>
                         {users.map((user, index) => (
                             <option
@@ -63,57 +211,97 @@ export default function Purchase_orders({ create = true, purchase_order_id_view 
                         ))}
                     </select>
                 </div>
-                <div>
-                    <label>From:</label>
-                    <input
-                        type="date"
-                        id="min-date"
-                    />
-                </div>
 
                 <div>
-                    <label>To:</label>
-                    <input
-                        type="date"
-                        id="max-date"
-                    />
+                    <label>Date Search:</label>
+                    <select
+                        value={dateFilter}
+                        onChange={(e) => handleDateFilterChange(e.target.value)}
+                        clearable>
+                        <option value="all">All</option>
+                        <option value="today">Today</option>
+                        <option value="yesterday">Yesterday</option>
+                        <option value="last7days">Last 7 Days</option>
+                        <option value="last30days">Last 30 Days</option>
+                        <option value="last60days">Last 60 Days</option>
+                    </select>
                 </div>
             </div>
-            <Table>
-                <TableHeader>
-                    <TableColumn>ID</TableColumn>
-                    <TableColumn>Date</TableColumn>
-                    <TableColumn>Due Date</TableColumn>
-                    <TableColumn>Bill To</TableColumn>
-                    <TableColumn>Ship To</TableColumn>
-                    <TableColumn>Ship From</TableColumn>
-                    <TableColumn></TableColumn>
-                </TableHeader>
-                <TableBody>
-                    {data.map((item) => (
-                        <TableRow key={item.id}>
-                            <TableCell>{item.id}</TableCell>
-                            <TableCell>{item.date}</TableCell>
-                            <TableCell>{item.due_date}</TableCell>
-                            <TableCell>{item.bill_to}</TableCell>
-                            <TableCell>{item.ship_to}</TableCell>
-                            <TableCell>{item.ship_from}</TableCell>
-                            <TableCell>
-                                <a
-                                    className="button"
-                                    href={`/purchase_orders/${item.id}`}>
-                                    View
-                                </a>
-                            </TableCell>
-                        </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
+            {[
+                {
+                    name: 'All Purchase_Orders',
+                    data: data3,
+                },
+                {
+                    name: 'All First Quotes',
+                    data: data1,
+                },
+                {
+                    name: 'All Final Quotes',
+                    data: data2,
+                },
+            ].map((value, index) => {
+                return (
+                    <div key={value.name}>
+                        <h2>{value.name}</h2>
+                        <Table>
+                            <TableHeader>
+                                <TableColumn>ID</TableColumn>
+                                <TableColumn>Description</TableColumn>
+                                <TableColumn>Date</TableColumn>
+                                <TableColumn>Bill To</TableColumn>
+                                <TableColumn>B/L Number</TableColumn>
+                                <TableColumn>Purchase_Order Status</TableColumn>
+                                <TableColumn></TableColumn>
+                                <TableColumn></TableColumn>
+                            </TableHeader>
+                            <TableBody>
+                                {value.data.map((item) => (
+                                    <TableRow key={item.id}>
+                                        <TableCell>{item.id}</TableCell>
+                                        <TableCell>{item.description}</TableCell>
+                                        <TableCell>{new Date(item.date).toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}</TableCell>
+                                        <TableCell>{item.bill_to}</TableCell>
+                                        <TableCell>{item.bl_number}</TableCell>
+
+                                        <TableCell>
+                                            <select
+                                                defaultValue={item.purchase_order_status}
+                                                onChange={(e) => {
+                                                    change_purchase_order_status(item.id, e.target.value);
+                                                }}>
+                                                <option value="pending">Pending</option>
+                                                <option value="paid">Paid</option>
+                                                <option value="partial">Partial</option>
+                                            </select>
+                                        </TableCell>
+                                        <TableCell>
+                                            <a
+                                                className="button"
+                                                href={`/purchase_orders/${item.id}?edit=true`}>
+                                                Edit
+                                            </a>
+                                        </TableCell>
+                                        <TableCell>
+                                            <button
+                                                onClick={() => {
+                                                    deletePurchase_Order(item.id);
+                                                }}>
+                                                Delete
+                                            </button>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </div>
+                );
+            })}
         </div>
     );
 }
 
-function Create_purchase_order({ create = true, purchase_order_id_view = '' }) {
+function Create_purchase_order({ create = true, purchase_order_id_view = '', edit = false, fetch_purchase_orders, onCloseParent }) {
     const [company, set_company] = React.useState([]);
     const [all_bill_to, set_all_bill_to] = React.useState([]);
     const [all_ship_from, set_all_ship_from] = React.useState([]);
@@ -127,19 +315,28 @@ function Create_purchase_order({ create = true, purchase_order_id_view = '' }) {
     const [ship_from_information, set_ship_from_information] = React.useState('');
     const [ship_to_information, set_ship_to_information] = React.useState('');
     const [extra_information, set_extra_information] = React.useState('');
+    const [description, set_description] = React.useState('');
+    const [purchase_order_status, set_purchase_order_status] = React.useState('');
     const [bank_details_information, set_bank_details_information] = React.useState('');
+    const [invoices, set_invoices] = React.useState([]);
 
     const [terms_and_conditions, set_terms_and_conditions] = React.useState('');
     const [purchase_order_type, set_purchase_order_type] = React.useState('First Quote');
     const [bl_number, set_bl_number] = React.useState('');
     const [bill_to_id, set_bill_to_id] = React.useState('');
+    const [bill_to, set_bill_to] = React.useState('');
     const [ship_to_id, set_ship_to_id] = React.useState('');
+    const [ship_to, set_ship_to] = React.useState('');
     const [ship_from_id, set_ship_from_id] = React.useState('');
-    const [date, set_date] = React.useState('');
-    const [due_date, set_due_date] = React.useState('');
-    const [purchase_order_id, set_purchase_order_id] = React.useState(`INV - ${Math.floor(Math.random() * (9999999 - 1000000 + 1)) + 1000000}`);
+    const [ship_from, set_ship_from] = React.useState('');
+    const [date, set_date] = React.useState(getFormattedDate());
+    const [due_date, set_due_date] = React.useState(getFormattedDate());
+    const [purchase_order_id, set_purchase_order_id] = React.useState(`PO - ${Math.floor(Math.random() * (9999999 - 1000000 + 1)) + 1000000}`);
 
     const [total_price, set_total_price] = React.useState(0);
+
+    const [vendor_id, set_vendor_id] = React.useState('Select Vendor');
+    const [all_vendors, set_all_vendors] = React.useState([]);
 
     React.useEffect(() => {
         let total_price_ = 0;
@@ -148,40 +345,82 @@ function Create_purchase_order({ create = true, purchase_order_id_view = '' }) {
         });
         set_total_price(total_price_);
     }, [selected_items]);
-  ;
     React.useEffect(() => {
         fetchCompany();
         fetchBillTo();
         fetchShipFrom();
         fetchShipTo();
         fetchItems();
-        fetchPurchase_order();
+        fetchInvoices();
+        fetchVendor();
         if (!create) {
             get_purchase_order_details();
         }
     }, []);
 
+    function getFormattedDate() {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = (today.getMonth() + 1).toString().padStart(2, '0');
+        const day = today.getDate().toString().padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+    function fetch_purchase_orders_handler() {
+        fetch_purchase_orders();
+    }
+
     async function get_purchase_order_details() {
         const response = await fetch('http://localhost:5003/get_purchase_order_details/' + purchase_order_id_view);
         const data = await response.json();
-        console.log(data);
         const all_items_ = JSON.parse(data['all_items']);
+        set_purchase_order_id(data.id);
         set_selected_items(all_items_);
-        set_bill_to_id(data.bill_to);
-        set_ship_to_id(data.ship_to);
-        set_ship_from_id(data.ship_from);
+        set_bill_to(JSON.stringify(data.bill_to));
+        set_bill_to_id(data.bill_to.id);
+        set_ship_to(JSON.stringify(data.ship_to));
+        set_ship_to_id(data.ship_to.id);
+        set_ship_from(JSON.stringify(data.ship_from));
+        set_ship_from_id(data.ship_from.id);
+        set_bill_to_information(
+            <div>
+                <div>{data.bill_to.name}</div>
+                <div>{data.bill_to.address1}</div>
+                <div>{data.bill_to.address2}</div>
+            </div>
+        );
+        set_ship_to_information(
+            <div>
+                <div>{data.ship_to.name}</div>
+                <div>{data.ship_to.address1}</div>
+                <div>{data.ship_to.address2}</div>
+            </div>
+        );
+        set_ship_from_information(
+            <div>
+                <div>{data.ship_from.name}</div>
+                <div>{data.ship_from.address1}</div>
+                <div>{data.ship_from.address2}</div>
+            </div>
+        );
         set_purchase_order_type(data.type);
         set_terms_and_conditions(data.terms);
         set_extra_information(data.extra_info);
+        set_purchase_order_status(data.purchase_order_status);
+        set_description(data.description);
         set_bank_details_information(data.bank_details);
         set_bl_number(data.bl_number);
-        set_purchase_order_id(data.id);
 
-        const dateObject = new Date(data.date);
-        const year = dateObject.getFullYear();
-        const month = (dateObject.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based, so add 1
-        const day = dateObject.getDate().toString().padStart(2, '0');
+        var dateObject = new Date(data.date);
+        var year = dateObject.getFullYear();
+        var month = (dateObject.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based, so add 1
+        var day = dateObject.getDate().toString().padStart(2, '0');
         set_date(`${year}-${month}-${day}`);
+
+        dateObject = new Date(data.due_date);
+        year = dateObject.getFullYear();
+        month = (dateObject.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based, so add 1
+        day = dateObject.getDate().toString().padStart(2, '0');
+        set_due_date(`${year}-${month}-${day}`);
     }
 
     const edit_purchase_order_fields = (index, field, value) => {
@@ -215,14 +454,24 @@ function Create_purchase_order({ create = true, purchase_order_id_view = '' }) {
         updatedItems.splice(index, 1);
         set_selected_items(updatedItems);
     };
-    function fetchPurchase_order() {
-        fetch('http://localhost:5003/get/purchase_order')
+    function fetchInvoices() {
+        fetch('http://localhost:5003/get/invoice')
             .then((response) => response.json())
             .then((data) => {
-                // setda(data);
+                set_invoices(data);
             })
             .catch((error) => {
                 console.error('Error fetching purchase_order:', error);
+            });
+    }
+    function fetchVendor() {
+        fetch('http://localhost:5003/get/vendor')
+            .then((response) => response.json())
+            .then((data) => {
+                set_all_vendors(data);
+            })
+            .catch((error) => {
+                console.error('Error fetching all vendor:', error);
             });
     }
     function fetchCompany() {
@@ -317,7 +566,7 @@ function Create_purchase_order({ create = true, purchase_order_id_view = '' }) {
             });
     }
 
-    function createPurchase_order() {
+    function createPurchase_Order() {
         const purchase_orderData = {
             id: purchase_order_id,
             bill_to_id: bill_to_id,
@@ -329,13 +578,14 @@ function Create_purchase_order({ create = true, purchase_order_id_view = '' }) {
             terms: terms_and_conditions,
             type: purchase_order_type,
             extra_info: extra_information,
+            purchase_order_status: purchase_order_status,
+            description: description,
             bl_number: bl_number,
             all_items: selected_items,
+            edit: edit,
         };
-        console.log('purchase_orderData');
-        console.log(purchase_orderData);
 
-        fetch('http://localhost:5003/create/purchase_order', {
+        fetch('http://localhost:5003/create/purchase_order/' + purchase_order_id, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -344,7 +594,7 @@ function Create_purchase_order({ create = true, purchase_order_id_view = '' }) {
         })
             .then((response) => {
                 if (response.ok) {
-                    alert('Purchase_order created successfully');
+                    alert('Purchase_Order created successfully');
                 } else {
                     alert('Failed to create purchase_order');
                 }
@@ -353,225 +603,28 @@ function Create_purchase_order({ create = true, purchase_order_id_view = '' }) {
                 console.error('Error:', error);
             });
     }
-    function deletePurchase_order(purchase_orderId) {
-        fetch(`/delete/purchase_order/${purchase_orderId}`, {
-            method: 'DELETE',
-        })
-            .then((response) => {
-                if (response.ok) {
-                    alert('Purchase_order deleted successfully');
-                } else {
-                    alert('Failed to delete purchase_order');
-                }
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-            });
-    }
-    function editPurchase_order(purchase_orderId) {
-        const updatedPurchase_orderData = {
-            date: '2023-11-07', // Replace with updated data
-            terms: 'Net 45', // Replace with updated data
-            purchase_order1: 'Jane Smith', // Replace with updated data
-            // Add other fields as needed
-        };
 
-        fetch(`/edit/purchase_order/${purchase_orderId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(updatedPurchase_orderData),
-        })
-            .then((response) => {
-                if (response.ok) {
-                    alert('Purchase_order updated successfully');
-                } else {
-                    alert('Failed to update purchase_order');
-                }
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-            });
-    }
-    const { toPDF, targetRef } = usePDF({ filename: purchase_order_id + '.pdf' });
+    const { toPDF, targetRef } = usePDF({ filename: purchase_order_id + ' - Bill To -' + bill_to.name + ' Date: ' + date + '.pdf' });
 
     function createPDF() {
-        createPurchase_order();
+        createPurchase_Order();
         toPDF();
+        fetch_purchase_orders_handler();
+        onClose();
+        set_purchase_order_id(`INV - ${Math.floor(Math.random() * (9999999 - 1000000 + 1)) + 1000000}`);
+        onCloseParent();
     }
 
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [currency, set_currency] = React.useState('USD');
     return (
-        <div className="purchase_order">
-            <h1>Purchase_order Details</h1>
+        <div className="invoice">
+            <h1>Purchase_Order Details</h1>
+            <h2>{purchase_order_id}</h2>
 
             <div className="all_inputs all_inputs2">
                 <div className="input_field">
-                    <div className="title">Bill To</div>
-                    <div className="input">
-                        <select
-                            value={bill_to_id}
-                            onChange={(e) => {
-                                let value = e.target.value;
-                                let data = JSON.parse(value);
-                                set_bill_to_id(data.id);
-                                set_bill_to_information(
-                                    <div>
-                                        <div>{data.name}</div>
-                                        <div>{data.address1}</div>
-                                        <div>{data.address2}</div>
-                                    </div>
-                                );
-                            }}>
-                            {all_bill_to.map(function (bill_to) {
-                                return <option key={JSON.stringify(bill_to)} value={bill_to.id}>{bill_to.name}</option>;
-                            })}
-                        </select>
-                    </div>
-                </div>
-                <div className="input_field">
-                    <div className="title">Ship To</div>
-                    <div className="input">
-                        <select
-                            value={ship_to_id}
-                            onChange={(e) => {
-                                let value = e.target.value;
-                                let data = JSON.parse(value);
-                                set_ship_to_id(data.id);
-                                set_ship_to_information(
-                                    <div>
-                                        <div>{data.name}</div>
-                                        <div>{data.address1}</div>
-                                        <div>{data.address2}</div>
-                                    </div>
-                                );
-                            }}>
-                            {all_ship_to.map(function (ship_to) {
-                                return <option key={JSON.stringify(ship_to)} value={ship_to.id}>{ship_to.name}</option>;
-                            })}
-                        </select>
-                    </div>
-                </div>
-                <div className="input_field">
-                    <div className="title">Ship From</div>
-                    <div className="input">
-                        <select
-                            value={ship_from_id}
-                            onChange={(e) => {
-                                let value = e.target.value;
-                                let data = JSON.parse(value);
-                                set_ship_from_id(data.id);
-                                set_ship_from_information(
-                                    <div>
-                                        <div>{data.name}</div>
-                                        <div>{data.address1}</div>
-                                        <div>{data.address2}</div>
-                                    </div>
-                                );
-                            }}>
-                            {all_ship_from.map(function (ship_from) {
-                                return <option key={JSON.stringify(ship_from)} value={ship_from.id}>{ship_from.name}</option>;
-                            })}
-                        </select>
-                    </div>
-                </div>
-
-                <div className="input_field">
-                    <div className="title">Bank Details</div>
-                    <div className="input">
-                        <textarea
-                            type="text"
-                            value={bank_details_information}
-                            onChange={(e) => set_bank_details_information(e.target.value)}
-                        />
-                    </div>
-                </div>
-
-                <div className="input_field">
-                    <div className="title">Date</div>
-                    <div className="input">
-                        <input
-                            value={date}
-                            type="date"
-                            onChange={(e) => {
-                                set_date(e.target.value);
-                            }}
-                        />
-                    </div>
-                </div>
-                <div className="input_field">
-                    <div className="title">Due Date</div>
-                    <div className="input">
-                        <input
-                            value={due_date}
-                            type="date"
-                            onChange={(e) => {
-                                set_due_date(e.target.value);
-                            }}
-                        />
-                    </div>
-                </div>
-                <div className="input_field">
-                    <div className="title">Currency</div>
-                    <div className="input">
-                        <select
-                            value={currency}
-                            onChange={(e) => {
-                                let value = e.target.value;
-                                set_currency(value);
-                            }}>
-                            <option value="USD">USD</option>
-                            <option value="CAD">CAD</option>
-                        </select>
-                    </div>
-                </div>
-                <div className="input_field">
-                    <div className="title">Terms</div>
-                    <div className="input">
-                        <textarea
-                            value={terms_and_conditions}
-                            name=""
-                            id=""
-                            cols="30"
-                            rows="10"
-                            onChange={(e) => {
-                                let value = e.target.value;
-                                set_terms_and_conditions(value);
-                            }}></textarea>
-                    </div>
-                </div>
-                <div className="input_field">
-                    <div className="title">Type</div>
-                    <div className="input">
-                        <select
-                            value={purchase_order_type}
-                            onChange={(e) => {
-                                set_purchase_order_type(e.target.value);
-                            }}>
-                            <option value="First Quote">First Quote</option>
-                            <option value="Final Quote">Final Quote</option>
-                            <option value="Purchase_order">Purchase_order</option>
-                        </select>
-                    </div>
-                </div>
-                <div className="input_field">
-                    <div className="title">Extra Info</div>
-                    <div className="input">
-                        <textarea
-                            value={extra_information}
-                            name=""
-                            id=""
-                            cols="30"
-                            rows="10"
-                            onChange={(e) => {
-                                set_extra_information(e.target.value);
-                            }}></textarea>
-                    </div>
-                </div>
-                <div className="input_field">
-                    <div className="title">B/L number #</div>
+                    <div className="title">Invoice</div>
                     <div className="input">
                         <input
                             type="text"
@@ -583,97 +636,91 @@ function Create_purchase_order({ create = true, purchase_order_id_view = '' }) {
                     </div>
                 </div>
             </div>
-            <div className="input_field">
-                <div className="input">
-                    <table
-                        id="purchase_order-table"
-                        className="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>Item</th>
-                                <th>Description</th>
-                                <th>Price</th>
-                                <th>Quantity</th>
-                                <th>Total Price</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {selected_items.map((item, index) => (
-                                <tr key={index}>
-                                    <td>
-                                        <input
-                                            type="text"
-                                            value={item.name}
-                                            onChange={(e) => edit_purchase_order_fields(index, 'name', e.target.value)}
-                                        />
-                                    </td>
-                                    <td>
-                                        <input
-                                            type="text"
-                                            value={item.description}
-                                            onChange={(e) => edit_purchase_order_fields(index, 'description', e.target.value)}
-                                        />
-                                    </td>
-                                    <td>
-                                        <input
-                                            type="number"
-                                            value={item.price}
-                                            onChange={(e) => edit_purchase_order_fields(index, 'price', parseFloat(e.target.value))}
-                                        />
-                                    </td>
-                                    <td>
-                                        <input
-                                            type="number"
-                                            value={item.quantity}
-                                            onChange={(e) => edit_purchase_order_fields(index, 'quantity', parseFloat(e.target.value))}
-                                        />
-                                    </td>
-                                    <td>{item.price * item.quantity}</td>
-                                    <td>
-                                        <button onClick={() => removeItem(index)}>Remove</button> {/* Button to remove item */}
-                                    </td>
-                                </tr>
-                            ))}
-                            <tr>
-                                <td>
-                                    <select onChange={(e) => add_new_purchase_order_item(e)}>
-                                        <option value="none">New Item</option>
-                                        <option value="blank">Blank Item</option>
-                                        {all_items &&
-                                            all_items.map(function (item) {
-                                                return (
-                                                    <option key={JSON.stringify(item)} value={JSON.stringify(item)}>
-                                                        {item.name} - {item.price} Price
-                                                    </option>
-                                                );
-                                            })}
-                                    </select>
-                                </td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td>
-                                    <strong>Total Price of all items: </strong>
-                                </td>
 
-                                <td> {total_price}</td>
-                                <td></td>
-                            </tr>
-                        </tfoot>
-                    </table>
-                </div>
-            </div>
-            <button onClick={onOpen}>View Purchase_order</button>
+            <Accordion>
+                {invoices.map((invoice) => {
+                    return (
+                        <AccordionItem
+                            className="input_field"
+                            key={invoice.id}
+                            aria-label={invoice.description}
+                            title={invoice.id + ' ' + invoice.description + ' ' + invoice.date + ' ' + invoice.bill_to}>
+                            <div className="input">
+                                <table
+                                    id="invoice-table"
+                                    className="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Item</th>
+                                            <th>Description</th>
+                                            <th>Price</th>
+                                            <th>Vendor</th>
+                                            <th>Quantity</th>
+                                            <th>Total Price</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {JSON.parse(invoice.all_items).map((item, index) => (
+                                            <tr key={index}>
+                                                <td>
+                                                    <input
+                                                        type="text"
+                                                        value={item.name}
+                                                        readOnly
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <input
+                                                        type="text"
+                                                        value={item.description}
+                                                        readOnly
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <input
+                                                        type="number"
+                                                        value={item.price}
+                                                        readOnly
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <select
+                                                        value={item.vendor_id}
+                                                        disabled={true}
+                                                        readOnly>
+                                                        <option value={'Select Vendor'}>No Vendor</option>
+                                                        {all_vendors.map(function (vendor_) {
+                                                            return (
+                                                                <option
+                                                                    key={vendor_.id}
+                                                                    value={vendor_.id}>
+                                                                    {vendor_.name}
+                                                                </option>
+                                                            );
+                                                        })}
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <input
+                                                        type="number"
+                                                        value={item.quantity}
+                                                        readOnly
+                                                    />
+                                                </td>
+                                                <td>{(item.price * item.quantity).toFixed(2)}</td>
+                                                <td>
+                                                    <button onClick={() => removeItem(index)}>Add To PO</button> {/* Button to remove item */}
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </AccordionItem>
+                    );
+                })}
+            </Accordion>
 
             <Modal
                 isOpen={isOpen}
@@ -681,11 +728,11 @@ function Create_purchase_order({ create = true, purchase_order_id_view = '' }) {
                 <ModalContent>
                     <ModalHeader>Create Daily</ModalHeader>
                     <ModalBody>
-                        <div className="purchase_order_viewer_container">
+                        <div className="invoice_viewer_container">
                             <div
                                 ref={targetRef}
-                                className="purchase_order_viewer"
-                                id="purchase_order_viewer">
+                                className="invoice_viewer"
+                                id="invoice_viewer">
                                 <div className="logo"></div>
                                 <h4>{purchase_order_type}</h4>
                                 <div className="first_section">
@@ -696,6 +743,10 @@ function Create_purchase_order({ create = true, purchase_order_id_view = '' }) {
 
                                         <h1>{purchase_order_id}</h1>
                                         <div>Date: {date}</div>
+                                        <div>Due Date: {due_date}</div>
+                                        <div>B/L Number: {bl_number}</div>
+                                        <div>Description: {description}</div>
+                                        <div>Purchase_Order Status: {purchase_order_status}</div>
                                         <div
                                             dangerouslySetInnerHTML={{
                                                 __html: purchase_order_information.replace(/\n/g, '<br>'),
@@ -741,11 +792,11 @@ function Create_purchase_order({ create = true, purchase_order_id_view = '' }) {
                                                     <TableCell>{item.name}</TableCell>
                                                     <TableCell>{item.description}</TableCell>
                                                     <TableCell>
-                                                        {currency} {item.price}
+                                                        {currency} {item.price.toFixed(2)}
                                                     </TableCell>
                                                     <TableCell>{item.quantity}</TableCell>
                                                     <TableCell>
-                                                        {currency} {item.price * item.quantity}
+                                                        {currency} {(item.price * item.quantity).toFixed(2)}
                                                     </TableCell>
                                                 </TableRow>
                                             ))}
@@ -778,7 +829,8 @@ function Create_purchase_order({ create = true, purchase_order_id_view = '' }) {
                         </div>
                     </ModalBody>
                     <ModalFooter>
-                        <button onClick={createPDF}>Create Purchase_order</button>
+                        <button onClick={createPDF}>Create Purchase_Order</button>
+                        <button onClick={toPDF}>Download Purchase_Order</button>
                     </ModalFooter>
                 </ModalContent>
             </Modal>

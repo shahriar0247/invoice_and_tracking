@@ -11,7 +11,7 @@ def get_invoice_view():
     all_invoice = []
     all_invoices_raw = Invoice.query.order_by(Invoice.id).all()
     for invoice in all_invoices_raw:
-        if invoice.deleted == "Deleted": continue
+        if invoice.deleted == "True": continue
         invoice_object = {}
         invoice_object["id"] = invoice.id
         invoice_object["bill_to"] = Bill_to.query.get(invoice.bill_to_id).name
@@ -23,6 +23,7 @@ def get_invoice_view():
         invoice_object["due_date"] = invoice.due_date
         invoice_object["description"] = invoice.description
         invoice_object["invoice_status"] = invoice.invoice_status
+        invoice_object["all_items"] = invoice.all_items
 
         all_invoice.append(invoice_object)
 
