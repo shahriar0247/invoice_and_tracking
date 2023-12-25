@@ -19,6 +19,7 @@ class Bill_to(db.Model):
     address1 = db.Column(db.String(1200), nullable=True)
     address2 = db.Column(db.String(1200), nullable=True)
     address3 = db.Column(db.String(1200), nullable=True)
+    deleted = db.Column(db.String(10), nullable=True)
 
 
 class Ship_from(db.Model):
@@ -27,6 +28,7 @@ class Ship_from(db.Model):
     address1 = db.Column(db.String(1200), nullable=True)
     address2 = db.Column(db.String(1200), nullable=True)
     address3 = db.Column(db.String(1200), nullable=True)
+    deleted = db.Column(db.String(10), nullable=True)
 
 
 class Ship_to(db.Model):
@@ -35,6 +37,7 @@ class Ship_to(db.Model):
     address1 = db.Column(db.String(1200), nullable=True)
     address2 = db.Column(db.String(1200), nullable=True)
     address3 = db.Column(db.String(1200), nullable=True)
+    deleted = db.Column(db.String(10), nullable=True)
 
 class Item(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -64,15 +67,8 @@ class Invoice(db.Model):
     bl_number = db.Column(db.String(1200), nullable=True)
     bank_details = db.Column(db.String(1200), nullable=True)
     type = db.Column(db.String(1200), nullable=True)
+    deleted = db.Column(db.String(10), nullable=True)
 
-    # tracking params
-    # container = db.Column(db.String(1200), nullable=True)
-    # departure = db.Column(db.String(1200), nullable=True)
-    # location_status = db.Column(db.String(1200), nullable=True)
-    # custom_tracking = db.Column(db.String(1200), nullable=True)
-    # status = db.Column(db.String(1200), nullable=True)
-    # Deli = db.Column(db.String(1200), nullable=True)
-    # Manifest = db.Column(db.String(1200), nullable=True)
 
     def __init__(self, *args, **kwargs):
         if not kwargs.get('id'):
@@ -85,6 +81,8 @@ class Vendor(db.Model):
     name = db.Column(db.String(1200), nullable=True)
     address1 = db.Column(db.String(1200), nullable=True)
     address2 = db.Column(db.String(1200), nullable=True)
+    deleted = db.Column(db.String(10), nullable=True)
+    
     
 class Purchase_Order(db.Model):
     id = db.Column(db.String(20), primary_key=True, nullable=True)
@@ -101,14 +99,8 @@ class Purchase_Order(db.Model):
     bank_details = db.Column(db.String(1200), nullable=True)
     type = db.Column(db.String(1200), nullable=True)
 
-    # tracking params
-    container = db.Column(db.String(1200), nullable=True)
-    departure = db.Column(db.String(1200), nullable=True)
-    location_status = db.Column(db.String(1200), nullable=True)
-    custom_tracking = db.Column(db.String(1200), nullable=True)
-    BL = db.Column(db.String(1200), nullable=True)
-    Deli = db.Column(db.String(1200), nullable=True)
-    Manifest = db.Column(db.String(1200), nullable=True)
+    deleted = db.Column(db.String(10), nullable=True)
+
     
     def __init__(self, *args, **kwargs):
         if not kwargs.get('id'):

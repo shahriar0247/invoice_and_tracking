@@ -7,121 +7,125 @@ from app.models.modals import Bill_to, Company, Invoice, Ship_from, Ship_to, Ven
 
 
 @app.route("/get/type/<type>")
-def get_bill_to_view(type):
+def get_items_view(type):
     all_bills = []
     if type == "ship_from":
         all_bills_raw = Ship_from.query.all()
-    elif type == "bill_to":
+    elif type == "item":
         all_bills_raw = Bill_to.query.all()
     elif type == "ship_to":
         all_bills_raw = Ship_to.query.all()
-    for bill_to in all_bills_raw:
-        bill_to_object = {}
-        bill_to_object["id"] = bill_to.id
-        bill_to_object["name"] = bill_to.name
-        bill_to_object["address1"] = bill_to.address1
-        bill_to_object["address2"] = bill_to.address2
+    elif type == "vendor":
+        all_bills_raw = Vendor.query.all()
+    for item in all_bills_raw:
+        if item.deleted == "True": continue
+        item_object = {}
+        item_object["id"] = item.id
+        item_object["name"] = item.name
+        item_object["address1"] = item.address1
+        item_object["address2"] = item.address2
 
-        all_bills.append(bill_to_object)
+        all_bills.append(item_object)
 
     return jsonify(all_bills)
 
 
 @app.route("/create/type/<type>", methods=["POST"])
-def create_bill_to_view(type):
+def create_items_view(type):
     data = request.json
     if type == "ship_from":
-        new_bill_to = Ship_from(
+        new_item = Ship_from(
             name=data["name"],
             address1=data["address1"],
             address2=data["address2"],
         )
-    elif type == "bill_to":
-        new_bill_to = Bill_to(
+    elif type == "item":
+        new_item = Bill_to(
             name=data["name"],
             address1=data["address1"],
             address2=data["address2"],
         )
     elif type == "ship_to":
-        new_bill_to = Ship_to(
+        new_item = Ship_to(
             name=data["name"],
             address1=data["address1"],
             address2=data["address2"],
         )
     elif type == "vendor":
-        new_bill_to = Vendor(
+        new_item = Vendor(
             name=data["name"],
             address1=data["address1"],
             address2=data["address2"],
         )
         
 
-    db.session.add(new_bill_to)
+    db.session.add(new_item)
     db.session.commit()
 
     return "Invoice created successfully"
 
 
-@app.route("/edit/type/<type>/<int:bill_to_id>", methods=["PUT"])
-def edit_bill_to_view(type, bill_to_id):
+@app.route("/edit/type/<type>/<int:item_id>", methods=["PUT"])
+def edit_items_view(type, item_id):
     data = request.json
     if type == "ship_from":
-        bill_to = Ship_from.query.get(bill_to_id)
-    elif type == "bill_to":
-        bill_to = Bill_to.query.get(bill_to_id)
+        item = Ship_from.query.get(item_id)
+    elif type == "item":
+        item = Bill_to.query.get(item_id)
     elif type == "ship_to":
-        bill_to = Ship_to.query.get(bill_to_id)
+        item = Ship_to.query.get(item_id)
     elif type == "vendor":
-        bill_to = Vendor.query.get(bill_to_id)
+        item = Vendor.query.get(item_id)
 
-    if not bill_to:
+    if not item:
         return jsonify({"error": "Bill_to not found"}), 404
 
-    bill_to.name = data.get("name", bill_to.name)
-    bill_to.address1 = data.get("address1", bill_to.address1)
-    bill_to.address2 = data.get("address2", bill_to.address2)
+    item.name = data.get("name", item.name)
+    item.address1 = data.get("address1", item.address1)
+    item.address2 = data.get("address2", item.address2)
 
     db.session.commit()
 
     return "Bill_to updated successfully"
 
 
-@app.route("/get/type/<type>/<int:bill_to_id>")
-def get_bill_to_one_view(type, bill_to_id):
+@app.route("/get/type/<type>/<int:item_id>")
+def get_items_one_view(type, item_id):
     if type == "ship_from":
-        bill_to = Ship_from.query.get(bill_to_id)
-    elif type == "bill_to":
-        bill_to = Bill_to.query.get(bill_to_id)
+        item = Ship_from.query.get(item_id)
+    elif type == "item":
+        item = Bill_to.query.get(item_id)
     elif type == "ship_to":
-        bill_to = Ship_to.query.get(bill_to_id)
+        item = Ship_to.query.get(item_id)
     elif type == "vendor":
-        bill_to = Vendor.query.get(bill_to_id)
+        item = Vendor.query.get(item_id)
     
-    bill_to_object = {}
-    bill_to_object["id"] = bill_to.id
-    bill_to_object["name"] = bill_to.name
-    bill_to_object["address1"] = bill_to.address1
-    bill_to_object["address2"] = bill_to.address2
+    item_object = {}
+    item_object["id"] = item.id
+    item_object["name"] = item.name
+    item_object["address1"] = item.address1
+    item_object["address2"] = item.address2
 
-    return jsonify(bill_to_object)
+    return jsonify(item_object)
 
 # ... (previous backend code)
 
-@app.route("/delete/type/<type>/<int:bill_to_id>", methods=["DELETE"])
-def delete_bill_to_view(type, bill_to_id):
+@app.route("/delete/type/<type>/<int:item_id>", methods=["DELETE"])
+def delete_items_view(type, item_id):
     if type == "ship_from":
-        bill_to = Ship_from.query.get(bill_to_id)
-    elif type == "bill_to":
-        bill_to = Bill_to.query.get(bill_to_id)
+        item = Ship_from.query.get(item_id)
+    elif type == "item":
+        item = Bill_to.query.get(item_id)
     elif type == "ship_to":
-        bill_to = Ship_to.query.get(bill_to_id)
+        item = Ship_to.query.get(item_id)
     elif type == "vendor":
-        bill_to = Vendor.query.get(bill_to_id)
-    if not bill_to:
+        item = Vendor.query.get(item_id)
+    if not item:
         return jsonify({"error": "Bill_to not found"}), 404
 
     try:
-        db.session.delete(bill_to)
+        item.deleted = "True"
+        db.session.delete(item)
         db.session.commit()
     except Exception as e:
         return str(e)
