@@ -47,6 +47,7 @@ class Item(db.Model):
     currency = db.Column(db.String(1200), nullable=True)
     quantity = db.Column(db.Integer, nullable=True)
     vendor_id = db.Column(db.Integer, db.ForeignKey('vendor.id'), nullable=True)
+    deleted = db.Column(db.String(10), nullable=True)
 
 
 

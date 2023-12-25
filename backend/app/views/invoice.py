@@ -9,8 +9,9 @@ from app.models.modals import Bill_to, Purchase_Order, Invoice, Ship_from, Ship_
 @app.route("/get/invoice")
 def get_invoice_view():
     all_invoice = []
-    all_invoices_raw = Invoice.query.all()
+    all_invoices_raw = Invoice.query.order_by(Invoice.id).all()
     for invoice in all_invoices_raw:
+        if invoice.deleted == "Deleted": continue
         invoice_object = {}
         invoice_object["id"] = invoice.id
         invoice_object["bill_to"] = Bill_to.query.get(invoice.bill_to_id).name

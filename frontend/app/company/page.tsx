@@ -5,14 +5,14 @@ import '../styles/globals.scss';
 import '../styles/invoice_viewer.scss';
 
 export default function Company() {
-    const [name, set_name] = React.useState();
-    const [address1, set_address1] = React.useState();
-    const [address2, set_address2] = React.useState();
-    const [address3, set_address3] = React.useState();
-    const [tel, set_tel] = React.useState();
-    const [fax, set_fax] = React.useState();
-    const [gst, set_gst] = React.useState();
-    const [bank_details, set_bank_details] = React.useState();
+    const [name, set_name] = React.useState("");
+    const [address1, set_address1] = React.useState("");
+    const [address2, set_address2] = React.useState("");
+    const [address3, set_address3] = React.useState("");
+    const [tel, set_tel] = React.useState("");
+    const [fax, set_fax] = React.useState("");
+    const [gst, set_gst] = React.useState("");
+    const [bank_details, set_bank_details] = React.useState("");
     React.useEffect(() => {
         fetchCompany();
     }, []);

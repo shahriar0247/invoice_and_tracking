@@ -11,7 +11,7 @@ def get_items_view(type):
     all_bills = []
     if type == "ship_from":
         all_bills_raw = Ship_from.query.all()
-    elif type == "item":
+    elif type == "bill_to":
         all_bills_raw = Bill_to.query.all()
     elif type == "ship_to":
         all_bills_raw = Ship_to.query.all()
@@ -39,7 +39,7 @@ def create_items_view(type):
             address1=data["address1"],
             address2=data["address2"],
         )
-    elif type == "item":
+    elif type == "bill_to":
         new_item = Bill_to(
             name=data["name"],
             address1=data["address1"],
@@ -70,7 +70,7 @@ def edit_items_view(type, item_id):
     data = request.json
     if type == "ship_from":
         item = Ship_from.query.get(item_id)
-    elif type == "item":
+    elif type == "bill_to":
         item = Bill_to.query.get(item_id)
     elif type == "ship_to":
         item = Ship_to.query.get(item_id)
@@ -93,7 +93,7 @@ def edit_items_view(type, item_id):
 def get_items_one_view(type, item_id):
     if type == "ship_from":
         item = Ship_from.query.get(item_id)
-    elif type == "item":
+    elif type == "bill_to":
         item = Bill_to.query.get(item_id)
     elif type == "ship_to":
         item = Ship_to.query.get(item_id)
@@ -108,13 +108,13 @@ def get_items_one_view(type, item_id):
 
     return jsonify(item_object)
 
-# ... (previous backend code)
+
 
 @app.route("/delete/type/<type>/<int:item_id>", methods=["DELETE"])
 def delete_items_view(type, item_id):
     if type == "ship_from":
         item = Ship_from.query.get(item_id)
-    elif type == "item":
+    elif type == "bill_to":
         item = Bill_to.query.get(item_id)
     elif type == "ship_to":
         item = Ship_to.query.get(item_id)

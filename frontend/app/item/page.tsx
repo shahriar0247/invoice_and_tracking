@@ -9,7 +9,7 @@ export default function App() {
     const [name, set_name] = React.useState('');
     const [description, set_description] = React.useState('');
     const [price, set_price] = React.useState('');
-    const [vendor_id, set_vendor_id] = React.useState(0);
+    const [vendor_id, set_vendor_id] = React.useState('Select Vendor');
     const [editItemId, setEditItemId] = React.useState(null);
 
     const [all_vendors, set_all_vendors] = React.useState([]);
@@ -17,10 +17,11 @@ export default function App() {
     const [tableData, setTableData] = React.useState([]);
 
     function toggleCreateModal() {
-        set_name("");
-        set_description("");
-        set_price("");
-        set_vendor_id(0);
+        set_name('');
+        set_description('');
+        set_price('');
+        set_vendor_id('Select Vendor');
+        setEditItemId(null);
         onOpen();
     }
 
@@ -33,7 +34,11 @@ export default function App() {
                 set_name(data.name);
                 set_description(data.description);
                 set_price(data.price);
-                set_vendor_id(data.vendor_id);
+                if (data.vendor_id) {
+                    set_vendor_id(data.vendor_id);
+                } else {
+                    set_vendor_id('Select Vendor');
+                }
             })
             .catch((error) => {
                 console.error('Error fetching item details for editing:', error);
@@ -123,6 +128,19 @@ export default function App() {
                 console.error('Error:', error);
             });
     }
+    function handle_delete_click(item_id) {
+        const confirmDelete = window.confirm('Are you sure you want to delete this item?');
+        if (confirmDelete) {
+            fetch(`http://localhost:5003/delete/item/${item_id}`, {
+                method: 'DELETE',
+            })
+                .then((response) => response.text())
+                .then((data) => {
+                    window.location.reload();
+                })
+                .catch((error) => console.error('Error deleting bill_to:', error));
+        }
+    }
 
     return (
         <div className="item">
@@ -146,6 +164,7 @@ export default function App() {
                             <TableCell>{item.price}</TableCell>
                             <TableCell>
                                 <button onClick={() => toggleEditModal(item.id)}>Edit</button>
+                                <button onClick={() => handle_delete_click(item.id)}>Delete</button>
                             </TableCell>
                         </TableRow>
                     ))}
@@ -203,7 +222,7 @@ export default function App() {
                                         onChange={(e) => {
                                             set_vendor_id(e.target.value);
                                         }}>
-                                        <option value={0}>Select Vendor</option>
+                                        <option value={'Select Vendor'}>Select Vendor</option>
                                         {all_vendors.map(function (vendor_) {
                                             return (
                                                 <option

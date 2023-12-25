@@ -7,8 +7,9 @@ from app.models.modals import Bill_to, Company, Invoice, Item, Item, Vendor
 @app.route("/get/item")
 def get_item_view():
     all_bills = []
-    all_bills_raw = Item.query.all()
+    all_bills_raw = Item.query.order_by(Item.id).all()
     for item in all_bills_raw:
+        if item.deleted == "True": continue
         item_object = {}
         item_object["id"] = item.id
         item_object["name"] = item.name
@@ -32,7 +33,11 @@ def edit_item_view(item_id):
     item.name = data.get("name", item.name)
     item.description = data.get("description", item.description)
     item.price = data.get("price", item.price)
-    item.vendor_id = data.get("vendor_id", item.vendor_id)
+    if data['vendor_id'] != "Select Vendor":
+        item.vendor_id = data.get("vendor_id", item.vendor_id)
+    else:
+        item.vendor_id = None
+        
 
     db.session.commit()
 
@@ -71,3 +76,12 @@ def create_item_view():
     db.session.commit()
 
     return "Invoice created successfully"
+
+@app.route("/delete/item/<int:item_id>", methods=["DELETE"])
+def delete_item_view(item_id):
+    item = Item.query.get(item_id)
+    item.deleted = "True"
+    db.session.commit()
+
+
+    return "Bill_to deleted successfully"
