@@ -87,19 +87,15 @@ class Vendor(db.Model):
     
 class Purchase_Order(db.Model):
     id = db.Column(db.String(20), primary_key=True, nullable=True)
-    
-    vendor_id = db.Column(db.Integer, db.ForeignKey('vendor.id'), nullable=True)
-    all_items = db.Column(db.String(500), nullable=True)
 
+    vendor_id = db.Column(db.Integer, db.ForeignKey('vendor.id'), nullable=True)
     invoice_id = db.Column(db.String(20), db.ForeignKey('invoice.id'), nullable=True)
 
+    all_items = db.Column(db.String(500), nullable=True)
+    description = db.Column(db.String(1200), nullable=True)
     date = db.Column(db.DateTime, nullable=True)
-    terms = db.Column(db.String(1200), nullable=True)
-    extra_info = db.Column(db.String(1200), nullable=True)
-    bl_number = db.Column(db.String(1200), nullable=True)
-    bank_details = db.Column(db.String(1200), nullable=True)
-    type = db.Column(db.String(1200), nullable=True)
-
+    due_date = db.Column(db.DateTime, nullable=True)
+    purchase_order_status = db.Column(db.String(1200), nullable=True)
     deleted = db.Column(db.String(10), nullable=True)
 
     
@@ -108,6 +104,13 @@ class Purchase_Order(db.Model):
             kwargs['id'] = f'PO - {random.randint(1000000, 9999999)}'
         super(Purchase_Order, self).__init__(*args, **kwargs)
 
+class ItemHistory(db.Model):
+    id = db.Column(db.String(20), primary_key=True, nullable=True)
+    all_items = db.Column(db.String(500), nullable=True)
+    description = db.Column(db.String(1200), nullable=True)
+    date = db.Column(db.DateTime, nullable=True)
+    deleted = db.Column(db.String(10), nullable=True)
+    
 
 class Daily_Account(db.Model):
     id = db.Column(db.String(20), primary_key=True, nullable=True)

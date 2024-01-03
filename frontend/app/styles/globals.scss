@@ -200,8 +200,15 @@ textarea {
 #invoice-table {
     width: 100%;
 }
-
+section{
+    height: 95vh;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+}
 .invoice {
+    height: calc(95vh - 100px);
+    overflow-y: auto;
+    overflow-x: auto;
     .all_filters {
         display: grid;
         grid-template-columns: 1fr 1fr 1fr;
@@ -228,4 +235,9 @@ textarea {
     max-width: none !important;
 }
 
+.all_items_po{
+    border: 1px solid black;
+    box-shadow: 0px 0px 5px 1px rgba(0, 0, 0, 0.3);
+    padding: 20px
+}
 @import './invoice_viewer.scss';

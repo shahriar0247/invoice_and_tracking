@@ -20,4 +20,5 @@ from .views.tracking import *
 from .views.invoice import *
 from .views.vendor import *
 from .views.purchase_order import *
+from .views.item_history import *
 from .views.daily_accounts import *
