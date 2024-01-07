@@ -28,8 +28,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     <a href="/item">Items</a>
                     <a href="/invoices">Invoices</a>
                     <a href="/type/vendor">Vendors</a>
-                    <a href="/item_history">Item History</a>
-                    {/* <a href="/daily_accounts">Daily Accounts</a> */}
+                    <a href="/purchase_order">Purchase Order</a>
+                    <a href="/daily_accounts">Daily Accounts</a>
                 </nav>
                 <div className="dummy"></div>
                 <main>{children}</main>

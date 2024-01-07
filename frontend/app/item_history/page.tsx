@@ -314,11 +314,22 @@ function Create_item_history({ create = true, item_history_id_view = '', edit = 
     }, [selected_items]);
     React.useEffect(() => {
         fetchItems();
+        fetchInvoices();
+        fetchVendor();
         if (!create) {
             get_item_history_details();
         }
     }, []);
-
+    function fetchInvoices() {
+        fetch('http://localhost:5003/get/invoice')
+            .then((response) => response.json())
+            .then((data) => {
+                set_invoices(data);
+            })
+            .catch((error) => {
+                console.error('Error fetching purchase_order:', error);
+            });
+    }
     function getFormattedDate() {
         const today = new Date();
         const year = today.getFullYear();
@@ -378,7 +389,16 @@ function Create_item_history({ create = true, item_history_id_view = '', edit = 
         updatedItems.splice(index, 1);
         set_selected_items(updatedItems);
     };
-
+    function fetchVendor() {
+        fetch('http://localhost:5003/get/vendor')
+            .then((response) => response.json())
+            .then((data) => {
+                set_all_vendors(data);
+            })
+            .catch((error) => {
+                console.error('Error fetching all vendor:', error);
+            });
+    }
     function fetchItems() {
         console.log('here 2');
         fetch('http://localhost:5003/get/item')
@@ -427,8 +447,9 @@ function Create_item_history({ create = true, item_history_id_view = '', edit = 
         set_item_history_id(`IH - ${Math.floor(Math.random() * (9999999 - 1000000 + 1)) + 1000000}`);
         fetch_item_history_handler();
         // toPDF();
-        // onClose();
-        // onCloseParent();
+        onClose();
+        onCloseParent();
+        window.location.reload()
     }
 
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -648,7 +669,7 @@ function Create_item_history({ create = true, item_history_id_view = '', edit = 
                                                 </td>
                                                 <td>{(item.price * item.quantity).toFixed(2)}</td>
                                                 <td>
-                                                    <button onClick={() => set_selected_items([...selected_items, item])}>Add To PO</button>
+                                                    <button onClick={() => set_selected_items([...selected_items, item])}>Add</button>
                                                 </td>
                                             </tr>
                                         ))}

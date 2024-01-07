@@ -6,8 +6,6 @@ import { usePDF } from 'react-to-pdf';
 import { Accordion, AccordionItem } from '@nextui-org/react';
 
 export default function Purchase_Orders({ create = true, purchase_order_id_view = '' }) {
-    const [data1, setData1] = React.useState([]);
-    const [data2, setData2] = React.useState([]);
     const [data3, setData3] = React.useState([]);
     const [all_data, set_all_data] = React.useState([]);
     const [users, setUsers] = React.useState([]);
@@ -83,10 +81,7 @@ export default function Purchase_Orders({ create = true, purchase_order_id_view 
         fetch('http://localhost:5003/get/purchase_order')
             .then((response) => response.json())
             .then((data) => {
-                setData1(data.filter((item) => item.type === 'First Quote'));
-                setData2(data.filter((item) => item.type === 'Final Quote'));
-                setData3(data.filter((item) => item.type === 'Purchase_Order'));
-
+                setData3(data);
                 set_all_data(data);
                 setUsers(getUniqueUsers(data));
             })
@@ -135,10 +130,7 @@ export default function Purchase_Orders({ create = true, purchase_order_id_view 
             );
         });
 
-        console.log(filteredData2.filter((item) => item.type === 'Purchase_Order'));
-        setData1(filteredData2.filter((item) => item.type === 'First Quote'));
-        setData2(filteredData2.filter((item) => item.type === 'Final Quote'));
-        setData3(filteredData2.filter((item) => item.type === 'Purchase_Order'));
+        setData3(filteredData2);
     }
 
     React.useEffect(() => {
@@ -232,14 +224,6 @@ export default function Purchase_Orders({ create = true, purchase_order_id_view 
                     name: 'All Purchase_Orders',
                     data: data3,
                 },
-                {
-                    name: 'All First Quotes',
-                    data: data1,
-                },
-                {
-                    name: 'All Final Quotes',
-                    data: data2,
-                },
             ].map((value, index) => {
                 return (
                     <div key={value.name}>
@@ -319,6 +303,8 @@ function Create_purchase_order({ create = true, purchase_order_id_view = '', edi
     const [purchase_order_status, set_purchase_order_status] = React.useState('');
     const [bank_details_information, set_bank_details_information] = React.useState('');
     const [invoices, set_invoices] = React.useState([]);
+    const [invoice_id, set_invoice_id] = React.useState('');
+    const [invoice, set_invoice] = React.useState('');
 
     const [terms_and_conditions, set_terms_and_conditions] = React.useState('');
     const [purchase_order_type, set_purchase_order_type] = React.useState('First Quote');
@@ -347,9 +333,6 @@ function Create_purchase_order({ create = true, purchase_order_id_view = '', edi
     }, [selected_items]);
     React.useEffect(() => {
         fetchCompany();
-        fetchBillTo();
-        fetchShipFrom();
-        fetchShipTo();
         fetchItems();
         fetchInvoices();
         fetchVendor();
@@ -375,40 +358,8 @@ function Create_purchase_order({ create = true, purchase_order_id_view = '', edi
         const all_items_ = JSON.parse(data['all_items']);
         set_purchase_order_id(data.id);
         set_selected_items(all_items_);
-        set_bill_to(JSON.stringify(data.bill_to));
-        set_bill_to_id(data.bill_to.id);
-        set_ship_to(JSON.stringify(data.ship_to));
-        set_ship_to_id(data.ship_to.id);
-        set_ship_from(JSON.stringify(data.ship_from));
-        set_ship_from_id(data.ship_from.id);
-        set_bill_to_information(
-            <div>
-                <div>{data.bill_to.name}</div>
-                <div>{data.bill_to.address1}</div>
-                <div>{data.bill_to.address2}</div>
-            </div>
-        );
-        set_ship_to_information(
-            <div>
-                <div>{data.ship_to.name}</div>
-                <div>{data.ship_to.address1}</div>
-                <div>{data.ship_to.address2}</div>
-            </div>
-        );
-        set_ship_from_information(
-            <div>
-                <div>{data.ship_from.name}</div>
-                <div>{data.ship_from.address1}</div>
-                <div>{data.ship_from.address2}</div>
-            </div>
-        );
-        set_purchase_order_type(data.type);
-        set_terms_and_conditions(data.terms);
-        set_extra_information(data.extra_info);
-        set_purchase_order_status(data.purchase_order_status);
+        set_invoice_id(data.invoice_id);
         set_description(data.description);
-        set_bank_details_information(data.bank_details);
-        set_bl_number(data.bl_number);
 
         var dateObject = new Date(data.date);
         var year = dateObject.getFullYear();
@@ -569,18 +520,13 @@ function Create_purchase_order({ create = true, purchase_order_id_view = '', edi
     function createPurchase_Order() {
         const purchase_orderData = {
             id: purchase_order_id,
-            bill_to_id: bill_to_id,
-            ship_to_id: ship_to_id,
-            ship_from_id: ship_from_id,
+            invoice_id: invoice_id,
             bank_details: bank_details_information,
             date: date,
             due_date: due_date,
             terms: terms_and_conditions,
-            type: purchase_order_type,
             extra_info: extra_information,
-            purchase_order_status: purchase_order_status,
             description: description,
-            bl_number: bl_number,
             all_items: selected_items,
             edit: edit,
         };
@@ -626,11 +572,34 @@ function Create_purchase_order({ create = true, purchase_order_id_view = '', edi
                 <div className="input_field">
                     <div className="title">Invoice</div>
                     <div className="input">
-                        <input
-                            type="text"
-                            value={bl_number}
+                        <select
+                            value={invoice}
                             onChange={(e) => {
-                                set_bl_number(e.target.value);
+                                let value = e.target.value;
+                                set_invoice(value)
+                                let data = JSON.parse(value);
+                                set_invoice_id(data.id);
+                            }}>
+                            {invoices.map(function (invoice) {
+                                return (
+                                    <option
+                                        key={JSON.stringify(invoice)}
+                                        value={JSON.stringify(invoice)}>
+                                        {invoice.id}
+                                    </option>
+                                );
+                            })}
+                        </select>
+                    </div>
+                </div>
+                <div className="input_field">
+                    <div className="title">Description</div>
+                    <div className="input">
+                        <textarea
+                            type="text"
+                            value={description}
+                            onChange={(e) => {
+                                set_description(e.target.value);
                             }}
                         />
                     </div>

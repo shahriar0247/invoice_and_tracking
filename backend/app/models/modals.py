@@ -114,8 +114,10 @@ class ItemHistory(db.Model):
 
 class Daily_Account(db.Model):
     id = db.Column(db.String(20), primary_key=True, nullable=True)
-    
+    description = db.Column(db.String(1200), nullable=True)
+    date = db.Column(db.DateTime, nullable=True)
     purchase_order_id = db.Column(db.String(20), db.ForeignKey('purchase__order.id'), nullable=True)
+    invoice_id = db.Column(db.String(20), db.ForeignKey('invoice.id'), nullable=True)
     
     all_items = db.Column(db.String(500), nullable=True)
     

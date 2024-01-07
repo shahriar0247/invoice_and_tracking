@@ -11,6 +11,7 @@ export default function App() {
     const [price, set_price] = React.useState('');
     const [vendor_id, set_vendor_id] = React.useState('Select Vendor');
     const [editItemId, setEditItemId] = React.useState(null);
+    const [vendor_cost, set_vendor_cost] = React.useState(null);
 
     const [all_vendors, set_all_vendors] = React.useState([]);
 
@@ -193,7 +194,7 @@ export default function App() {
                             <div className="input_field">
                                 <div className="title">Description</div>
                                 <div className="input">
-                                    <input
+                                    <textarea
                                         type="text"
                                         value={description}
                                         onChange={(e) => {
@@ -233,6 +234,16 @@ export default function App() {
                                             );
                                         })}
                                     </select>
+                                </div>
+                            </div>
+                            <div className="input_field">
+                                <div className="title">Price</div>
+                                <div className="input">
+                                    <input
+                                        type="number"
+                                        value={vendor_cost}
+                                        onChange={(e) => set_vendor_cost(e.target.value)}
+                                    />
                                 </div>
                             </div>
                         </div>

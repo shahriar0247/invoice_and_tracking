@@ -253,6 +253,7 @@ export default function Invoices({ create = true, invoice_id_view = '' }) {
                                 <TableColumn>Invoice Status</TableColumn>
                                 <TableColumn></TableColumn>
                                 <TableColumn></TableColumn>
+                                <TableColumn></TableColumn>
                             </TableHeader>
                             <TableBody>
                                 {value.data.map((item) => (
@@ -287,6 +288,14 @@ export default function Invoices({ create = true, invoice_id_view = '' }) {
                                                     deleteInvoice(item.id);
                                                 }}>
                                                 Delete
+                                            </button>
+                                        </TableCell>
+                                        <TableCell>
+                                            <button
+                                                onClick={() => {
+                                                    deleteInvoice(item.id);
+                                                }}>
+                                                Tracking
                                             </button>
                                         </TableCell>
                                     </TableRow>
@@ -330,6 +339,7 @@ function Create_invoice({ create = true, invoice_id_view = '', edit = false, fet
     const [date, set_date] = React.useState(getFormattedDate());
     const [due_date, set_due_date] = React.useState(getFormattedDate());
     const [invoice_id, set_invoice_id] = React.useState(`INV - ${Math.floor(Math.random() * (9999999 - 1000000 + 1)) + 1000000}`);
+    const [all_vendors, set_all_vendors] = React.useState([]);
 
     const [total_price, set_total_price] = React.useState(0);
 
@@ -342,6 +352,7 @@ function Create_invoice({ create = true, invoice_id_view = '', edit = false, fet
     }, [selected_items]);
     React.useEffect(() => {
         fetchCompany();
+        fetchVendor();
         fetchBillTo();
         fetchShipFrom();
         fetchShipTo();
@@ -448,6 +459,16 @@ function Create_invoice({ create = true, invoice_id_view = '', edit = false, fet
         updatedItems.splice(index, 1);
         set_selected_items(updatedItems);
     };
+    function fetchVendor() {
+        fetch('http://localhost:5003/get/vendor')
+            .then((response) => response.json())
+            .then((data) => {
+                set_all_vendors(data);
+            })
+            .catch((error) => {
+                console.error('Error fetching all vendor:', error);
+            });
+    }
     function fetchInvoice() {
         fetch('http://localhost:5003/get/invoice')
             .then((response) => response.json())
@@ -750,7 +771,7 @@ function Create_invoice({ create = true, invoice_id_view = '', edit = false, fet
                 <div className="input_field">
                     <div className="title">Description</div>
                     <div className="input">
-                        <input
+                        <textarea
                             type="text"
                             value={description}
                             onChange={(e) => {
@@ -802,12 +823,13 @@ function Create_invoice({ create = true, invoice_id_view = '', edit = false, fet
                             }}></textarea>
                     </div>
                 </div>
+
                 <div className="input_field">
                     <div className="title">Invoice Status</div>
                     <div className="input">
                         <select
                             value={invoice_status}
-                            defaultValue={"pending"}
+                            defaultValue={'pending'}
                             onChange={(e) => {
                                 set_invoice_status(e.target.value);
                             }}>
@@ -842,6 +864,9 @@ function Create_invoice({ create = true, invoice_id_view = '', edit = false, fet
                                 <th>Price</th>
                                 <th>Quantity</th>
                                 <th>Total Price</th>
+                                <th>Vendor</th>
+                                <th>Vendor Cost</th>
+                                <th>Profit</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -877,6 +902,32 @@ function Create_invoice({ create = true, invoice_id_view = '', edit = false, fet
                                         />
                                     </td>
                                     <td>{(item.price * item.quantity).toFixed(2)}</td>
+
+                                    <td>
+                                        <select
+                                            value={item.vendor_id}
+                                            onChange={(e) => edit_invoice_fields(index, 'vendor_id', parseFloat(e.target.value))}>
+                                            <option value={'Select Vendor'}>No Vendor</option>
+                                            {all_vendors.map(function (vendor_) {
+                                                return (
+                                                    <option
+                                                        key={vendor_.id}
+                                                        value={vendor_.id}>
+                                                        {vendor_.name}
+                                                    </option>
+                                                );
+                                            })}
+                                        </select>
+                                    </td>
+
+                                    <td>
+                                        <input
+                                            type="number"
+                                            value={item.vendor_cost}
+                                            onChange={(e) => edit_invoice_fields(index, 'vendor_cost', parseFloat(e.target.value))}
+                                        />
+                                    </td>
+                                    <td>{item.price - item.vendor_cost}</td>
                                     <td>
                                         <button onClick={() => removeItem(index)}>Remove</button> {/* Button to remove item */}
                                     </td>
