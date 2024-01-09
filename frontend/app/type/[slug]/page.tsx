@@ -7,9 +7,9 @@ export default function BillTo({}) {
     var pathParts = fullPath.split('/');
     var item = pathParts[pathParts.length - 1];
 
-    var title = 'Bill To';
+    var title = 'Bill To (Client)';
     if (item == 'bill_to') {
-        title = 'Bill To';
+        title = 'Bill To (Client)';
     } else if (item == 'ship_from') {
         title = 'Ship From';
     } else if (item == 'ship_to') {

@@ -196,7 +196,7 @@ export default function Create_tracking({}) {
                 <div></div>
 
                 <div className="input_field">
-                    <div className="title">Bill To</div>
+                    <div className="title">Bill To (Client)</div>
                     <div className="input">
                         <input
                             readOnly

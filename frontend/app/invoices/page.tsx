@@ -198,7 +198,7 @@ export default function Invoices({ create = true, invoice_id_view = '' }) {
             <h1>All Filters</h1>
             <div className="all_filters">
                 <div>
-                    <label>Bill To Search:</label>
+                    <label>Bill To (Client) Search:</label>
                     <select onChange={(e) => set_bill_to_search_term(e.target.value)}>
                         <option value="">All</option>
                         {users.map((user, index) => (
@@ -248,7 +248,7 @@ export default function Invoices({ create = true, invoice_id_view = '' }) {
                                 <TableColumn>ID</TableColumn>
                                 <TableColumn>Description</TableColumn>
                                 <TableColumn>Date</TableColumn>
-                                <TableColumn>Bill To</TableColumn>
+                                <TableColumn>Bill To (Client)</TableColumn>
                                 <TableColumn>B/L Number</TableColumn>
                                 <TableColumn>Invoice Status</TableColumn>
                                 <TableColumn></TableColumn>
@@ -293,7 +293,7 @@ export default function Invoices({ create = true, invoice_id_view = '' }) {
                                         <TableCell>
                                             <button
                                                 onClick={() => {
-                                                    deleteInvoice(item.id);
+                                                    window.location.href = ("/tracking/" + item.id);
                                                 }}>
                                                 Tracking
                                             </button>
@@ -609,7 +609,7 @@ function Create_invoice({ create = true, invoice_id_view = '', edit = false, fet
             });
     }
 
-    const { toPDF, targetRef } = usePDF({ filename: invoice_id + ' - Bill To -' + bill_to.name + ' Date: ' + date + '.pdf' });
+    const { toPDF, targetRef } = usePDF({ filename: invoice_id + ' - Bill To (Client) -' + bill_to.name + ' Date: ' + date + '.pdf' });
 
     function createPDF() {
         createInvoice();
@@ -629,7 +629,7 @@ function Create_invoice({ create = true, invoice_id_view = '', edit = false, fet
 
             <div className="all_inputs all_inputs2">
                 <div className="input_field">
-                    <div className="title">Bill To</div>
+                    <div className="title">Bill To (Client)</div>
                     <div className="input">
                         <select
                             value={bill_to}
@@ -1011,7 +1011,7 @@ function Create_invoice({ create = true, invoice_id_view = '', edit = false, fet
                                 </div>
                                 <div className="second_section">
                                     <div className="bill_to_information">
-                                        <h3>Bill To</h3>
+                                        <h3>Bill To (Client)</h3>
 
                                         {bill_to_information}
                                     </div>

@@ -9,7 +9,7 @@ $accent: rgb(255, 66, 66);
 body {
     font-family: Arial, Helvetica, sans-serif;
     display: grid;
-    grid-template-columns: 200px 80vw;
+    grid-template-columns: 270px 80vw;
     height: 100vh;
 
     h1,
@@ -37,23 +37,24 @@ body {
         height: max-content;
         box-shadow: 0px 0px 10px 1px rgba(0, 0, 0, 0.319);
         padding: 20px;
-        height: 500px;
+        height: 600px;
         margin-top: calc(50vh - 250px);
         margin-left: 25px;
         position: fixed;
-        width: 180px;
+        width: 250px;
 
         a {
             color: white;
             text-decoration: none;
             background-color: $primary;
-            width: 150px;
+            width: 180px;
             padding-top: 15px;
             padding-bottom: 15px;
             margin-bottom: 5px;
             margin-top: 5px;
             border-radius: 5px;
             text-align: center;
+            font-size: 14px;
             transition: 200ms all;
             box-shadow: 2px 2px 5px 1px rgba(0, 0, 0, 0.4);
         }
@@ -182,7 +183,7 @@ textarea {
     outline: none;
     padding-left: 10px;
     padding-right: 10px;
-    width: calc(90% - 40px);
+    width: calc(97% - 100px);
     min-width: 100px;
     max-width: 400px;
     resize: none;
@@ -191,6 +192,24 @@ textarea {
 textarea {
     height: 100px;
     padding: 10px;
+}
+
+table {
+    td {
+        max-width: 200px;
+        overflow: hidden;
+    }
+
+    input,
+    textarea {
+        width: 100px !important;
+        margin-right: 20px;
+    }
+
+    textarea {
+        height: 30px;
+    }
+
 }
 
 .bootstrap-select>button.dropdown-toggle {
@@ -219,7 +238,7 @@ section {
 
     .all_filters {
         display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
+        grid-template-columns: 1fr 1fr;
         margin: auto;
         margin-top: 20px;
         margin-bottom: 20px;
@@ -227,6 +246,10 @@ section {
         margin-right: 0px;
         align-items: center;
         padding: 20px;
+
+        div {
+            margin-bottom: 20px;
+        }
 
         label {
             margin-right: 10px;

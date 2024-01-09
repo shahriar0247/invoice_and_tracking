@@ -191,7 +191,7 @@ export default function Purchase_Orders({ create = true, purchase_order_id_view 
             <h1>All Filters</h1>
             <div className="all_filters">
                 <div>
-                    <label>Bill To Search:</label>
+                    <label>Bill To (Client) Search:</label>
                     <select onChange={(e) => set_bill_to_search_term(e.target.value)}>
                         <option value="">All</option>
                         {users.map((user, index) => (
@@ -233,7 +233,7 @@ export default function Purchase_Orders({ create = true, purchase_order_id_view 
                                 <TableColumn>ID</TableColumn>
                                 <TableColumn>Description</TableColumn>
                                 <TableColumn>Date</TableColumn>
-                                <TableColumn>Bill To</TableColumn>
+                                <TableColumn>Bill To (Client)</TableColumn>
                                 <TableColumn>B/L Number</TableColumn>
                                 <TableColumn>Purchase_Order Status</TableColumn>
                                 <TableColumn></TableColumn>
@@ -550,7 +550,7 @@ function Create_purchase_order({ create = true, purchase_order_id_view = '', edi
             });
     }
 
-    const { toPDF, targetRef } = usePDF({ filename: purchase_order_id + ' - Bill To -' + bill_to.name + ' Date: ' + date + '.pdf' });
+    const { toPDF, targetRef } = usePDF({ filename: purchase_order_id + ' - Bill To (Client) -' + bill_to.name + ' Date: ' + date + '.pdf' });
 
     function createPDF() {
         createPurchase_Order();
@@ -724,7 +724,7 @@ function Create_purchase_order({ create = true, purchase_order_id_view = '', edi
                                 </div>
                                 <div className="second_section">
                                     <div className="bill_to_information">
-                                        <h3>Bill To</h3>
+                                        <h3>Bill To (Client)</h3>
 
                                         {bill_to_information}
                                     </div>

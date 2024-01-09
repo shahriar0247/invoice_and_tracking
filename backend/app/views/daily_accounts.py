@@ -23,60 +23,83 @@ def get_daily_account_view():
         daily_account_object = {}
         daily_account_object["id"] = daily_account.id
         daily_account_object["all_items"] = daily_account.all_items
+        daily_account_object["description"] = daily_account.description
+        daily_account_object["currency"] = daily_account.currency
+        daily_account_object["date"] = daily_account.date
+        daily_account_object["vendor_id"] = 0
+        daily_account_object["bill_to_id"] = 0
+     
+        bill_to_object = {}
+        if (daily_account.bill_to_id and daily_account.bill_to_id !=0):
+            bill_to = Bill_to.query.get(
+                daily_account.bill_to_id
+            )
+            bill_to_object["id"] = bill_to.id
+            bill_to_object["name"] = bill_to.name
+            daily_account_object["bill_to_id"] = bill_to.id
 
-        purchase_order = Purchase_Order.query.get(
-            daily_account.purchase_order_id
-        )
-        purchase_order_object = {}
-        purchase_order_object["id"] = purchase_order.id
-        purchase_order_object["invoice_id"] = purchase_order.id
-        purchase_order_object["vendor"] = Vendor.query.get(
-            purchase_order.vendor_id
-        ).name
-        purchase_order_object["bl_number"] = purchase_order.bl_number
-        purchase_order_object["date"] = purchase_order.date
 
-        invoice = Invoice.query.get(purchase_order.invoice_id)
-        invoice_object = {}
-        invoice_object["id"] = invoice.id
-        invoice_object["bill_to"] = Bill_to.query.get(invoice.bill_to_id).name
-        invoice_object["ship_from"] = Ship_from.query.get(invoice.ship_from_id).name
-        invoice_object["ship_to"] = Ship_to.query.get(invoice.ship_to_id).name
-        invoice_object["bl_number"] = invoice.bl_number
-        invoice_object["date"] = invoice.date
+        vendor_object = {}
+    
+        if (daily_account.vendor_id and daily_account.vendor_id !=0):
+            vendor = Vendor.query.get(daily_account.vendor_id)
+            vendor_object["id"] = vendor.id
+            vendor_object["name"] = vendor.name
+            daily_account_object["vendor_id"] = vendor.id
 
-        daily_account_object["invoice"] = invoice_object
-        daily_account_object["purchase_order"] = purchase_order_object
-
-        daily_account_object["invoice_id"] = invoice.id
-        daily_account_object["purchase_order_id"] = purchase_order.id
+        daily_account_object["vendor"] = vendor_object
+        daily_account_object["bill_to"] = bill_to_object
 
         all_daily_account.append(daily_account_object)
 
     return jsonify(all_daily_account)
 
-
-@app.route("/create/daily_account", methods=["POST"])
-def create_daily_account_view():
+@app.route("/create/daily_account/<daily_account_id>", methods=["POST"])
+def create_daily_account_view(daily_account_id):
     data = request.json
-    new_daily_account = Daily_Account(all_items=json.dumps(data["all_items"]), purchase_order_id=data["purchase_order_id"])
 
-    db.session.add(new_daily_account)
+    invoice = Daily_Account.query.get(daily_account_id)
+
+    if invoice and data["edit"]:
+        invoice.bill_to_id = data.get("bill_to_id", invoice.bill_to_id)
+        invoice.vendor_id = data.get("vendor_id", invoice.vendor_id)
+        invoice.date = data.get("date", invoice.date)
+        invoice.currency = data.get("currency", invoice.currency)
+        invoice.description = data.get("description", invoice.description)
+        invoice.all_items = json.dumps(
+            data.get("all_items", json.loads(invoice.all_items))
+        )
+
+        db.session.commit()
+
+        return "Invoice updated successfully"
+
+    new_invoice = Daily_Account(
+        id=(data["id"]),
+        vendor_id=data['vendor_id'],
+        bill_to_id=data['bill_to_id'],
+        date=data['date'],
+        currency=data['currency'],
+        description=data['description'],
+        all_items=json.dumps(data["all_items"]),
+    )
+
+    db.session.add(new_invoice)
     db.session.commit()
 
     return "Invoice created successfully"
 
+@app.route("/delete/daily_account/<invoice_id>", methods=["DELETE"])
+def delete_daily_account(invoice_id):
+    invoice = Daily_Account.query.get(invoice_id)
 
-@app.route("/delete/daily_account/<int:daily_account_id>", methods=["DELETE"])
-def delete_daily_account(daily_account_id):
-    daily_account = Invoice.query.get(daily_account_id)
-
-    if daily_account:
-        db.session.delete(daily_account)
+    if invoice:
+        db.session.delete(invoice)
         db.session.commit()
-        return "Invoice deleted successfully"
+        return "Daily_Account deleted successfully"
 
-    return "Invoice not found", 404
+    return "Daily_Account not found", 404
+
 
 
 @app.route("/edit/daily_account/<int:daily_account_id>", methods=["PUT"])
@@ -108,34 +131,40 @@ def get_daily_account_details_view_(daily_account_number):
     daily_account_object = {}
     daily_account_object["id"] = daily_account.id
     daily_account_object["all_items"] = daily_account.all_items
+    daily_account_object["description"] = daily_account.description
+    daily_account_object["currency"] = daily_account.currency
+    daily_account_object["date"] = daily_account.date
+    daily_account_object["vendor_id"] = 0
+    daily_account_object["bill_to_id"] = 0
 
-    purchase_order = Purchase_Order.query.get(
-        daily_account.purchase_order_id
-    )
-    purchase_order_object = {}
-    purchase_order_object["id"] = purchase_order.id
-    purchase_order_object["invoice_id"] = purchase_order.id
-    purchase_order_object["vendor"] = Vendor.query.get(
-        purchase_order.vendor_id
-    ).name
-    purchase_order_object["bl_number"] = purchase_order.bl_number
-    purchase_order_object["date"] = purchase_order.date
-    purchase_order_object["all_items"] = purchase_order.all_items
 
-    invoice = Invoice.query.get(purchase_order.invoice_id)
-    invoice_object = {}
-    invoice_object["id"] = invoice.id
-    invoice_object["bill_to"] = Bill_to.query.get(invoice.bill_to_id).name
-    invoice_object["ship_from"] = Ship_from.query.get(invoice.ship_from_id).name
-    invoice_object["ship_to"] = Ship_to.query.get(invoice.ship_to_id).name
-    invoice_object["bl_number"] = invoice.bl_number
-    invoice_object["date"] = invoice.date
-    invoice_object["all_items"] = invoice.all_items
+  
+    bill_to_object = {}
+    if (daily_account.bill_to_id and daily_account.bill_to_id !=0):
+        bill_to = Bill_to.query.get(
+            daily_account.bill_to_id
+        )
+        bill_to_object["id"] = bill_to.id
+        bill_to_object["name"] = bill_to.name
+        bill_to_object["address1"] = bill_to.address1
+        bill_to_object["address2"] = bill_to.address2
+        daily_account_object["bill_to_id"] = bill_to.id
 
-    daily_account_object["invoice"] = invoice_object
-    daily_account_object["purchase_order"] = purchase_order_object
 
-    daily_account_object["invoice_id"] = invoice.id
-    daily_account_object["purchase_order_id"] = purchase_order.id
+
+    vendor_object = {}
+
+    if (daily_account.vendor_id and daily_account.vendor_id !=0):
+
+        vendor = Vendor.query.get(daily_account.vendor_id)
+        vendor_object["id"] = vendor.id
+        vendor_object["name"] = vendor.name
+        vendor_object["address1"] = vendor.address1
+        vendor_object["address2"] = vendor.address2
+        daily_account_object["vendor_id"] = vendor.id
+
+    daily_account_object["vendor"] = vendor_object
+    daily_account_object["bill_to"] = bill_to_object
+
 
     return jsonify(daily_account_object)

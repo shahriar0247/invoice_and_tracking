@@ -46,7 +46,7 @@ class Item(db.Model):
     price = db.Column(db.Float(precision=5), nullable=True)
     currency = db.Column(db.String(1200), nullable=True)
     quantity = db.Column(db.Integer, nullable=True)
-    vendor_id = db.Column(db.Integer, db.ForeignKey('vendor.id'), nullable=True)
+    vendor_id = db.Column(db.Integer, nullable=True)
     deleted = db.Column(db.String(10), nullable=True)
 
 
@@ -54,9 +54,9 @@ class Item(db.Model):
 class Invoice(db.Model):
     id = db.Column(db.String(20), primary_key=True, nullable=True)
 
-    bill_to_id = db.Column(db.Integer, db.ForeignKey('bill_to.id'), nullable=True)
-    ship_from_id = db.Column(db.Integer, db.ForeignKey('ship_from.id'), nullable=True)
-    ship_to_id = db.Column(db.Integer, db.ForeignKey('ship_to.id'), nullable=True)
+    bill_to_id = db.Column(db.Integer, nullable=True)
+    ship_from_id = db.Column(db.Integer, nullable=True)
+    ship_to_id = db.Column(db.Integer, nullable=True)
     all_items = db.Column(db.String(500), nullable=True)
     
     date = db.Column(db.DateTime, nullable=True)
@@ -88,8 +88,8 @@ class Vendor(db.Model):
 class Purchase_Order(db.Model):
     id = db.Column(db.String(20), primary_key=True, nullable=True)
 
-    vendor_id = db.Column(db.Integer, db.ForeignKey('vendor.id'), nullable=True)
-    invoice_id = db.Column(db.String(20), db.ForeignKey('invoice.id'), nullable=True)
+    vendor_id = db.Column(db.Integer, nullable=True)
+    invoice_id =db.Column(db.Integer, nullable=True)
 
     all_items = db.Column(db.String(500), nullable=True)
     description = db.Column(db.String(1200), nullable=True)
@@ -116,9 +116,9 @@ class Daily_Account(db.Model):
     id = db.Column(db.String(20), primary_key=True, nullable=True)
     description = db.Column(db.String(1200), nullable=True)
     date = db.Column(db.DateTime, nullable=True)
-    purchase_order_id = db.Column(db.String(20), db.ForeignKey('purchase__order.id'), nullable=True)
-    invoice_id = db.Column(db.String(20), db.ForeignKey('invoice.id'), nullable=True)
-    
+    vendor_id = db.Column(db.Integer, nullable=True)
+    bill_to_id = db.Column(db.Integer, nullable=True)
+    currency = db.Column(db.String(1200), nullable=True)
     all_items = db.Column(db.String(500), nullable=True)
     
     def __init__(self, *args, **kwargs):
