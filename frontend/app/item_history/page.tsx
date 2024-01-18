@@ -78,7 +78,7 @@ export default function ItemHistorys({ create = true, item_history_id_view = '' 
     }, []);
 
     function fetch_item_history() {
-        fetch('http://localhost:5003/get/item_history')
+        fetch('http://35.209.219.229:5003/get/item_history')
             .then((response) => response.json())
             .then((data) => {
                 setData(data);
@@ -96,7 +96,7 @@ export default function ItemHistorys({ create = true, item_history_id_view = '' 
         return uniqueUsers;
     }
     function deleteItemHistory(item_historyId) {
-        fetch(`http://localhost:5003/delete/item_history/${item_historyId}`, {
+        fetch(`http://35.209.219.229:5003/delete/item_history/${item_historyId}`, {
             method: 'DELETE',
         })
             .then((response) => {
@@ -142,7 +142,7 @@ export default function ItemHistorys({ create = true, item_history_id_view = '' 
             id: id,
             status: status,
         };
-        fetch(`http://localhost:5003/item_history/change_status`, {
+        fetch(`http://35.209.219.229:5003/item_history/change_status`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -321,7 +321,7 @@ function Create_item_history({ create = true, item_history_id_view = '', edit = 
         }
     }, []);
     function fetchInvoices() {
-        fetch('http://localhost:5003/get/invoice')
+        fetch('http://35.209.219.229:5003/get/invoice')
             .then((response) => response.json())
             .then((data) => {
                 set_invoices(data);
@@ -342,7 +342,7 @@ function Create_item_history({ create = true, item_history_id_view = '', edit = 
     }
 
     async function get_item_history_details() {
-        const response = await fetch('http://localhost:5003/get_item_history_details/' + item_history_id_view);
+        const response = await fetch('http://35.209.219.229:5003/get_item_history_details/' + item_history_id_view);
         const data = await response.json();
         const all_items_ = JSON.parse(data['all_items']);
         set_item_history_id(data.id);
@@ -390,7 +390,7 @@ function Create_item_history({ create = true, item_history_id_view = '', edit = 
         set_selected_items(updatedItems);
     };
     function fetchVendor() {
-        fetch('http://localhost:5003/get/vendor')
+        fetch('http://35.209.219.229:5003/get/vendor')
             .then((response) => response.json())
             .then((data) => {
                 set_all_vendors(data);
@@ -401,7 +401,7 @@ function Create_item_history({ create = true, item_history_id_view = '', edit = 
     }
     function fetchItems() {
         console.log('here 2');
-        fetch('http://localhost:5003/get/item')
+        fetch('http://35.209.219.229:5003/get/item')
             .then((response) => response.json())
             .then((data) => {
                 console.log(data);
@@ -421,7 +421,7 @@ function Create_item_history({ create = true, item_history_id_view = '', edit = 
             edit: edit,
         };
 
-        fetch('http://localhost:5003/create/item_history/' + item_history_id, {
+        fetch('http://35.209.219.229:5003/create/item_history/' + item_history_id, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

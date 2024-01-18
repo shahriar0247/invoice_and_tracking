@@ -78,7 +78,7 @@ export default function Invoices({ create = true, invoice_id_view = '' }) {
     }, []);
 
     function fetch_invoices() {
-        fetch('http://localhost:5003/get/invoice')
+        fetch('http://35.209.219.229:5003/get/invoice')
             .then((response) => response.json())
             .then((data) => {
                 setData1(data.filter((item) => item.type === 'First Quote'));
@@ -99,7 +99,7 @@ export default function Invoices({ create = true, invoice_id_view = '' }) {
         return uniqueUsers;
     }
     function deleteInvoice(invoiceId) {
-        fetch(`http://localhost:5003/delete/invoice/${invoiceId}`, {
+        fetch(`http://35.209.219.229:5003/delete/invoice/${invoiceId}`, {
             method: 'DELETE',
         })
             .then((response) => {
@@ -117,6 +117,7 @@ export default function Invoices({ create = true, invoice_id_view = '' }) {
     function filter() {
         var filteredData = all_data.filter(function (invoice) {
             if (invoice.bill_to.includes(bill_to_search_term)) {
+            console.log(bill_to_search_term)
                 return true;
             }
         });
@@ -124,16 +125,10 @@ export default function Invoices({ create = true, invoice_id_view = '' }) {
         var filteredData2 = filteredData.filter(function (invoice) {
             return (
                 (minDate === '' || new Date(invoice.date) >= new Date(minDate)) &&
-                (maxDate === '' || new Date(invoice.date) <= new Date(maxDate)) &&
-                Object.values(invoice).some(function (value) {
-                    if (value) {
-                        return value.toLowerCase().includes(bill_to_search_term);
-                    }
-                })
+                (maxDate === '' || new Date(invoice.date) <= new Date(maxDate))
             );
         });
 
-        console.log(filteredData2.filter((item) => item.type === 'Invoice'));
         setData1(filteredData2.filter((item) => item.type === 'First Quote'));
         setData2(filteredData2.filter((item) => item.type === 'Final Quote'));
         setData3(filteredData2.filter((item) => item.type === 'Invoice'));
@@ -148,7 +143,7 @@ export default function Invoices({ create = true, invoice_id_view = '' }) {
             id: id,
             status: status,
         };
-        fetch(`http://localhost:5003/invoice/change_status`, {
+        fetch(`http://35.209.219.229:5003/invoice/change_status`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -303,11 +298,11 @@ export default function Invoices({ create = true, invoice_id_view = '' }) {
                     </div>
                 );
             })}
-            <CreateSummary_Container data1={data1}></CreateSummary_Container>
+            <CreateSummary_Container data3={data3}></CreateSummary_Container>
         </div>
     );
 }
-function CreateSummary_Container(data1) {
+function CreateSummary_Container(data3) {
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     return (
@@ -319,7 +314,7 @@ function CreateSummary_Container(data1) {
                 <ModalContent>
                     <ModalHeader>Create Summary</ModalHeader>
                     <ModalBody>
-                        <CreateSummary data1={data1} />
+                        <CreateSummary data3={data3} />
                     </ModalBody>
                     <ModalFooter></ModalFooter>
                 </ModalContent>
@@ -327,10 +322,10 @@ function CreateSummary_Container(data1) {
         </div>
     );
 }
-function CreateSummary(data1) {
+function CreateSummary(data3) {
     const [currency, set_currency] = React.useState('USD');
     const { toPDF, targetRef } = usePDF({ filename: 'Summary.pdf' });
-    const totalPriceOfAllItems = data1.data1.data1.flatMap((invoice) => JSON.parse(invoice.all_items || '[]').map((item) => item.price)).reduce((acc, price) => acc + price, 0);
+    const totalPriceOfAllItems = data3.data3.data3.flatMap((invoice) => JSON.parse(invoice.all_items || '[]').map((item) => item.price)).reduce((acc, price) => acc + price, 0);
 
     return (
         <div>
@@ -353,7 +348,7 @@ function CreateSummary(data1) {
                         </TableHeader>
                         <TableBody>
                             
-                            {data1.data1.data1.map((item) => (
+                            {data3.data3.data3.map((item) => (
                                 <TableRow key={item.id}>
                                     <TableCell>{item.id}</TableCell>
                                     <TableCell>{new Date(item.date).toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}</TableCell>
@@ -367,7 +362,7 @@ function CreateSummary(data1) {
                                 <TableCell></TableCell>
                                 <TableCell></TableCell>
                                 <TableCell></TableCell>
-                                <TableCell></TableCell>
+                                <TableCell>Total Price: {totalPriceOfAllItems.toFixed(2)} {currency}</TableCell>
                             </TableRow>
                         </TableBody>
                     </Table>
@@ -443,7 +438,7 @@ function Create_invoice({ create = true, invoice_id_view = '', edit = false, fet
     }
 
     async function get_invoice_details() {
-        const response = await fetch('http://localhost:5003/get_invoice_details/' + invoice_id_view);
+        const response = await fetch('http://35.209.219.229:5003/get_invoice_details/' + invoice_id_view);
         const data = await response.json();
         const all_items_ = JSON.parse(data['all_items']);
         set_invoice_id(data.id);
@@ -528,7 +523,7 @@ function Create_invoice({ create = true, invoice_id_view = '', edit = false, fet
         set_selected_items(updatedItems);
     };
     function fetchVendor() {
-        fetch('http://localhost:5003/get/vendor')
+        fetch('http://35.209.219.229:5003/get/vendor')
             .then((response) => response.json())
             .then((data) => {
                 set_all_vendors(data);
@@ -538,7 +533,7 @@ function Create_invoice({ create = true, invoice_id_view = '', edit = false, fet
             });
     }
     function fetchInvoice() {
-        fetch('http://localhost:5003/get/invoice')
+        fetch('http://35.209.219.229:5003/get/invoice')
             .then((response) => response.json())
             .then((data) => {
                 // setda(data);
@@ -548,7 +543,7 @@ function Create_invoice({ create = true, invoice_id_view = '', edit = false, fet
             });
     }
     function fetchCompany() {
-        fetch('http://localhost:5003/get/company')
+        fetch('http://35.209.219.229:5003/get/company')
             .then((response) => response.json())
             .then((data) => {
                 set_company(data);
@@ -570,7 +565,7 @@ function Create_invoice({ create = true, invoice_id_view = '', edit = false, fet
             });
     }
     function fetchBillTo() {
-        fetch('http://localhost:5003/get/type/bill_to')
+        fetch('http://35.209.219.229:5003/get/type/bill_to')
             .then((response) => response.json())
             .then((data) => {
                 set_all_bill_to(data);
@@ -589,7 +584,7 @@ function Create_invoice({ create = true, invoice_id_view = '', edit = false, fet
             });
     }
     function fetchShipFrom() {
-        fetch('http://localhost:5003/get/type/ship_from')
+        fetch('http://35.209.219.229:5003/get/type/ship_from')
             .then((response) => response.json())
             .then((data) => {
                 set_all_ship_from(data);
@@ -608,7 +603,7 @@ function Create_invoice({ create = true, invoice_id_view = '', edit = false, fet
             });
     }
     function fetchShipTo() {
-        fetch('http://localhost:5003/get/type/ship_to')
+        fetch('http://35.209.219.229:5003/get/type/ship_to')
             .then((response) => response.json())
             .then((data) => {
                 set_all_ship_to(data);
@@ -628,7 +623,7 @@ function Create_invoice({ create = true, invoice_id_view = '', edit = false, fet
     }
     function fetchItems() {
         console.log('here 2');
-        fetch('http://localhost:5003/get/item')
+        fetch('http://35.209.219.229:5003/get/item')
             .then((response) => response.json())
             .then((data) => {
                 console.log(data);
@@ -658,7 +653,7 @@ function Create_invoice({ create = true, invoice_id_view = '', edit = false, fet
             edit: edit,
         };
 
-        fetch('http://localhost:5003/create/invoice/' + invoice_id, {
+        fetch('http://35.209.219.229:5003/create/invoice/' + invoice_id, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
