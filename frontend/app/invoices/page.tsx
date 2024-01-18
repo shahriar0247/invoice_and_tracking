@@ -352,6 +352,7 @@ function CreateSummary(data1) {
                             <TableColumn>Total Value</TableColumn>
                         </TableHeader>
                         <TableBody>
+                            
                             {data1.data1.data1.map((item) => (
                                 <TableRow key={item.id}>
                                     <TableCell>{item.id}</TableCell>
