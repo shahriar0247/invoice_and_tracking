@@ -12,7 +12,6 @@ export default function Daily_Accounts({ create = true, daily_account_id_view = 
     const [vendor_search_term, set_vendor_search_term] = React.useState('');
     const [bill_to_search_term, set_bill_to_search_term] = React.useState('');
     const [edit, set_edit] = React.useState(false);
-    const [summary_modal, set_summary_modal] = React.useState(false);
 
     const [minDate, setMinDate] = React.useState('');
     const [maxDate, setMaxDate] = React.useState('');
@@ -132,6 +131,9 @@ export default function Daily_Accounts({ create = true, daily_account_id_view = 
             } else {
                 return false;
             }
+            if (daily_account.vendor == null) {
+                return false;
+            }
 
             return (minDate === '' || new Date(daily_account.date) >= new Date(minDate)) && (maxDate === '' || new Date(daily_account.date) <= new Date(maxDate));
         });
@@ -177,13 +179,13 @@ export default function Daily_Accounts({ create = true, daily_account_id_view = 
     }
     return (
         <div className="invoice">
-            <h1>Daily Accounts</h1>
-            <button onClick={onOpen}>Create Accounts</button>
+            <h1>Daily_Accounts</h1>
+            <button onClick={onOpen}>Create Daily_Account</button>
             <Modal
                 isOpen={isOpen}
                 onClose={onClose}>
                 <ModalContent>
-                    <ModalHeader>Create Accounts</ModalHeader>
+                    <ModalHeader>Create Daily_Account</ModalHeader>
                     <ModalBody>
                         <Create_daily_account
                             fetch_daily_accounts={fetch_daily_accounts}
@@ -193,6 +195,7 @@ export default function Daily_Accounts({ create = true, daily_account_id_view = 
                     <ModalFooter></ModalFooter>
                 </ModalContent>
             </Modal>
+
             <h1>All Filters</h1>
             <div className="all_filters">
                 <div>
@@ -239,28 +242,41 @@ export default function Daily_Accounts({ create = true, daily_account_id_view = 
                     </select>
                 </div>
             </div>
+
             <div>
-                <h2>All Daily Accounts</h2>
+                <h2>All Daily Receivable</h2>
                 <Table>
                     <TableHeader>
                         <TableColumn>ID</TableColumn>
+                        <TableColumn>Description</TableColumn>
                         <TableColumn>Date</TableColumn>
                         <TableColumn>Vendor</TableColumn>
+                        <TableColumn>Bill To</TableColumn>
+                        <TableColumn>Items</TableColumn>
                         <TableColumn>Total Price</TableColumn>
+                        <TableColumn>Tax Amount</TableColumn>
                         <TableColumn></TableColumn>
                         <TableColumn></TableColumn>
                     </TableHeader>
                     <TableBody>
                         {data3.map(function (item) {
-                            if (item.vendor.name == null) {
+                            if (item.bill_to.name == null) {
                                 return;
                             }
                             return (
                                 <TableRow key={item.id}>
                                     <TableCell>{item.id}</TableCell>
+                                    <TableCell>{item.description}</TableCell>
                                     <TableCell>{new Date(item.date).toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}</TableCell>
                                     <TableCell>{item.vendor.name}</TableCell>
+                                    <TableCell>{item.bill_to.name}</TableCell>
+                                    <TableCell>
+                                        {JSON.parse(item.all_items).map(function (item2) {
+                                            return item2.name + ', ';
+                                        })}
+                                    </TableCell>
                                     <TableCell>{JSON.parse(item.all_items).reduce((acc, item) => acc + item.price * item.quantity, 0) + ' ' + item.currency}</TableCell>
+                                    <TableCell>{JSON.parse(item.all_items).reduce((acc, item) => acc + item.tax_amount * item.quantity, 0) + ' ' + item.currency}</TableCell>
                                     <TableCell>
                                         <a
                                             className="button"
@@ -285,9 +301,7 @@ export default function Daily_Accounts({ create = true, daily_account_id_view = 
         </div>
     );
 }
-function CreateSummary() {
-    return <div>hi</div>;
-}
+
 function Create_daily_account({ create = true, daily_account_id_view = '', edit = false, fetch_daily_accounts, onCloseParent }) {
     const [company, set_company] = React.useState([]);
     const [all_vendor, set_all_vendor] = React.useState([]);
@@ -325,14 +339,8 @@ function Create_daily_account({ create = true, daily_account_id_view = '', edit 
 
     React.useEffect(() => {
         let total_price_ = 0;
-
         selected_items.map(function (item) {
-            console.log(item.tax_amount);
-            if (item.tax_amount == undefined) {
-                total_price_ = total_price_ + parseFloat(item.price) * item.quantity;
-            } else {
-                total_price_ = total_price_ + parseFloat(item.price) + parseFloat(item.tax_amount) * item.quantity;
-            }
+            total_price_ = total_price_ + parseFloat(item.price) + parseFloat(item.tax_amount) * item.quantity;
         });
         set_total_price(total_price_);
     }, [selected_items]);
@@ -522,35 +530,6 @@ function Create_daily_account({ create = true, daily_account_id_view = '', edit 
 
             <div className="all_inputs all_inputs2">
                 <div className="input_field">
-                    <div className="title">Vendor</div>
-                    <div className="input">
-                        <select
-                            value={vendor}
-                            onChange={(e) => {
-                                let value = e.target.value;
-                                if (value && value != 0) {
-                                    let data = JSON.parse(value);
-                                    set_vendor_id(data.id);
-                                    set_vendor(value);
-                                } else {
-                                    set_vendor_id(0);
-                                    set_vendor(null);
-                                }
-                            }}>
-                            <option value={0}>None</option>
-                            {all_vendor.map(function (vendor) {
-                                return (
-                                    <option
-                                        key={JSON.stringify(vendor)}
-                                        value={JSON.stringify(vendor)}>
-                                        {vendor.name}
-                                    </option>
-                                );
-                            })}
-                        </select>
-                    </div>
-                </div>
-                <div className="input_field">
                     <div className="title">Bill To (Client)</div>
                     <div className="input">
                         <select
@@ -675,12 +654,8 @@ function Create_daily_account({ create = true, daily_account_id_view = '', edit 
                                             onChange={(e) => edit_daily_account_fields(index, 'quantity', e.target.value)}
                                         />
                                     </td>
-                                    <td>
-                                        {item.tax_amount == undefined && item.tax_amount == ''
-                                            ? (parseFloat(item.price) * item.quantity).toFixed(2)
-                                            : (parseFloat(item.price) + parseFloat(item.tax_amount) * item.quantity).toFixed(2)}
-                                    </td>
-                                    x
+                                    <td>{(parseFloat(item.price) + parseFloat(item.tax_amount) * item.quantity).toFixed(2)}</td>
+
                                     <td>
                                         <select
                                             value={item.vendor_id}
@@ -697,6 +672,7 @@ function Create_daily_account({ create = true, daily_account_id_view = '', edit 
                                             })}
                                         </select>
                                     </td>
+
                                     <td>
                                         <input
                                             type="number"
@@ -753,7 +729,7 @@ function Create_daily_account({ create = true, daily_account_id_view = '', edit 
                     </table>
                 </div>
             </div>
-            <button onClick={createPDF}>Create Accounts</button>
+            <button onClick={createPDF}>Create Daily_Account</button>
         </div>
     );
 }

@@ -15,7 +15,6 @@ export default function Invoices({ create = true, invoice_id_view = '' }) {
 
     const [minDate, setMinDate] = React.useState('');
     const [maxDate, setMaxDate] = React.useState('');
-
     const [dateFilter, setDateFilter] = React.useState(''); // State to store selected date filter
 
     const handleDateFilterChange = (filter) => {
@@ -176,6 +175,20 @@ export default function Invoices({ create = true, invoice_id_view = '' }) {
                 invoice_id_view={invoice_id_view}></Create_invoice>
         );
     }
+    const all_data_array = [
+        {
+            name: 'All Invoices',
+            data: data3,
+        },
+        {
+            name: 'All First Quotes',
+            data: data1,
+        },
+        {
+            name: 'All Final Quotes',
+            data: data2,
+        },
+    ];
     return (
         <div className="invoice">
             <h1>Invoices</h1>
@@ -226,27 +239,13 @@ export default function Invoices({ create = true, invoice_id_view = '' }) {
                     </select>
                 </div>
             </div>
-            {[
-                {
-                    name: 'All Invoices',
-                    data: data3,
-                },
-                {
-                    name: 'All First Quotes',
-                    data: data1,
-                },
-                {
-                    name: 'All Final Quotes',
-                    data: data2,
-                },
-            ].map((value, index) => {
+            {all_data_array.map((value, index) => {
                 return (
                     <div key={value.name}>
                         <h2>{value.name}</h2>
                         <Table>
                             <TableHeader>
                                 <TableColumn>ID</TableColumn>
-                                <TableColumn>Description</TableColumn>
                                 <TableColumn>Date</TableColumn>
                                 <TableColumn>Bill To (Client)</TableColumn>
                                 <TableColumn>B/L Number</TableColumn>
@@ -259,7 +258,6 @@ export default function Invoices({ create = true, invoice_id_view = '' }) {
                                 {value.data.map((item) => (
                                     <TableRow key={item.id}>
                                         <TableCell>{item.id}</TableCell>
-                                        <TableCell>{item.description}</TableCell>
                                         <TableCell>{new Date(item.date).toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}</TableCell>
                                         <TableCell>{item.bill_to}</TableCell>
                                         <TableCell>{item.bl_number}</TableCell>
@@ -293,7 +291,7 @@ export default function Invoices({ create = true, invoice_id_view = '' }) {
                                         <TableCell>
                                             <button
                                                 onClick={() => {
-                                                    window.location.href = ("/tracking/" + item.id);
+                                                    window.location.href = '/tracking/' + item.id;
                                                 }}>
                                                 Tracking
                                             </button>
@@ -305,10 +303,79 @@ export default function Invoices({ create = true, invoice_id_view = '' }) {
                     </div>
                 );
             })}
+            <CreateSummary_Container data1={data1}></CreateSummary_Container>
         </div>
     );
 }
+function CreateSummary_Container(data1) {
+    const { isOpen, onOpen, onClose } = useDisclosure();
 
+    return (
+        <div>
+            <button onClick={onOpen}>Create Summary</button>
+            <Modal
+                isOpen={isOpen}
+                onClose={onClose}>
+                <ModalContent>
+                    <ModalHeader>Create Summary</ModalHeader>
+                    <ModalBody>
+                        <CreateSummary data1={data1} />
+                    </ModalBody>
+                    <ModalFooter></ModalFooter>
+                </ModalContent>
+            </Modal>
+        </div>
+    );
+}
+function CreateSummary(data1) {
+    const [currency, set_currency] = React.useState('USD');
+    const { toPDF, targetRef } = usePDF({ filename: 'Summary.pdf' });
+    const totalPriceOfAllItems = data1.data1.data1.flatMap((invoice) => JSON.parse(invoice.all_items || '[]').map((item) => item.price)).reduce((acc, price) => acc + price, 0);
+
+    return (
+        <div>
+            <div ref={targetRef}>
+                <h2>Summary</h2>
+                <label htmlFor="">Currency: </label>
+                <select name="" id="" onChange={(e) => {set_currency(e.target.value)}}>
+                    <option value="USD">USD</option>
+                    <option value="CAD">CAD</option>
+                </select>
+                <div>
+                    <h3>Invoices</h3>
+                    <Table>
+                        <TableHeader>
+                            <TableColumn>ID</TableColumn>
+                            <TableColumn>Date</TableColumn>
+                            <TableColumn>Bill To (Client)</TableColumn>
+                            <TableColumn>B/L Number</TableColumn>
+                            <TableColumn>Total Value</TableColumn>
+                        </TableHeader>
+                        <TableBody>
+                            {data1.data1.data1.map((item) => (
+                                <TableRow key={item.id}>
+                                    <TableCell>{item.id}</TableCell>
+                                    <TableCell>{new Date(item.date).toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}</TableCell>
+                                    <TableCell>{item.bill_to}</TableCell>
+                                    <TableCell>{item.bl_number}</TableCell>
+                                    <TableCell>{JSON.parse(item.all_items).reduce((acc, item) => acc + item.price * item.quantity, 0) + " " +currency}</TableCell>
+                                </TableRow>
+                            ))}
+                            <TableRow>
+                                <TableCell></TableCell>
+                                <TableCell></TableCell>
+                                <TableCell></TableCell>
+                                <TableCell></TableCell>
+                                <TableCell></TableCell>
+                            </TableRow>
+                        </TableBody>
+                    </Table>
+                </div>
+            </div>
+            <button onClick={toPDF}>Download PDF</button>
+        </div>
+    );
+}
 function Create_invoice({ create = true, invoice_id_view = '', edit = false, fetch_invoices, onCloseParent }) {
     const [company, set_company] = React.useState([]);
     const [all_bill_to, set_all_bill_to] = React.useState([]);
