@@ -272,4 +272,13 @@ section {
     padding: 20px
 }
 
+.summary_print {
+    // transform: scale(0.2);
+    padding: 20px !important;
+    width: 1000px !important;
+    height: 80vh;
+    overflow-y: auto;
+
+}
+
 @import './invoice_viewer.scss';

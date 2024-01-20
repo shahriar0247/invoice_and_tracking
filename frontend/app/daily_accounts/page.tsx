@@ -282,11 +282,78 @@ export default function Daily_Accounts({ create = true, daily_account_id_view = 
                     </TableBody>
                 </Table>
             </div>
+            <CreateSummary_Container data3={data3}></CreateSummary_Container>
+            
         </div>
     );
 }
-function CreateSummary() {
-    return <div>hi</div>;
+function CreateSummary_Container(data3) {
+    const { isOpen, onOpen, onClose } = useDisclosure();
+
+    return (
+        <div>
+            <button onClick={onOpen}>Create Summary</button>
+            <Modal
+                isOpen={isOpen}
+                onClose={onClose}>
+                <ModalContent>
+                    <ModalHeader>Create Summary</ModalHeader>
+                    <ModalBody>
+                        <CreateSummary data3={data3} />
+                    </ModalBody>
+                    <ModalFooter></ModalFooter>
+                </ModalContent>
+            </Modal>
+        </div>
+    );
+}
+function CreateSummary(data3) {
+    const [currency, set_currency] = React.useState('USD');
+    const { toPDF, targetRef } = usePDF({ filename: 'Summary.pdf' });
+    const totalPriceOfAllItems = data3.data3.data3.flatMap((invoice) => JSON.parse(invoice.all_items || '[]').map((item) => item.price)).reduce((acc, price) => acc + price, 0);
+    console.log(data3.data3.data3)
+
+    return (
+        <div>
+            <div >
+                <label htmlFor="">Currency: </label>
+                <select name="" id="" onChange={(e) => {set_currency(e.target.value)}}>
+                    <option value="USD">USD</option>
+                    <option value="CAD">CAD</option>
+                </select>
+                <div className='summary_print' ref={targetRef}>
+                <h2>Summary</h2>
+
+                    <Table>
+                    <TableHeader>
+                        <TableColumn>ID</TableColumn>
+                        <TableColumn>Date</TableColumn>
+                        <TableColumn>Vendor</TableColumn>
+                        <TableColumn>Tax Amount</TableColumn>
+                        <TableColumn>Total Price</TableColumn>
+                    </TableHeader>
+                    <TableBody>
+                        {data3.data3.data3.map(function (item) {
+                            if (item.vendor.name == null) {
+                                return;
+                            }
+                            return (
+                                <TableRow key={item.id}>
+                                    <TableCell>{item.id}</TableCell>
+                                    <TableCell>{new Date(item.date).toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}</TableCell>
+                                    <TableCell>{item.vendor.name}</TableCell>
+                                    <TableCell>{JSON.parse(item.all_items).reduce((acc, item) => acc + (item.tax_amount) * item.quantity, 0) + ' ' + currency}</TableCell>
+                                    <TableCell>{JSON.parse(item.all_items).reduce((acc, item) => acc + (item.price + item.tax_amount) * item.quantity, 0) + ' ' + currency}</TableCell>
+                                </TableRow>
+                            );
+                        })}
+                    </TableBody>
+                </Table>
+                </div>
+            </div>
+            <button onClick={toPDF}>Download PDF</button>
+        </div>
+    );
 }
 function Create_daily_account({ create = true, daily_account_id_view = '', edit = false, fetch_daily_accounts, onCloseParent }) {
     const [company, set_company] = React.useState([]);
@@ -520,6 +587,7 @@ function Create_daily_account({ create = true, daily_account_id_view = '', edit 
             <h1>Daily_Account Details</h1>
             <h2>{daily_account_id}</h2>
 
+        <p>A vendor is required</p>
             <div className="all_inputs all_inputs2">
                 <div className="input_field">
                     <div className="title">Vendor</div>
@@ -550,35 +618,7 @@ function Create_daily_account({ create = true, daily_account_id_view = '', edit 
                         </select>
                     </div>
                 </div>
-                <div className="input_field">
-                    <div className="title">Bill To (Client)</div>
-                    <div className="input">
-                        <select
-                            value={bill_to}
-                            onChange={(e) => {
-                                let value = e.target.value;
-                                if (value && value != 0) {
-                                    let data = JSON.parse(value);
-                                    set_bill_to_id(data.id);
-                                    set_bill_to(value);
-                                } else {
-                                    set_bill_to_id(0);
-                                    set_bill_to('');
-                                }
-                            }}>
-                            <option value={0}>None</option>
-                            {all_bill_to.map(function (bill_to) {
-                                return (
-                                    <option
-                                        key={JSON.stringify(bill_to)}
-                                        value={JSON.stringify(bill_to)}>
-                                        {bill_to.name}
-                                    </option>
-                                );
-                            })}
-                        </select>
-                    </div>
-                </div>
+              
                 <div className="input_field">
                     <div className="title">Currency</div>
                     <div className="input">
@@ -680,7 +720,6 @@ function Create_daily_account({ create = true, daily_account_id_view = '', edit 
                                             ? (parseFloat(item.price) * item.quantity).toFixed(2)
                                             : (parseFloat(item.price) + parseFloat(item.tax_amount) * item.quantity).toFixed(2)}
                                     </td>
-                                    x
                                     <td>
                                         <select
                                             value={item.vendor_id}

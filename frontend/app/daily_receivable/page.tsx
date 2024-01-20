@@ -179,13 +179,13 @@ export default function Daily_Accounts({ create = true, daily_account_id_view = 
     }
     return (
         <div className="invoice">
-            <h1>Daily_Accounts</h1>
-            <button onClick={onOpen}>Create Daily_Account</button>
+            <h1>Daily_Receivables</h1>
+            <button onClick={onOpen}>Create Daily_Receivable</button>
             <Modal
                 isOpen={isOpen}
                 onClose={onClose}>
                 <ModalContent>
-                    <ModalHeader>Create Daily_Account</ModalHeader>
+                    <ModalHeader>Create Daily_Receivable</ModalHeader>
                     <ModalBody>
                         <Create_daily_account
                             fetch_daily_accounts={fetch_daily_accounts}
@@ -296,12 +296,80 @@ export default function Daily_Accounts({ create = true, daily_account_id_view = 
                             );
                         })}
                     </TableBody>
-                </Table>
+                    </Table>
             </div>
+            <CreateSummary_Container data3={data3}></CreateSummary_Container>
+            
         </div>
     );
 }
+function CreateSummary_Container(data3) {
+    const { isOpen, onOpen, onClose } = useDisclosure();
 
+    return (
+        <div>
+            <button onClick={onOpen}>Create Summary</button>
+            <Modal
+                isOpen={isOpen}
+                onClose={onClose}>
+                <ModalContent>
+                    <ModalHeader>Create Summary</ModalHeader>
+                    <ModalBody>
+                        <CreateSummary data3={data3} />
+                    </ModalBody>
+                    <ModalFooter></ModalFooter>
+                </ModalContent>
+            </Modal>
+        </div>
+    );
+}
+function CreateSummary(data3) {
+    const [currency, set_currency] = React.useState('USD');
+    const { toPDF, targetRef } = usePDF({ filename: 'Summary.pdf' });
+    const totalPriceOfAllItems = data3.data3.data3.flatMap((invoice) => JSON.parse(invoice.all_items || '[]').map((item) => item.price)).reduce((acc, price) => acc + price, 0);
+
+    return (
+        <div>
+            <div >
+                <label htmlFor="">Currency: </label>
+                <select name="" id="" onChange={(e) => {set_currency(e.target.value)}}>
+                    <option value="USD">USD</option>
+                    <option value="CAD">CAD</option>
+                </select>
+                <div className='summary_print' ref={targetRef}>
+                <h2>Summary</h2>
+
+                <Table>
+                    <TableHeader>
+                        <TableColumn>ID</TableColumn>
+                        <TableColumn>Date</TableColumn>
+                        <TableColumn>Vendor</TableColumn>
+                        <TableColumn>Tax Amount</TableColumn>
+                        <TableColumn>Total Price</TableColumn>
+                    </TableHeader>
+                    <TableBody>
+                        {data3.data3.data3.map(function (item) {
+                            if (item.bill_to.name == null) {
+                                return;
+                            }
+                            return (
+                                <TableRow key={item.id}>
+                                    <TableCell>{item.id}</TableCell>
+                                    <TableCell>{new Date(item.date).toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}</TableCell>
+                                    <TableCell>{item.vendor.name}</TableCell>
+                                    <TableCell>{JSON.parse(item.all_items).reduce((acc, item) => acc + (item.tax_amount) * item.quantity, 0) + ' ' + currency}</TableCell>
+                                    <TableCell>{JSON.parse(item.all_items).reduce((acc, item) => acc + (item.price + item.tax_amount) * item.quantity, 0) + ' ' + currency}</TableCell>
+                                </TableRow>
+                            );
+                        })}
+                    </TableBody>
+                </Table>
+                </div>
+            </div>
+            <button onClick={toPDF}>Download PDF</button>
+        </div>
+    );
+}
 function Create_daily_account({ create = true, daily_account_id_view = '', edit = false, fetch_daily_accounts, onCloseParent }) {
     const [company, set_company] = React.useState([]);
     const [all_vendor, set_all_vendor] = React.useState([]);
@@ -503,7 +571,7 @@ function Create_daily_account({ create = true, daily_account_id_view = '', edit 
         })
             .then((response) => {
                 if (response.ok) {
-                    alert('Daily_Account created successfully');
+                    alert('Daily_Receivable created successfully');
                     window.location.reload();
                 } else {
                     alert('Failed to create daily_account');
@@ -525,8 +593,10 @@ function Create_daily_account({ create = true, daily_account_id_view = '', edit 
     const { isOpen, onOpen, onClose } = useDisclosure();
     return (
         <div className="daily_account">
-            <h1>Daily_Account Details</h1>
+            <h1>Daily_Receivable Details</h1>
+            
             <h2>{daily_account_id}</h2>
+            <p>A Bill To is required</p>
 
             <div className="all_inputs all_inputs2">
                 <div className="input_field">
@@ -729,7 +799,7 @@ function Create_daily_account({ create = true, daily_account_id_view = '', edit 
                     </table>
                 </div>
             </div>
-            <button onClick={createPDF}>Create Daily_Account</button>
+            <button onClick={createPDF}>Create Daily_Receivable</button>
         </div>
     );
 }

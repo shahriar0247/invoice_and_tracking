@@ -329,14 +329,15 @@ function CreateSummary(data3) {
 
     return (
         <div>
-            <div ref={targetRef}>
-                <h2>Summary</h2>
+            <div >
                 <label htmlFor="">Currency: </label>
                 <select name="" id="" onChange={(e) => {set_currency(e.target.value)}}>
                     <option value="USD">USD</option>
                     <option value="CAD">CAD</option>
                 </select>
-                <div>
+                <div className='summary_print' ref={targetRef}>
+                <h2>Summary</h2>
+
                     <h3>Invoices</h3>
                     <Table>
                         <TableHeader>
@@ -368,7 +369,14 @@ function CreateSummary(data3) {
                     </Table>
                 </div>
             </div>
-            <button onClick={toPDF}>Download PDF</button>
+            <button onClick={() => {
+            const summaryPrintElement = targetRef.current;
+      
+
+            toPDF();
+        }}>
+            Download PDF
+        </button>
         </div>
     );
 }

@@ -29,7 +29,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     <a href="/invoices">Invoices</a>
                     <a href="/type/vendor">Vendors</a>
                     <a href="/purchase_order">Purchase Order</a>
-                    <a href="/daily_accounts">Daily Accounts / Expenses</a>
+                    <a href="/daily_accounts">Daily Accounts</a>
+                    <a href="/daily_receivable">Daily Receivable</a>
                 </nav>
                 <div className="dummy"></div>
                 <main>{children}</main>
