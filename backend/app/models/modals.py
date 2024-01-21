@@ -81,8 +81,9 @@ class Invoice(db.Model):
 
 class Shipment(db.Model):
     id = db.Column(db.String(20), primary_key=True, nullable=True)
+    invoice_id =db.Column(db.String(500), nullable=True)
 
-    issued_to = db.Column(db.Integer, nullable=True)
+    issued_to_id = db.Column(db.Integer, nullable=True)
     ship_from_id = db.Column(db.Integer, nullable=True)
     ship_to_id = db.Column(db.Integer, nullable=True)
     all_items = db.Column(db.String(500), nullable=True)
@@ -90,7 +91,7 @@ class Shipment(db.Model):
     arrival_date = db.Column(db.DateTime, nullable=True)
     due_date = db.Column(db.DateTime, nullable=True)
     terms = db.Column(db.String(1200), nullable=True)
-    invoice_status = db.Column(db.String(1200), nullable=True)
+    shipment_status = db.Column(db.String(1200), nullable=True)
     description = db.Column(db.String(1200), nullable=True)
     container_number = db.Column(db.String(1200), nullable=True)
     bl_number = db.Column(db.String(1200), nullable=True)
@@ -102,8 +103,8 @@ class Shipment(db.Model):
 
     def __init__(self, *args, **kwargs):
         if not kwargs.get('id'):
-            kwargs['id'] = f'INV - {random.randint(1000000, 9999999)}'
-        super(Invoice, self).__init__(*args, **kwargs)
+            kwargs['id'] = f'Shipment - {random.randint(1000000, 9999999)}'
+        super(Shipment, self).__init__(*args, **kwargs)
         
         
         

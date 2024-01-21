@@ -9,7 +9,7 @@ export default function Shipments({ type = null, create = true, shipment_id_view
     const [data3, setData3] = React.useState([]);
     const [all_data, set_all_data] = React.useState([]);
     const [users, setUsers] = React.useState([]);
-    const [bill_to_search_term, set_bill_to_search_term] = React.useState('');
+    const [issued_to_search_term, set_issued_to_search_term] = React.useState('');
     const [edit, set_edit] = React.useState(false);
 
     const [minDate, setMinDate] = React.useState('');
@@ -80,8 +80,7 @@ export default function Shipments({ type = null, create = true, shipment_id_view
         fetch('http://localhost:5003/get/shipment')
             .then((response) => response.json())
             .then((data) => {
-                setData3(data.filter((item) => item.type === 'Shipment'));
-
+                setData3(data);
                 set_all_data(data);
                 setUsers(getUniqueUsers(data));
             })
@@ -92,7 +91,7 @@ export default function Shipments({ type = null, create = true, shipment_id_view
 
     const { isOpen, onOpen, onClose } = useDisclosure();
     function getUniqueUsers(data) {
-        const uniqueUsers = [...new Set(data.map((item) => item.bill_to))];
+        const uniqueUsers = [...new Set(data.map((item) => item.issued_to))];
         return uniqueUsers;
     }
     function deleteShipment(shipmentId) {
@@ -113,8 +112,7 @@ export default function Shipments({ type = null, create = true, shipment_id_view
     }
     function filter() {
         var filteredData = all_data.filter(function (shipment) {
-            if (shipment.bill_to.includes(bill_to_search_term)) {
-                console.log(bill_to_search_term)
+            if (shipment.issued_to.includes(issued_to_search_term)) {
                 return true;
             }
         });
@@ -126,12 +124,12 @@ export default function Shipments({ type = null, create = true, shipment_id_view
             );
         });
 
-        setData3(filteredData2));
+        setData3(filteredData2);
     }
 
     React.useEffect(() => {
         filter();
-    }, [minDate, maxDate, bill_to_search_term]);
+    }, [minDate, maxDate, issued_to_search_term]);
 
     function change_shipment_status(id, status) {
         const data = {
@@ -167,12 +165,12 @@ export default function Shipments({ type = null, create = true, shipment_id_view
     }
 
 
-    const headers = ['ID', 'Date', 'Bill To', "BL Number", "Actions"]
-    const columns = ['id', 'arrival_date', 'bill_to', 'bl_number', 'shipment_actions']
+    const headers = ['ID', 'Arrival Date', 'Issued To', "BL Number", "Actions"]
+    const columns = ['id', 'arrival_date', 'issued_to', 'bl_number', 'shipment_actions']
 
 
     return (
-        <div className="shipment">
+        <div className="invoice">
             <h1>Shipments</h1>
             <button onClick={onOpen}>Create Shipment</button>
             <Modal
@@ -193,9 +191,9 @@ export default function Shipments({ type = null, create = true, shipment_id_view
             <h1>All Filters</h1>
             <div className="all_filters">
                 <div>
-                    {type == "shipment" ? <label>Advise To Search:</label> : <label>Bill To Search:</label>}
+                    {type == "shipment" ? <label>Advise To Search:</label> : <label>Issued To Search:</label>}
 
-                    <select onChange={(e) => set_bill_to_search_term(e.target.value)}>
+                    <select onChange={(e) => set_issued_to_search_term(e.target.value)}>
                         <option value="">All</option>
                         {users.map((user, index) => (
                             <option
@@ -263,7 +261,7 @@ function CreateSummary(data3) {
         let excel_data = [
             ["ID",
                 "Date",
-                "Bill To",
+                "Issued To",
                 "B/L Number",
                 "Total Value",
             ]
@@ -271,7 +269,7 @@ function CreateSummary(data3) {
         data3.data3.data3.map(function (item) {
             let arrival_date = (new Date(item.arrival_date).toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }));
             let total_price = JSON.parse(item.all_items).reduce((acc, item) => acc + item.price * item.quantity, 0) + " " + currency
-            excel_data.push([item.id, arrival_date, item.bill_to, item.bl_number, total_price])
+            excel_data.push([item.id, arrival_date, item.issued_to, item.bl_number, total_price])
         })
         excel_data.push(["", "", "", "", "Total Price: " + totalPriceOfAllItems.toFixed(2) + " " + currency])
 
@@ -337,7 +335,7 @@ function CreateSummary(data3) {
                         <TableHeader>
                             <TableColumn>ID</TableColumn>
                             <TableColumn>Date</TableColumn>
-                            <TableColumn>Bill To</TableColumn>
+                            <TableColumn>Issued To</TableColumn>
                             <TableColumn>B/L Number</TableColumn>
                             <TableColumn>Total Value</TableColumn>
                         </TableHeader>
@@ -348,7 +346,7 @@ function CreateSummary(data3) {
                                     <TableRow key={item.id}>
                                         <TableCell>{item.id}</TableCell>
                                         <TableCell>{new Date(item.arrival_date).toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}</TableCell>
-                                        <TableCell>{item.bill_to}</TableCell>
+                                        <TableCell>{item.issued_to}</TableCell>
                                         <TableCell>{item.bl_number}</TableCell>
                                         <TableCell>{JSON.parse(item.all_items).reduce((acc, item) => acc + item.price * item.quantity, 0) + " " + currency}</TableCell>
                                     </TableRow>
@@ -374,7 +372,7 @@ function CreateSummary(data3) {
 }
 function Create_shipment({ create = true, shipment_id_view = '', edit = false, fetch_shipments, onCloseParent }) {
     const [company, set_company] = React.useState([]);
-    const [all_bill_to, set_all_bill_to] = React.useState([]);
+    const [all_issued_to, set_all_issued_to] = React.useState([]);
     const [all_ship_from, set_all_ship_from] = React.useState([]);
     const [all_ship_to, set_all_ship_to] = React.useState([]);
     const [all_items, set_all_items] = React.useState();
@@ -382,27 +380,30 @@ function Create_shipment({ create = true, shipment_id_view = '', edit = false, f
 
     const [company_information, set_company_information] = React.useState('');
     const [shipment_information, set_shipment_information] = React.useState('');
-    const [bill_to_information, set_bill_to_information] = React.useState('');
+    const [issued_to_information, set_issued_to_information] = React.useState('');
     const [ship_from_information, set_ship_from_information] = React.useState('');
     const [ship_to_information, set_ship_to_information] = React.useState('');
-    const [extra_information, set_extra_information] = React.useState('');
+    const [container_numberrmation, set_container_numberrmation] = React.useState('');
     const [description, set_description] = React.useState('');
     const [shipment_status, set_shipment_status] = React.useState('');
-    const [bank_details_information, set_bank_details_information] = React.useState('');
+    const [shipping_details_information, set_shipping_details_information] = React.useState('');
 
     const [terms_and_conditions, set_terms_and_conditions] = React.useState('');
     const [shipment_type, set_shipment_type] = React.useState('First Quote');
     const [bl_number, set_bl_number] = React.useState('');
-    const [bill_to_id, set_bill_to_id] = React.useState('');
-    const [bill_to, set_bill_to] = React.useState('');
+    const [issued_to_id, set_issued_to_id] = React.useState('');
+    const [issued_to, set_issued_to] = React.useState('');
+    const [invoice, set_invoice] = React.useState('');
     const [ship_to_id, set_ship_to_id] = React.useState('');
     const [ship_to, set_ship_to] = React.useState('');
     const [ship_from_id, set_ship_from_id] = React.useState('');
     const [ship_from, set_ship_from] = React.useState('');
+    const [weight, set_weight] = React.useState('');
     const [arrival_date, set_arrival_date] = React.useState(getFormattedDate());
     const [due_date, set_due_date] = React.useState(getFormattedDate());
-    const [shipment_id, set_shipment_id] = React.useState(`INV - ${Math.floor(Math.random() * (9999999 - 1000000 + 1)) + 1000000}`);
+    const [shipment_id, set_shipment_id] = React.useState(`Shipment - ${Math.floor(Math.random() * (9999999 - 1000000 + 1)) + 1000000}`);
     const [all_vendors, set_all_vendors] = React.useState([]);
+    const [invoices, set_invoices] = React.useState([]);
 
     const [total_price, set_total_price] = React.useState(0);
 
@@ -420,7 +421,7 @@ function Create_shipment({ create = true, shipment_id_view = '', edit = false, f
         fetchShipFrom();
         fetchShipTo();
         fetchItems();
-        fetchShipment();
+        fetchInvoices();
         if (!create) {
             get_shipment_details();
         }
@@ -443,17 +444,17 @@ function Create_shipment({ create = true, shipment_id_view = '', edit = false, f
         const all_items_ = JSON.parse(data['all_items']);
         set_shipment_id(data.id);
         set_selected_items(all_items_);
-        set_bill_to(JSON.stringify(data.bill_to));
-        set_bill_to_id(data.bill_to.id);
+        set_issued_to(JSON.stringify(data.issued_to));
+        set_issued_to_id(data.issued_to.id);
         set_ship_to(JSON.stringify(data.ship_to));
         set_ship_to_id(data.ship_to.id);
         set_ship_from(JSON.stringify(data.ship_from));
         set_ship_from_id(data.ship_from.id);
-        set_bill_to_information(
+        set_issued_to_information(
             <div>
-                <div>{data.bill_to.name}</div>
-                <div>{data.bill_to.address1}</div>
-                <div>{data.bill_to.address2}</div>
+                <div>{data.issued_to.name}</div>
+                <div>{data.issued_to.address1}</div>
+                <div>{data.issued_to.address2}</div>
             </div>
         );
         set_ship_to_information(
@@ -472,11 +473,12 @@ function Create_shipment({ create = true, shipment_id_view = '', edit = false, f
         );
         set_shipment_type(data.type);
         set_terms_and_conditions(data.terms);
-        set_extra_information(data.extra_info);
+        set_container_numberrmation(data.container_number);
         set_shipment_status(data.shipment_status);
         set_description(data.description);
-        set_bank_details_information(data.bank_details);
+        set_shipping_details_information(data.shipping_details);
         set_bl_number(data.bl_number);
+        set_invoice(data.invoice_id);
 
         var dateObject = new Date(data.arrival_date);
         var year = dateObject.getFullYear();
@@ -532,14 +534,15 @@ function Create_shipment({ create = true, shipment_id_view = '', edit = false, f
                 console.error('Error fetching all vendor:', error);
             });
     }
-    function fetchShipment() {
-        fetch('http://localhost:5003/get/shipment')
+    function fetchInvoices() {
+        fetch('http://localhost:5003/get/invoice')
             .then((response) => response.json())
             .then((data) => {
-                // setda(data);
+                set_invoices(data);
+                // set_invoice(data[0].id)
             })
             .catch((error) => {
-                console.error('Error fetching shipment:', error);
+                console.error('Error fetching purchase_order:', error);
             });
     }
     function fetchCompany() {
@@ -547,7 +550,6 @@ function Create_shipment({ create = true, shipment_id_view = '', edit = false, f
             .then((response) => response.json())
             .then((data) => {
                 set_company(data);
-                set_bank_details_information(data.bank_details);
                 set_company_information(
                     <div>
                         <h1>{data.name}</h1>
@@ -568,10 +570,10 @@ function Create_shipment({ create = true, shipment_id_view = '', edit = false, f
         fetch('http://localhost:5003/get/type/bill_to')
             .then((response) => response.json())
             .then((data) => {
-                set_all_bill_to(data);
+                set_all_issued_to(data);
                 data = data[0];
-                set_bill_to_id(data.id);
-                set_bill_to_information(
+                set_issued_to_id(data.id);
+                set_issued_to_information(
                     <div>
                         <div>{data.name}</div>
                         <div>{data.address1}</div>
@@ -622,11 +624,9 @@ function Create_shipment({ create = true, shipment_id_view = '', edit = false, f
             });
     }
     function fetchItems() {
-        console.log('here 2');
         fetch('http://localhost:5003/get/item')
             .then((response) => response.json())
             .then((data) => {
-                console.log(data);
                 set_all_items(data);
             })
             .catch((error) => {
@@ -637,15 +637,17 @@ function Create_shipment({ create = true, shipment_id_view = '', edit = false, f
     function createShipment() {
         const shipmentData = {
             id: shipment_id,
-            bill_to_id: bill_to_id,
+            issued_to_id: issued_to_id,
+            invoice_id: invoice,
             ship_to_id: ship_to_id,
             ship_from_id: ship_from_id,
-            bank_details: bank_details_information,
+            shipping_details: shipping_details_information,
             arrival_date: arrival_date,
             due_date: due_date,
             terms: terms_and_conditions,
             type: shipment_type,
-            extra_info: extra_information,
+            weight: weight,
+            container_number: container_numberrmation,
             shipment_status: shipment_status,
             description: description,
             bl_number: bl_number,
@@ -672,14 +674,14 @@ function Create_shipment({ create = true, shipment_id_view = '', edit = false, f
             });
     }
 
-    const { toPDF, targetRef } = usePDF({ filename: shipment_id + ' - Bill To -' + bill_to.name + ' Date: ' + arrival_date + '.pdf' });
+    const { toPDF, targetRef } = usePDF({ filename: shipment_id + ' - Issued To -' + issued_to.name + ' Date: ' + arrival_date + '.pdf' });
 
     function createPDF() {
         createShipment();
         toPDF();
         fetch_shipments_handler();
         onClose();
-        set_shipment_id(`INV - ${Math.floor(Math.random() * (9999999 - 1000000 + 1)) + 1000000}`);
+        set_shipment_id(`Shipment - ${Math.floor(Math.random() * (9999999 - 1000000 + 1)) + 1000000}`);
         onCloseParent();
     }
 
@@ -691,17 +693,43 @@ function Create_shipment({ create = true, shipment_id_view = '', edit = false, f
             <h2>{shipment_id}</h2>
 
             <div className="all_inputs all_inputs2">
+
                 <div className="input_field">
-                    <div className="title">Bill To</div>
+
+
+                    <div className="title">Invoices</div>
                     <div className="input">
                         <select
-                            value={bill_to}
+                            value={invoice}
+                            onChange={(e) => {
+                                let value = e.target.value;
+                                set_invoice(value);
+                            }}>
+                            {invoices.map(function (invoice) {
+                                return (
+                                    <option
+                                        key={invoice.id}
+                                        value={invoice.id}>
+                                        {invoice.id}
+                                    </option>
+                                );
+                            })}
+                        </select>
+                    </div>
+                </div>
+                <div className="input_field">
+
+
+                    <div className="title">Issued To</div>
+                    <div className="input">
+                        <select
+                            value={issued_to}
                             onChange={(e) => {
                                 let value = e.target.value;
                                 let data = JSON.parse(value);
-                                set_bill_to_id(data.id);
-                                set_bill_to(value);
-                                set_bill_to_information(
+                                set_issued_to_id(data.id);
+                                set_issued_to(value);
+                                set_issued_to_information(
                                     <div>
                                         <div>{data.name}</div>
                                         <div>{data.address1}</div>
@@ -709,12 +737,12 @@ function Create_shipment({ create = true, shipment_id_view = '', edit = false, f
                                     </div>
                                 );
                             }}>
-                            {all_bill_to.map(function (bill_to) {
+                            {all_issued_to.map(function (issued_to) {
                                 return (
                                     <option
-                                        key={JSON.stringify(bill_to)}
-                                        value={JSON.stringify(bill_to)}>
-                                        {bill_to.name}
+                                        key={JSON.stringify(issued_to)}
+                                        value={JSON.stringify(issued_to)}>
+                                        {issued_to.name}
                                     </option>
                                 );
                             })}
@@ -783,18 +811,18 @@ function Create_shipment({ create = true, shipment_id_view = '', edit = false, f
                 </div>
 
                 <div className="input_field">
-                    <div className="title">Bank Details</div>
+                    <div className="title">Shipping Details</div>
                     <div className="input">
                         <textarea
                             type="text"
-                            value={bank_details_information}
-                            onChange={(e) => set_bank_details_information(e.target.value)}
+                            value={shipping_details_information}
+                            onChange={(e) => set_shipping_details_information(e.target.value)}
                         />
                     </div>
                 </div>
 
                 <div className="input_field">
-                    <div className="title">Date</div>
+                    <div className="title">Arrival Date</div>
                     <div className="input">
                         <input
                             value={arrival_date}
@@ -866,23 +894,34 @@ function Create_shipment({ create = true, shipment_id_view = '', edit = false, f
                             onChange={(e) => {
                                 set_shipment_type(e.target.value);
                             }}>
-                            <option value="First Quote">First Quote</option>
-                            <option value="Final Quote">Final Quote</option>
-                            <option value="Shipment">Shipment</option>
+                            <option value="Delivery Order">Delivery Order</option>
+                            <option value="Pre Alert">Pre Alert</option>
                         </select>
+                    </div>
+                </div>
+                <div className="input_field">
+                    <div className="title">Weight</div>
+                    <div className="input">
+                        <input
+                            value={weight}
+                            type="date"
+                            onChange={(e) => {
+                                set_weight(e.target.value);
+                            }}
+                        />
                     </div>
                 </div>
                 <div className="input_field">
                     <div className="title">Extra Info</div>
                     <div className="input">
                         <textarea
-                            value={extra_information}
+                            value={container_numberrmation}
                             name=""
                             id=""
                             cols="30"
                             rows="10"
                             onChange={(e) => {
-                                set_extra_information(e.target.value);
+                                set_container_numberrmation(e.target.value);
                             }}></textarea>
                     </div>
                 </div>
@@ -1055,11 +1094,11 @@ function Create_shipment({ create = true, shipment_id_view = '', edit = false, f
                 <ModalContent>
                     <ModalHeader>Create Daily</ModalHeader>
                     <ModalBody>
-                        <div className="shipment_viewer_container">
+                        <div className="invoice_viewer_container">
                             <div
                                 ref={targetRef}
-                                className="shipment_viewer"
-                                id="shipment_viewer">
+                                className="invoice_viewer"
+                                id="invoice_viewer">
                                 <div className="logo"></div>
                                 <h4>{shipment_type}</h4>
                                 <div className="first_section">
@@ -1081,10 +1120,10 @@ function Create_shipment({ create = true, shipment_id_view = '', edit = false, f
                                     </div>
                                 </div>
                                 <div className="second_section">
-                                    <div className="bill_to_information">
-                                        <h3>Bill To</h3>
+                                    <div className="issued_to_information">
+                                        <h3>Issued To</h3>
 
-                                        {bill_to_information}
+                                        {issued_to_information}
                                     </div>
                                     <div className="ship_from_information">
                                         <h3>Ship From</h3>
@@ -1097,10 +1136,10 @@ function Create_shipment({ create = true, shipment_id_view = '', edit = false, f
                                         <h3>Ship To </h3>
                                         {ship_to_information}
                                     </div>
-                                    <div className="extra_information">
+                                    <div className="container_numberrmation">
                                         <div
                                             dangerouslySetInnerHTML={{
-                                                __html: extra_information.replace(/\n/g, '<br>'),
+                                                __html: container_numberrmation.replace(/\n/g, '<br>'),
                                             }}></div>
                                     </div>
                                 </div>
@@ -1134,11 +1173,17 @@ function Create_shipment({ create = true, shipment_id_view = '', edit = false, f
                                     </div>
                                 </div>
                                 <div className="fifth_section">
-                                    <h3>Bank Details</h3>
-                                    <div
-                                        dangerouslySetInnerHTML={{
-                                            __html: bank_details_information.replace(/\n/g, '<br>'),
-                                        }}></div>
+                                    <h3>Shipping Details</h3>
+                                    {shipping_details_information &&
+
+                                        <div
+                                            dangerouslySetInnerHTML={{
+                                                __html: shipping_details_information.replace(/\n/g, '<br>'),
+                                            }}>
+                                        </div>
+                                    }
+
+
                                 </div>
                                 <div className="sixth_section">
                                     <center>THANK YOU FOR SHIPPING THROUGH MIANZ WE APPRECIATE YOUR BUSINESS</center>
@@ -1161,6 +1206,6 @@ function Create_shipment({ create = true, shipment_id_view = '', edit = false, f
                     </ModalFooter>
                 </ModalContent>
             </Modal>
-        </div>
+        </div >
     );
 }

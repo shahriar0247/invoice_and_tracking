@@ -105,30 +105,6 @@ def delete_invoice(invoice_id):
     return "Invoice not found", 404
 
 
-@app.route("/edit/invoice/<int:invoice_id>", methods=["PUT"])
-def edit_invoice(invoice_id):
-    invoice = Invoice.query.get(invoice_id)
-
-    if not invoice:
-        return "Invoice not found", 404
-
-    # Parse request data to update the invoice
-    data = request.json  # Assuming you receive JSON data from the request
-    invoice.date = data["date"]
-    invoice.terms = data["terms"]
-    invoice.bill_to1 = data["bill_to1"]
-    invoice.bill_to2 = data["bill_to2"]
-    invoice.bill_to3 = data["bill_to3"]
-    invoice.ship_from1 = data["ship_from1"]
-    invoice.ship_from2 = data["ship_from2"]
-    invoice.ship_from3 = data["ship_from3"]
-    invoice.company_name = data["company_name"]
-    invoice.description = data.get("description")
-    invoice.invoice_status = data.get("invoice_status")
-
-    db.session.commit()
-
-    return "Invoice updated successfully"
 
 
 @app.route("/get_invoice_details/<invoice_number>")

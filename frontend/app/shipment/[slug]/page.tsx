@@ -1,10 +1,10 @@
 'use client'
 
-import Invoices from "../page";
+import Shipments from "../page";
 
-export default function Invoices2(){
+export default function Shipments2(){
     var fullPath = window.location.pathname;
     var pathParts = fullPath.split('/');
     var item = decodeURIComponent(pathParts[pathParts.length - 1]);
-    return <Invoices create={false} invoice_id_view={item}></Invoices>
+    return <Shipments create={false} shipment_id_view={item}></Shipments>
 }

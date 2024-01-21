@@ -4,7 +4,7 @@ import React from 'react';
 import Delete_button from '../components/DeleteBtn';
 import Link from 'next/link';
 
-export default function DTable({ headers, table_data, columns, Custom_buttons = null, edit_function = null, delete_function = null, custom_function=[] }) {
+export default function DTable({ headers, table_data, columns, Custom_buttons = null, edit_function = null, delete_function = null, custom_function = [] }) {
     return (<Table>
         <TableHeader>
             {
@@ -38,47 +38,90 @@ export default function DTable({ headers, table_data, columns, Custom_buttons = 
                                 </TableCell>
                             )
                         }
+                        else if (column == "shipment_actions") {
+                            return (
+
+                                <TableCell>
+                                    <div style={{ display: 'grid', gridAutoFlow: 'column', gridGap: '5px' }}>
+                                        {edit_function &&
+                                            <button onClick={() => edit_function(item.id)}>Edit</button>
+
+                                        }
+                                        {delete_function &&
+                                            <Delete_button description={"Are you sure you want to delete " + item.name + " (" + item.id + ")"} delete_function={() => delete_function(item.id)}></Delete_button>
+
+                                        }
+                                        {Custom_buttons &&
+                                            <Custom_buttons></Custom_buttons>
+                                        }
+
+                                        <Link
+                                            className="button"
+                                            href={`/shipment/${item.id}?edit=true`}>
+                                            Edit
+                                        </Link>
+                                        <button
+
+                                            onClick={() => {
+                                                window.location.href = '/tracking/' + item.id;
+                                            }}>
+                                            Tracking
+                                        </button>
+                                        <select
+                                            defaultValue={item.invoice_status}
+                                            onChange={(e) => {
+                                                custom_function[0](item.id, e.target.value);
+                                            }}>
+                                            <option value="pending">Pending</option>
+                                            <option value="paid">Paid</option>
+                                            <option value="partial">Partial</option>
+                                        </select>
+                                    </div>
+
+                                </TableCell>)
+
+                        }
                         else if (column == "invoice_actions") {
-                        return(
+                            return (
 
-                            <TableCell>
-                                <div style={{display: 'grid', gridAutoFlow: 'column', gridGap: '5px'}}>
-                                    {edit_function &&
-                                        <button onClick={() => edit_function(item.id)}>Edit</button>
+                                <TableCell>
+                                    <div style={{ display: 'grid', gridAutoFlow: 'column', gridGap: '5px' }}>
+                                        {edit_function &&
+                                            <button onClick={() => edit_function(item.id)}>Edit</button>
 
-                                    }
-                                    {delete_function &&
-                                        <Delete_button description={"Are you sure you want to delete " + item.name + " (" + item.id + ")"} delete_function={() => delete_function(item.id)}></Delete_button>
+                                        }
+                                        {delete_function &&
+                                            <Delete_button description={"Are you sure you want to delete " + item.name + " (" + item.id + ")"} delete_function={() => delete_function(item.id)}></Delete_button>
 
-                                    }
-                                    {Custom_buttons &&
-                                        <Custom_buttons></Custom_buttons>
-                                    }
-                             
-                                <Link
-                                    className="button"
-                                    href={`/invoices/${item.id}?edit=true`}>
-                                    Edit
-                                </Link>
-                                <button
+                                        }
+                                        {Custom_buttons &&
+                                            <Custom_buttons></Custom_buttons>
+                                        }
 
-                                    onClick={() => {
-                                        window.location.href = '/tracking/' + item.id;
-                                    }}>
-                                    Tracking
-                                </button>
-                                <select
-                                    defaultValue={item.invoice_status}
-                                    onChange={(e) => {
-                                        custom_function[0](item.id, e.target.value);
-                                    }}>
-                                    <option value="pending">Pending</option>
-                                    <option value="paid">Paid</option>
-                                    <option value="partial">Partial</option>
-                                </select>
-                                </div>
+                                        <Link
+                                            className="button"
+                                            href={`/invoices/${item.id}?edit=true`}>
+                                            Edit
+                                        </Link>
+                                        <button
 
-                            </TableCell>)
+                                            onClick={() => {
+                                                window.location.href = '/tracking/' + item.id;
+                                            }}>
+                                            Tracking
+                                        </button>
+                                        <select
+                                            defaultValue={item.invoice_status}
+                                            onChange={(e) => {
+                                                custom_function[0](item.id, e.target.value);
+                                            }}>
+                                            <option value="pending">Pending</option>
+                                            <option value="paid">Paid</option>
+                                            <option value="partial">Partial</option>
+                                        </select>
+                                    </div>
+
+                                </TableCell>)
 
                         }
                         else if (column == "date") {
