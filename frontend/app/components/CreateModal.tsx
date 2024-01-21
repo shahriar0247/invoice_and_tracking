@@ -11,7 +11,7 @@ export default function CreateModal({ isOpen, onOpen, onClose, title, inputs_, e
         <Modal
             isOpen={isOpen}
             onClose={onClose}
-            size='lg'>
+            size='5xl'>
             <ModalContent>
                 <ModalHeader className="flex flex-col gap-1">
                     {title}
