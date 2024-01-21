@@ -2,6 +2,8 @@
 
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, useDisclosure } from '@nextui-org/react';
 import React from 'react';
+import Delete_button from '../components/DeleteBtn';
+import DTable from '../components/DTable';
 
 export default function App() {
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -21,6 +23,7 @@ export default function App() {
         set_name('');
         set_description('');
         set_price('');
+        set_vendor_cost('');
         set_vendor_id('Select Vendor');
         setEditItemId(null);
         onOpen();
@@ -35,6 +38,7 @@ export default function App() {
                 set_name(data.name);
                 set_description(data.description);
                 set_price(data.price);
+                set_vendor_cost(data.vendor_cost);
                 if (data.vendor_id) {
                     set_vendor_id(data.vendor_id);
                 } else {
@@ -78,6 +82,7 @@ export default function App() {
             name: name,
             description: description,
             price: price,
+            vendor_cost: vendor_cost,
             vendor_id: vendor_id,
         };
 
@@ -90,7 +95,6 @@ export default function App() {
         })
             .then((response) => {
                 if (response.ok) {
-                    alert('Item created successfully');
                     onClose();
                     fetchItem(); // Refresh the table after creating an item
                 } else {
@@ -107,6 +111,7 @@ export default function App() {
             name: name,
             description: description,
             price: price,
+            vendor_cost: vendor_cost,
             vendor_id: vendor_id,
         };
 
@@ -130,18 +135,17 @@ export default function App() {
             });
     }
     function handle_delete_click(item_id) {
-        const confirmDelete = window.confirm('Are you sure you want to delete this item?');
-        if (confirmDelete) {
-            fetch(`http://localhost:5003/delete/item/${item_id}`, {
-                method: 'DELETE',
+        fetch(`http://localhost:5003/delete/item/${item_id}`, {
+            method: 'DELETE',
+        })
+            .then((response) => response.text())
+            .then((data) => {
+                fetchItem();
             })
-                .then((response) => response.text())
-                .then((data) => {
-                    window.location.reload();
-                })
-                .catch((error) => console.error('Error deleting bill_to:', error));
-        }
+            .catch((error) => console.error('Error deleting bill_to:', error));
     }
+    const headers = ['Name', 'Description', 'Price', "Actions"]
+    const columns = ['name', 'description', 'price', 'actions']
 
     return (
         <div className="item">
@@ -150,27 +154,8 @@ export default function App() {
                 <button onClick={toggleCreateModal}>Create Item</button>
             </div>
 
-            <Table>
-                <TableHeader>
-                    <TableColumn>Name</TableColumn>
-                    <TableColumn>Description</TableColumn>
-                    <TableColumn>Price</TableColumn>
-                    <TableColumn>Actions</TableColumn>
-                </TableHeader>
-                <TableBody>
-                    {tableData.map((item) => (
-                        <TableRow key={item.id}>
-                            <TableCell>{item.name}</TableCell>
-                            <TableCell>{item.description}</TableCell>
-                            <TableCell>{item.price}</TableCell>
-                            <TableCell>
-                                <button onClick={() => toggleEditModal(item.id)}>Edit</button>
-                                <button onClick={() => handle_delete_click(item.id)}>Delete</button>
-                            </TableCell>
-                        </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
+            <DTable headers={headers} columns={columns} table_date={tableData} edit_function={toggleEditModal} delete_function={handle_delete_click}></DTable>
+
 
             <Modal
                 isOpen={isOpen}
@@ -237,7 +222,7 @@ export default function App() {
                                 </div>
                             </div>
                             <div className="input_field">
-                                <div className="title">Price</div>
+                                <div className="title">Vendor Cost</div>
                                 <div className="input">
                                     <input
                                         type="number"

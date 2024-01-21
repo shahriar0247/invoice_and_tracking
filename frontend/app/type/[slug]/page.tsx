@@ -1,4 +1,7 @@
 'use client';
+import CreateModal from '@/app/components/CreateModal';
+import DTable from '@/app/components/DTable';
+import Delete_button from '@/app/components/DeleteBtn';
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, useDisclosure } from '@nextui-org/react';
 import React, { useEffect, useState } from 'react';
 
@@ -18,13 +21,13 @@ export default function BillTo({ }) {
         title = 'Vendor';
     }
     const [showCreateModal, setShowCreateModal] = useState(false);
-    const [name, set_name] = useState('');
-    const [address1, set_address1] = useState('');
-    const [address2, set_address2] = useState('');
     const [create_mode, set_create_mode] = useState(true);
     const [edit_bill_to_id, set_edit_bill_to_id] = useState(0);
     const [tableData, setTableData] = useState([]);
-    const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
+    const [create_data, set_create_data] = useState({})
+
+    const { isOpen, onOpen, onClose } = useDisclosure();
 
     useEffect(() => {
         fetch_bill_to();
@@ -62,9 +65,7 @@ export default function BillTo({ }) {
 
     function handle_create_click() {
         set_create_mode(true);
-        set_name('');
-        set_address1('');
-        set_address2('');
+        set_create_data({});
         onOpen();
     }
 
@@ -72,9 +73,7 @@ export default function BillTo({ }) {
         fetch(`http://localhost:5003/get/type/${item}/${bill_to_id}`)
             .then((response) => response.json())
             .then((data) => {
-                set_name(data.name);
-                set_address1(data.address1);
-                set_address2(data.address2);
+                set_create_data(data);
                 set_edit_bill_to_id(data.id);
             })
             .catch((error) => {
@@ -82,12 +81,7 @@ export default function BillTo({ }) {
             });
     }
 
-    function edit_bill_to_id_(onClose) {
-        const formData = {
-            name: name,
-            address1: address1,
-            address2: address2,
-        };
+    function edit_bill_to_id_() {
 
         const apiUrl = create_mode ? `http://localhost:5003/create/type/${item}` : `http://localhost:5003/edit/type/${item}/${edit_bill_to_id}`;
 
@@ -96,7 +90,7 @@ export default function BillTo({ }) {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(formData),
+            body: JSON.stringify(create_data),
         })
             .then((response) => response.text())
             .then((data) => {
@@ -107,152 +101,22 @@ export default function BillTo({ }) {
             .catch((error) => console.error('Error updating/creating bill_to:', error));
     }
 
+    const headers = ['ID', "Name", "Address 1", "Address 2", "Actions"]
+    const columns = ['id', 'name', 'address1', 'address2', 'actions']
+    const inputs_ = [{ 'title': "Name", "name": 'name' }, { 'title': "Address 1", "name": 'address1' }, { 'title': "Address 2", "name": 'address2' }]
+
     return (
         <div className="bill_to">
             <h1>{title} Details</h1>
             <div className="topbar">
                 <button onClick={() => handle_create_click()}>Create {title}</button>
             </div>
-            <Table>
-                <TableHeader>
-                    <TableColumn>ID</TableColumn>
-                    <TableColumn>Name</TableColumn>
-                    <TableColumn>Address 1</TableColumn>
-                    <TableColumn>Address 2</TableColumn>
-                    <TableColumn>Options</TableColumn>
-                </TableHeader>
-                <TableBody>
-                    {tableData.map((item) => (
-                        <TableRow key={item.id}>
-                            <TableCell>{item.id}</TableCell>
-                            <TableCell>{item.name}</TableCell>
-                            <TableCell>{item.address1}</TableCell>
-                            <TableCell>{item.address2}</TableCell>
-                            <TableCell>
-                                <div className="grid grid-cols-2 gap-4">
 
-                                    <button onClick={() => handle_edit_click(item.id)}>Edit</button>
-                                    <Delete_button description={"Are you sure you want to delete " + item.name + " (" + item.id + ")"} delete_function={() => handle_delete_click(item.id)}></Delete_button>
-                                </div>
+            <DTable headers={headers} columns={columns} table_date={tableData} edit_function={handle_edit_click} delete_function={handle_delete_click}></DTable>
 
-                            </TableCell>
-                        </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
+            <CreateModal isOpen={isOpen} onOpen={onOpen} onClose={onClose} title={title} inputs_={inputs_} edit_function={edit_bill_to_id_} data={create_data} set_data={set_create_data}></CreateModal>
 
-            <Modal
-                isOpen={isOpen}
-                onOpenChange={onOpenChange}
-                size='lg'
-            >
-                <ModalContent>
-                    {(onClose) => (
-                        <>
-                            <ModalHeader className="flex flex-col gap-1">
-                                {create_mode ? 'Create' : 'Edit'} {title}
-                            </ModalHeader>
-                            <ModalBody>
-                                <div className="all_inputs">
-                                    <div className="input_field">
-                                        <div className="title">Name</div>
-                                        <div className="input">
-                                            <input
-                                                type="text"
-                                                value={name}
-                                                onChange={(e) => {
-                                                    set_name(e.target.value);
-                                                }}
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="input_field">
-                                        <div className="title">Address Line 1</div>
-                                        <div className="input">
-                                            <input
-                                                type="text"
-                                                value={address1}
-                                                onChange={(e) => {
-                                                    set_address1(e.target.value);
-                                                }}
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="input_field">
-                                        <div className="title">Address Line 2</div>
-                                        <div className="input">
-                                            <input
-                                                type="text"
-                                                value={address2}
-                                                onChange={(e) => {
-                                                    set_address2(e.target.value);
-                                                }}
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-                            </ModalBody>
-                            <ModalFooter>
-                                <button
-                                    color="danger"
-                                    onClick={onClose}>
-                                    Close
-                                </button>
-                                <button
-                                    color="primary"
-                                    onClick={() => edit_bill_to_id_(onClose)}>
-                                    {create_mode ? 'Create' : 'Edit'}
-                                </button>
-                            </ModalFooter>
-                        </>
-                    )}
-                </ModalContent>
-            </Modal>
         </div>
     );
 }
-function Delete_button({ description, delete_function }) {
-    const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
-    return (
-        <div>
-            <button
-                color="danger"
-                onClick={onOpen}>
-                Delete
-            </button>
-
-            <Modal
-                isOpen={isOpen}
-                onOpenChange={onOpenChange}
-                size='lg'
-            >
-                <ModalContent>
-                    {(onClose) => (
-                        <>
-                            <ModalHeader className="flex flex-col gap-1">
-                                Are you sure you want to delete?
-                            </ModalHeader>
-                            <ModalBody>
-                                {description}
-                            </ModalBody>
-                            <ModalFooter>
-                                <button
-                                    color="primary"
-                                    onClick={onClose}>
-                                    Close
-                                </button>
-                                <button
-                                    color="danger"
-                                    onClick={() => { delete_function(), onClose() }}>
-                                    Delete
-                                </button>
-                            </ModalFooter>
-                        </>
-                    )}
-                </ModalContent>
-            </Modal>
-
-        </div>
-    )
-}

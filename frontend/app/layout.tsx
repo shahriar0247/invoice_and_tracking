@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './styles/globals.scss';
 import './styles/invoice_viewer.scss';
+import Link from 'next/link';
 
 
 export const metadata: Metadata = {
@@ -22,17 +23,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <body>
                 <nav>
                     <div className="nav_container">
-                        <a href="/company">Company</a>
-                        <a href="/type/bill_to">Bill To</a>
-                        <a href="/type/ship_from">Ship From</a>
-                        <a href="/type/ship_to">Ship To</a>
-                        <a href="/item">Items</a>
-                        <a href="/shipment">Shipment</a>
-                        <a href="/invoices">Invoices</a>
-                        <a href="/type/vendor">Vendors</a>
-                        <a href="/purchase_order">Purchase Order</a>
-                        <a href="/daily_accounts">Daily Accounts</a>
-                        <a href="/daily_receivable">Daily Receivable</a>
+                        <Link href="/company">Company</Link>
+                        <Link href="/type/bill_to">Bill To</Link>
+                        <Link href="/type/ship_from">Ship From</Link>
+                        <Link href="/type/ship_to">Ship To</Link>
+                        <Link href="/item">Items</Link>
+                        <Link href="/shipment">Shipment</Link>
+                        <Link href="/invoices">Invoices</Link>
+                        <Link href="/type/vendor">Vendors</Link>
+                        <Link href="/purchase_order">Purchase Order</Link>
+                        <Link href="/daily_accounts">Daily Accounts</Link>
+                        <Link href="/daily_receivable">Daily Receivable</Link>
                     </div>
                 </nav>
                 <main>{children}</main>
