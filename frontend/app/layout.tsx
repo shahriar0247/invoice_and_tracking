@@ -21,19 +21,20 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </head>
             <body>
                 <nav>
-                    <a href="/company">Company</a>
-                    <a href="/type/bill_to">Bill To (Client)</a>
-                    <a href="/type/ship_from">Ship From</a>
-                    <a href="/type/ship_to">Ship To</a>
-                    <a href="/item">Items</a>
-                    <a href="/shipment">Shipment</a>
-                    <a href="/invoices">Invoices</a>
-                    <a href="/type/vendor">Vendors</a>
-                    <a href="/purchase_order">Purchase Order</a>
-                    <a href="/daily_accounts">Daily Accounts</a>
-                    <a href="/daily_receivable">Daily Receivable</a>
+                    <div className="nav_container">
+                        <a href="/company">Company</a>
+                        <a href="/type/bill_to">Bill To</a>
+                        <a href="/type/ship_from">Ship From</a>
+                        <a href="/type/ship_to">Ship To</a>
+                        <a href="/item">Items</a>
+                        <a href="/shipment">Shipment</a>
+                        <a href="/invoices">Invoices</a>
+                        <a href="/type/vendor">Vendors</a>
+                        <a href="/purchase_order">Purchase Order</a>
+                        <a href="/daily_accounts">Daily Accounts</a>
+                        <a href="/daily_receivable">Daily Receivable</a>
+                    </div>
                 </nav>
-                <div className="dummy"></div>
                 <main>{children}</main>
             </body>
         </html>

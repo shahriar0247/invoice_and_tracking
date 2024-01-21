@@ -29,7 +29,7 @@ export default function App() {
     function toggleEditModal(itemId) {
         setEditItemId(itemId);
         onOpen();
-        fetch(`http://35.209.219.229:5003/get/item/${itemId}`)
+        fetch(`http://localhost:5003/get/item/${itemId}`)
             .then((response) => response.json())
             .then((data) => {
                 set_name(data.name);
@@ -52,7 +52,7 @@ export default function App() {
     }, []);
 
     function fetchItem() {
-        fetch('http://35.209.219.229:5003/get/item')
+        fetch('http://localhost:5003/get/item')
             .then((response) => response.json())
             .then((data) => {
                 setTableData(data);
@@ -63,7 +63,7 @@ export default function App() {
     }
 
     function fetchVendor() {
-        fetch('http://35.209.219.229:5003/get/vendor')
+        fetch('http://localhost:5003/get/vendor')
             .then((response) => response.json())
             .then((data) => {
                 set_all_vendors(data);
@@ -81,7 +81,7 @@ export default function App() {
             vendor_id: vendor_id,
         };
 
-        fetch('http://35.209.219.229:5003/create/item', {
+        fetch('http://localhost:5003/create/item', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -110,7 +110,7 @@ export default function App() {
             vendor_id: vendor_id,
         };
 
-        fetch(`http://35.209.219.229:5003/edit/item/${editItemId}`, {
+        fetch(`http://localhost:5003/edit/item/${editItemId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -132,7 +132,7 @@ export default function App() {
     function handle_delete_click(item_id) {
         const confirmDelete = window.confirm('Are you sure you want to delete this item?');
         if (confirmDelete) {
-            fetch(`http://35.209.219.229:5003/delete/item/${item_id}`, {
+            fetch(`http://localhost:5003/delete/item/${item_id}`, {
                 method: 'DELETE',
             })
                 .then((response) => response.text())

@@ -32,16 +32,22 @@ body {
     }
 
     nav {
-        display: grid;
-        justify-content: center;
-        height: max-content;
-        box-shadow: 0px 0px 10px 1px rgba(0, 0, 0, 0.319);
-        padding: 20px;
-        height: 600px;
-        margin-top: calc(50vh - 250px);
-        margin-left: 25px;
-        position: fixed;
-        width: 250px;
+
+
+        height: 100%;
+
+        .nav_container {
+            display: grid;
+            justify-content: center;
+            height: max-content;
+            margin: auto;
+            box-shadow: 0px 0px 10px 1px rgba(0, 0, 0, 0.319);
+            padding: 20px;
+            position: fixed;
+            width: 250px;
+            top: 10vh;
+
+        }
 
         a {
             color: white;
@@ -183,7 +189,6 @@ textarea {
     outline: none;
     padding-left: 10px;
     padding-right: 10px;
-    width: calc(97% - 100px);
     min-width: 100px;
     max-width: 400px;
     resize: none;
@@ -225,14 +230,11 @@ th {
     width: 100%;
 }
 
-section {
-    height: 95vh;
-    margin-top: 0 !important;
-    margin-bottom: 0 !important;
-}
-section.bg-content1{
+
+section.bg-content1 {
     overflow-y: visible !important;
 }
+
 .invoice {
     height: calc(95vh - 100px);
     overflow-y: auto;
@@ -281,7 +283,8 @@ section.bg-content1{
     background-color: white;
     page-break-before: 'always';
 }
-.summary_print_container{
+
+.summary_print_container {
 
     page-break-before: 'always';
     // height: calc(100vh - 240px);

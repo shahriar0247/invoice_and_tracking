@@ -5,6 +5,7 @@ import '../styles/globals.scss';
 import '../styles/invoice_viewer.scss';
 
 export default function Company() {
+    
     const [name, set_name] = React.useState("");
     const [address1, set_address1] = React.useState("");
     const [address2, set_address2] = React.useState("");
@@ -13,11 +14,15 @@ export default function Company() {
     const [fax, set_fax] = React.useState("");
     const [gst, set_gst] = React.useState("");
     const [bank_details, set_bank_details] = React.useState("");
+
+
     React.useEffect(() => {
         fetchCompany();
     }, []);
+    
+    
     function fetchCompany() {
-        fetch('http://35.209.219.229:5003/get/company')
+        fetch('http://localhost:5003/get/company')
             .then((response) => response.json())
             .then((data) => {
                 set_name(data['name']);
@@ -45,7 +50,7 @@ export default function Company() {
             bank_details: bank_details,
         };
 
-        fetch('http://35.209.219.229:5003/create/company', {
+        fetch('http://localhost:5003/create/company', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -64,6 +69,8 @@ export default function Company() {
                 console.error('Error:', error);
             });
     }
+ 
+ 
     return (
         <div className="company">
             <h1>Company Details</h1>

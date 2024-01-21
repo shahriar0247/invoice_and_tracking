@@ -2,14 +2,14 @@
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, useDisclosure } from '@nextui-org/react';
 import React, { useEffect, useState } from 'react';
 
-export default function BillTo({}) {
+export default function BillTo({ }) {
     var fullPath = window.location.pathname;
     var pathParts = fullPath.split('/');
     var item = pathParts[pathParts.length - 1];
 
-    var title = 'Bill To (Client)';
+    var title = 'Bill To';
     if (item == 'bill_to') {
-        title = 'Bill To (Client)';
+        title = 'Bill To';
     } else if (item == 'ship_from') {
         title = 'Ship From';
     } else if (item == 'ship_to') {
@@ -31,7 +31,7 @@ export default function BillTo({}) {
     }, []);
 
     function fetch_bill_to() {
-        fetch(`http://35.209.219.229:5003/get/type/${item}`)
+        fetch(`http://localhost:5003/get/type/${item}`)
             .then((response) => response.json())
             .then((data) => {
                 setTableData(data);
@@ -42,17 +42,15 @@ export default function BillTo({}) {
     }
 
     function handle_delete_click(bill_to_id) {
-        const confirmDelete = window.confirm('Are you sure you want to delete this item?');
-        if (confirmDelete) {
-            fetch(`http://35.209.219.229:5003/delete/type/${item}/${bill_to_id}`, {
-                method: 'DELETE',
+        fetch(`http://localhost:5003/delete/type/${item}/${bill_to_id}`, {
+            method: 'DELETE',
+        })
+            .then((response) => response.text())
+            .then((data) => {
+                setTableData([])
+                fetch_bill_to()
             })
-                .then((response) => response.text())
-                .then((data) => {
-                    window.location.reload();
-                })
-                .catch((error) => console.error('Error deleting bill_to:', error));
-        }
+            .catch((error) => console.error('Error deleting bill_to:', error));
     }
 
     function handle_edit_click(bill_to_id) {
@@ -71,7 +69,7 @@ export default function BillTo({}) {
     }
 
     function get_bill_to_details(bill_to_id) {
-        fetch(`http://35.209.219.229:5003/get/type/${item}/${bill_to_id}`)
+        fetch(`http://localhost:5003/get/type/${item}/${bill_to_id}`)
             .then((response) => response.json())
             .then((data) => {
                 set_name(data.name);
@@ -91,7 +89,7 @@ export default function BillTo({}) {
             address2: address2,
         };
 
-        const apiUrl = create_mode ? `http://35.209.219.229:5003/create/type/${item}` : `http://35.209.219.229:5003/edit/type/${item}/${edit_bill_to_id}`;
+        const apiUrl = create_mode ? `http://localhost:5003/create/type/${item}` : `http://localhost:5003/edit/type/${item}/${edit_bill_to_id}`;
 
         fetch(apiUrl, {
             method: create_mode ? 'POST' : 'PUT',
@@ -103,7 +101,8 @@ export default function BillTo({}) {
             .then((response) => response.text())
             .then((data) => {
                 onClose();
-                window.location.reload();
+                setTableData([])
+                fetch_bill_to()
             })
             .catch((error) => console.error('Error updating/creating bill_to:', error));
     }
@@ -130,8 +129,12 @@ export default function BillTo({}) {
                             <TableCell>{item.address1}</TableCell>
                             <TableCell>{item.address2}</TableCell>
                             <TableCell>
-                                <button onClick={() => handle_edit_click(item.id)}>Edit</button>
-                                <button onClick={() => handle_delete_click(item.id)}>Delete</button>
+                                <div className="grid grid-cols-2 gap-4">
+
+                                    <button onClick={() => handle_edit_click(item.id)}>Edit</button>
+                                    <Delete_button description={"Are you sure you want to delete " + item.name + " (" + item.id + ")"} delete_function={() => handle_delete_click(item.id)}></Delete_button>
+                                </div>
+
                             </TableCell>
                         </TableRow>
                     ))}
@@ -140,7 +143,9 @@ export default function BillTo({}) {
 
             <Modal
                 isOpen={isOpen}
-                onOpenChange={onOpenChange}>
+                onOpenChange={onOpenChange}
+                size='lg'
+            >
                 <ModalContent>
                     {(onClose) => (
                         <>
@@ -205,4 +210,49 @@ export default function BillTo({}) {
             </Modal>
         </div>
     );
+}
+function Delete_button({ description, delete_function }) {
+    const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
+    return (
+        <div>
+            <button
+                color="danger"
+                onClick={onOpen}>
+                Delete
+            </button>
+
+            <Modal
+                isOpen={isOpen}
+                onOpenChange={onOpenChange}
+                size='lg'
+            >
+                <ModalContent>
+                    {(onClose) => (
+                        <>
+                            <ModalHeader className="flex flex-col gap-1">
+                                Are you sure you want to delete?
+                            </ModalHeader>
+                            <ModalBody>
+                                {description}
+                            </ModalBody>
+                            <ModalFooter>
+                                <button
+                                    color="primary"
+                                    onClick={onClose}>
+                                    Close
+                                </button>
+                                <button
+                                    color="danger"
+                                    onClick={() => { delete_function(), onClose() }}>
+                                    Delete
+                                </button>
+                            </ModalFooter>
+                        </>
+                    )}
+                </ModalContent>
+            </Modal>
+
+        </div>
+    )
 }

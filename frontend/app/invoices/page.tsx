@@ -78,7 +78,7 @@ export default function Invoices({ type = null, create = true, invoice_id_view =
     }, []);
 
     function fetch_invoices() {
-        fetch('http://35.209.219.229:5003/get/invoice')
+        fetch('http://localhost:5003/get/invoice')
             .then((response) => response.json())
             .then((data) => {
                 setData1(data.filter((item) => item.type === 'First Quote'));
@@ -99,7 +99,7 @@ export default function Invoices({ type = null, create = true, invoice_id_view =
         return uniqueUsers;
     }
     function deleteInvoice(invoiceId) {
-        fetch(`http://35.209.219.229:5003/delete/invoice/${invoiceId}`, {
+        fetch(`http://localhost:5003/delete/invoice/${invoiceId}`, {
             method: 'DELETE',
         })
             .then((response) => {
@@ -143,7 +143,7 @@ export default function Invoices({ type = null, create = true, invoice_id_view =
             id: id,
             status: status,
         };
-        fetch(`http://35.209.219.229:5003/invoice/change_status`, {
+        fetch(`http://localhost:5003/invoice/change_status`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -213,7 +213,8 @@ export default function Invoices({ type = null, create = true, invoice_id_view =
             <h1>All Filters</h1>
             <div className="all_filters">
                 <div>
-                    <label>Bill To (Client) Search:</label>
+                {type == "shipment" ?<label>Advise To Search:</label> :     <label>Bill To Search:</label>}    
+                
                     <select onChange={(e) => set_bill_to_search_term(e.target.value)}>
                         <option value="">All</option>
                         {users.map((user, index) => (
@@ -253,7 +254,7 @@ export default function Invoices({ type = null, create = true, invoice_id_view =
                             <TableHeader>
                                 <TableColumn>ID</TableColumn>
                                 <TableColumn>Date</TableColumn>
-                                <TableColumn>Bill To (Client)</TableColumn>
+                                <TableColumn>Bill To</TableColumn>
                                 <TableColumn>B/L Number</TableColumn>
                                 <TableColumn>Invoice Status</TableColumn>
                                 <TableColumn></TableColumn>
@@ -342,7 +343,7 @@ function CreateSummary(data3) {
         let excel_data = [
             ["ID",
                 "Date",
-                "Bill To (Client)",
+                "Bill To",
                 "B/L Number",
                 "Total Value",
             ]
@@ -352,7 +353,7 @@ function CreateSummary(data3) {
             let total_price = JSON.parse(item.all_items).reduce((acc, item) => acc + item.price * item.quantity, 0) + " " + currency
             excel_data.push([item.id, date, item.bill_to, item.bl_number, total_price])
         })
-        fetch("http://35.209.219.229:5003/daily_accounts/download", {
+        fetch("http://localhost:5003/daily_accounts/download", {
 
             method: "post",
             body: JSON.stringify(excel_data),
@@ -414,7 +415,7 @@ function CreateSummary(data3) {
                         <TableHeader>
                             <TableColumn>ID</TableColumn>
                             <TableColumn>Date</TableColumn>
-                            <TableColumn>Bill To (Client)</TableColumn>
+                            <TableColumn>Bill To</TableColumn>
                             <TableColumn>B/L Number</TableColumn>
                             <TableColumn>Total Value</TableColumn>
                         </TableHeader>
@@ -515,7 +516,7 @@ function Create_invoice({ create = true, invoice_id_view = '', edit = false, fet
     }
 
     async function get_invoice_details() {
-        const response = await fetch('http://35.209.219.229:5003/get_invoice_details/' + invoice_id_view);
+        const response = await fetch('http://localhost:5003/get_invoice_details/' + invoice_id_view);
         const data = await response.json();
         const all_items_ = JSON.parse(data['all_items']);
         set_invoice_id(data.id);
@@ -600,7 +601,7 @@ function Create_invoice({ create = true, invoice_id_view = '', edit = false, fet
         set_selected_items(updatedItems);
     };
     function fetchVendor() {
-        fetch('http://35.209.219.229:5003/get/vendor')
+        fetch('http://localhost:5003/get/vendor')
             .then((response) => response.json())
             .then((data) => {
                 set_all_vendors(data);
@@ -610,7 +611,7 @@ function Create_invoice({ create = true, invoice_id_view = '', edit = false, fet
             });
     }
     function fetchInvoice() {
-        fetch('http://35.209.219.229:5003/get/invoice')
+        fetch('http://localhost:5003/get/invoice')
             .then((response) => response.json())
             .then((data) => {
                 // setda(data);
@@ -620,7 +621,7 @@ function Create_invoice({ create = true, invoice_id_view = '', edit = false, fet
             });
     }
     function fetchCompany() {
-        fetch('http://35.209.219.229:5003/get/company')
+        fetch('http://localhost:5003/get/company')
             .then((response) => response.json())
             .then((data) => {
                 set_company(data);
@@ -642,7 +643,7 @@ function Create_invoice({ create = true, invoice_id_view = '', edit = false, fet
             });
     }
     function fetchBillTo() {
-        fetch('http://35.209.219.229:5003/get/type/bill_to')
+        fetch('http://localhost:5003/get/type/bill_to')
             .then((response) => response.json())
             .then((data) => {
                 set_all_bill_to(data);
@@ -661,7 +662,7 @@ function Create_invoice({ create = true, invoice_id_view = '', edit = false, fet
             });
     }
     function fetchShipFrom() {
-        fetch('http://35.209.219.229:5003/get/type/ship_from')
+        fetch('http://localhost:5003/get/type/ship_from')
             .then((response) => response.json())
             .then((data) => {
                 set_all_ship_from(data);
@@ -680,7 +681,7 @@ function Create_invoice({ create = true, invoice_id_view = '', edit = false, fet
             });
     }
     function fetchShipTo() {
-        fetch('http://35.209.219.229:5003/get/type/ship_to')
+        fetch('http://localhost:5003/get/type/ship_to')
             .then((response) => response.json())
             .then((data) => {
                 set_all_ship_to(data);
@@ -700,7 +701,7 @@ function Create_invoice({ create = true, invoice_id_view = '', edit = false, fet
     }
     function fetchItems() {
         console.log('here 2');
-        fetch('http://35.209.219.229:5003/get/item')
+        fetch('http://localhost:5003/get/item')
             .then((response) => response.json())
             .then((data) => {
                 console.log(data);
@@ -730,7 +731,7 @@ function Create_invoice({ create = true, invoice_id_view = '', edit = false, fet
             edit: edit,
         };
 
-        fetch('http://35.209.219.229:5003/create/invoice/' + invoice_id, {
+        fetch('http://localhost:5003/create/invoice/' + invoice_id, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -749,7 +750,7 @@ function Create_invoice({ create = true, invoice_id_view = '', edit = false, fet
             });
     }
 
-    const { toPDF, targetRef } = usePDF({ filename: invoice_id + ' - Bill To (Client) -' + bill_to.name + ' Date: ' + date + '.pdf' });
+    const { toPDF, targetRef } = usePDF({ filename: invoice_id + ' - Bill To -' + bill_to.name + ' Date: ' + date + '.pdf' });
 
     function createPDF() {
         createInvoice();
@@ -769,7 +770,7 @@ function Create_invoice({ create = true, invoice_id_view = '', edit = false, fet
 
             <div className="all_inputs all_inputs2">
                 <div className="input_field">
-                    <div className="title">Bill To (Client)</div>
+                    <div className="title">Bill To</div>
                     <div className="input">
                         <select
                             value={bill_to}
@@ -1151,7 +1152,7 @@ function Create_invoice({ create = true, invoice_id_view = '', edit = false, fet
                                 </div>
                                 <div className="second_section">
                                     <div className="bill_to_information">
-                                        <h3>Bill To (Client)</h3>
+                                        <h3>Bill To</h3>
 
                                         {bill_to_information}
                                     </div>

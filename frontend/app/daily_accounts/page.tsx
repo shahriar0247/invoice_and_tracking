@@ -80,7 +80,7 @@ export default function Daily_Accounts({ create = true, daily_account_id_view = 
     }, []);
 
     function fetch_daily_accounts() {
-        fetch('http://35.209.219.229:5003/get/daily_account')
+        fetch('http://localhost:5003/get/daily_account')
             .then((response) => response.json())
             .then((data) => {
                 setData3(data);
@@ -104,7 +104,7 @@ export default function Daily_Accounts({ create = true, daily_account_id_view = 
         return uniqueUsers;
     }
     function deleteDaily_Account(daily_accountId) {
-        fetch(`http://35.209.219.229:5003/delete/daily_account/${daily_accountId}`, {
+        fetch(`http://localhost:5003/delete/daily_account/${daily_accountId}`, {
             method: 'DELETE',
         })
             .then((response) => {
@@ -148,7 +148,7 @@ export default function Daily_Accounts({ create = true, daily_account_id_view = 
             id: id,
             status: status,
         };
-        fetch(`http://35.209.219.229:5003/daily_account/change_status`, {
+        fetch(`http://localhost:5003/daily_account/change_status`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -211,7 +211,7 @@ export default function Daily_Accounts({ create = true, daily_account_id_view = 
                     </select>
                 </div>
                 <div>
-                    <label>Bill To (Client) Search:</label>
+                    <label>Bill To Search:</label>
                     <select onChange={(e) => set_bill_to_search_term(e.target.value)}>
                         <option value="All">All</option>
                         {users2.map(function (user, index) {
@@ -437,7 +437,7 @@ function Create_daily_account({ create = true, daily_account_id_view = '', edit 
     }
 
     async function get_daily_account_details() {
-        const response = await fetch('http://35.209.219.229:5003/get_daily_account_details/' + daily_account_id_view);
+        const response = await fetch('http://localhost:5003/get_daily_account_details/' + daily_account_id_view);
         const data = await response.json();
         const all_items_ = JSON.parse(data['all_items']);
         set_daily_account_id(data.id);
@@ -488,7 +488,7 @@ function Create_daily_account({ create = true, daily_account_id_view = '', edit 
         set_selected_items(updatedItems);
     };
     function fetchVendor() {
-        fetch('http://35.209.219.229:5003/get/type/vendor')
+        fetch('http://localhost:5003/get/type/vendor')
             .then((response) => response.json())
             .then((data) => {
                 set_all_vendor(data);
@@ -498,7 +498,7 @@ function Create_daily_account({ create = true, daily_account_id_view = '', edit 
             });
     }
     function fetchDaily_Account() {
-        fetch('http://35.209.219.229:5003/get/daily_account')
+        fetch('http://localhost:5003/get/daily_account')
             .then((response) => response.json())
             .then((data) => {
                 // setda(data);
@@ -508,7 +508,7 @@ function Create_daily_account({ create = true, daily_account_id_view = '', edit 
             });
     }
     function fetchCompany() {
-        fetch('http://35.209.219.229:5003/get/company')
+        fetch('http://localhost:5003/get/company')
             .then((response) => response.json())
             .then((data) => {
                 set_company(data);
@@ -531,7 +531,7 @@ function Create_daily_account({ create = true, daily_account_id_view = '', edit 
     }
 
     function fetchBill_To() {
-        fetch('http://35.209.219.229:5003/get/type/bill_to')
+        fetch('http://localhost:5003/get/type/bill_to')
             .then((response) => response.json())
             .then((data) => {
                 set_all_bill_to(data);
@@ -541,7 +541,7 @@ function Create_daily_account({ create = true, daily_account_id_view = '', edit 
             });
     }
     function fetchItems() {
-        fetch('http://35.209.219.229:5003/get/item')
+        fetch('http://localhost:5003/get/item')
             .then((response) => response.json())
             .then((data) => {
                 set_all_items(data);
@@ -563,7 +563,7 @@ function Create_daily_account({ create = true, daily_account_id_view = '', edit 
             edit: edit,
         };
 
-        fetch('http://35.209.219.229:5003/create/daily_account/' + daily_account_id, {
+        fetch('http://localhost:5003/create/daily_account/' + daily_account_id, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
