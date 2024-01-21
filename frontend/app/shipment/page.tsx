@@ -171,7 +171,7 @@ export default function Shipments({ type = null, create = true, shipment_id_view
 
     return (
         <div className="invoice">
-            <h1>Shipments</h1>
+            <h1>Shipment Pre Advice</h1>
             <button onClick={onOpen}>Create Shipment</button>
             <Modal
                 isOpen={isOpen}
@@ -383,7 +383,7 @@ function Create_shipment({ create = true, shipment_id_view = '', edit = false, f
     const [issued_to_information, set_issued_to_information] = React.useState('');
     const [ship_from_information, set_ship_from_information] = React.useState('');
     const [ship_to_information, set_ship_to_information] = React.useState('');
-    const [container_numberrmation, set_container_numberrmation] = React.useState('');
+    const [container_number, set_container_number] = React.useState('');
     const [description, set_description] = React.useState('');
     const [shipment_status, set_shipment_status] = React.useState('');
     const [shipping_details_information, set_shipping_details_information] = React.useState('');
@@ -473,7 +473,7 @@ function Create_shipment({ create = true, shipment_id_view = '', edit = false, f
         );
         set_shipment_type(data.type);
         set_terms_and_conditions(data.terms);
-        set_container_numberrmation(data.container_number);
+        set_container_number(data.container_number);
         set_shipment_status(data.shipment_status);
         set_description(data.description);
         set_shipping_details_information(data.shipping_details);
@@ -647,7 +647,7 @@ function Create_shipment({ create = true, shipment_id_view = '', edit = false, f
             terms: terms_and_conditions,
             type: shipment_type,
             weight: weight,
-            container_number: container_numberrmation,
+            container_number: container_number,
             shipment_status: shipment_status,
             description: description,
             bl_number: bl_number,
@@ -912,16 +912,16 @@ function Create_shipment({ create = true, shipment_id_view = '', edit = false, f
                     </div>
                 </div>
                 <div className="input_field">
-                    <div className="title">Extra Info</div>
+                    <div className="title">Container Number</div>
                     <div className="input">
                         <textarea
-                            value={container_numberrmation}
+                            value={container_number}
                             name=""
                             id=""
                             cols="30"
                             rows="10"
                             onChange={(e) => {
-                                set_container_numberrmation(e.target.value);
+                                set_container_number(e.target.value);
                             }}></textarea>
                     </div>
                 </div>
@@ -1136,10 +1136,10 @@ function Create_shipment({ create = true, shipment_id_view = '', edit = false, f
                                         <h3>Ship To </h3>
                                         {ship_to_information}
                                     </div>
-                                    <div className="container_numberrmation">
+                                    <div className="container_number">
                                         <div
                                             dangerouslySetInnerHTML={{
-                                                __html: container_numberrmation.replace(/\n/g, '<br>'),
+                                                __html: container_number.replace(/\n/g, '<br>'),
                                             }}></div>
                                     </div>
                                 </div>
