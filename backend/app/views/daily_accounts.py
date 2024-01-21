@@ -1,7 +1,9 @@
 import json
 
-from flask import jsonify, redirect, request
-
+from flask import jsonify, redirect, request, send_file
+import pandas as pd
+import os
+import uuid
 from app import app, db
 from app.models.modals import (
     Bill_to,
@@ -168,3 +170,14 @@ def get_daily_account_details_view_(daily_account_number):
 
 
     return jsonify(daily_account_object)
+
+@app.route('/daily_accounts/download', methods=['POST'])
+def download_excel():
+    data = request.json
+    df = pd.DataFrame(data[1:], columns=data[0])
+    random_filename = f"output_excel_{uuid.uuid4().hex}.xlsx"
+    excel_file_path = os.path.join("/home/ahmedshahriar0247/invoice_and_tracking/backend/", random_filename)
+    df.to_excel(excel_file_path, index=False, engine='openpyxl')
+    response = send_file(excel_file_path, as_attachment=True)
+    os.remove(excel_file_path)
+    return response

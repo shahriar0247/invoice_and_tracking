@@ -330,7 +330,7 @@ function CreateSummary(data3) {
 
     return (
         <div>
-            <div >
+            <div>
                 <label htmlFor="">Currency: </label>
                 <select name="" id="" onChange={(e) => {set_currency(e.target.value)}}>
                     <option value="USD">USD</option>
@@ -362,11 +362,20 @@ function CreateSummary(data3) {
                                 </TableRow>
                             );
                         })}
+                                <TableRow>
+                                <TableCell></TableCell>
+                                <TableCell></TableCell>
+                                <TableCell></TableCell>
+                                <TableCell></TableCell>
+                                <TableCell>Total Price: {totalPriceOfAllItems.toFixed(2)} {currency}</TableCell>
+                            </TableRow>
+                        
                     </TableBody>
                 </Table>
                 </div>
             </div>
             <button onClick={toPDF}>Download PDF</button>
+            <button onClick={toPDF}>Download Excel</button>
         </div>
     );
 }

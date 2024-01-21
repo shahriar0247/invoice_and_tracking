@@ -4,7 +4,7 @@ import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Table, TableB
 import React from 'react';
 import { usePDF } from 'react-to-pdf';
 
-export default function Invoices({ create = true, invoice_id_view = '' }) {
+export default function Invoices({ type = null, create = true, invoice_id_view = '' }) {
     const [data1, setData1] = React.useState([]);
     const [data2, setData2] = React.useState([]);
     const [data3, setData3] = React.useState([]);
@@ -117,7 +117,7 @@ export default function Invoices({ create = true, invoice_id_view = '' }) {
     function filter() {
         var filteredData = all_data.filter(function (invoice) {
             if (invoice.bill_to.includes(bill_to_search_term)) {
-            console.log(bill_to_search_term)
+                console.log(bill_to_search_term)
                 return true;
             }
         });
@@ -170,20 +170,27 @@ export default function Invoices({ create = true, invoice_id_view = '' }) {
                 invoice_id_view={invoice_id_view}></Create_invoice>
         );
     }
-    const all_data_array = [
-        {
-            name: 'All Invoices',
-            data: data3,
-        },
-        {
-            name: 'All First Quotes',
-            data: data1,
-        },
-        {
-            name: 'All Final Quotes',
-            data: data2,
-        },
-    ];
+    let all_data_array;
+    if (type == "shipment") {
+        all_data_array = [
+            {
+                name: 'All Final Quotes',
+                data: data2,
+            }]
+    }
+    else {
+        all_data_array = [
+            {
+                name: 'All Invoices',
+                data: data3,
+            },
+            {
+                name: 'All First Quotes',
+                data: data1,
+            },
+
+        ];
+    }
     return (
         <div className="invoice">
             <h1>Invoices</h1>
@@ -234,6 +241,10 @@ export default function Invoices({ create = true, invoice_id_view = '' }) {
                     </select>
                 </div>
             </div>
+      {type == "shipment" ? console.log('hi'): 
+            <CreateSummary_Container data3={data3}></CreateSummary_Container>
+}
+
             {all_data_array.map((value, index) => {
                 return (
                     <div key={value.name}>
@@ -298,7 +309,6 @@ export default function Invoices({ create = true, invoice_id_view = '' }) {
                     </div>
                 );
             })}
-            <CreateSummary_Container data3={data3}></CreateSummary_Container>
         </div>
     );
 }
@@ -324,21 +334,82 @@ function CreateSummary_Container(data3) {
 }
 function CreateSummary(data3) {
     const [currency, set_currency] = React.useState('USD');
-    const { toPDF, targetRef } = usePDF({ filename: 'Summary.pdf' });
+    const [header, set_header] = React.useState('Header');
+    const [footer, set_footer] = React.useState('');
+    const { toPDF, targetRef } = usePDF({ filename: 'Summary.pdf', size: 'A4' });
     const totalPriceOfAllItems = data3.data3.data3.flatMap((invoice) => JSON.parse(invoice.all_items || '[]').map((item) => item.price)).reduce((acc, price) => acc + price, 0);
+    function download_excel() {
+        let excel_data = [
+            ["ID",
+                "Date",
+                "Bill To (Client)",
+                "B/L Number",
+                "Total Value",
+            ]
+        ]
+        data3.data3.data3.map(function (item) {
+            let date = (new Date(item.date).toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }));
+            let total_price = JSON.parse(item.all_items).reduce((acc, item) => acc + item.price * item.quantity, 0) + " " + currency
+            excel_data.push([item.id, date, item.bill_to, item.bl_number, total_price])
+        })
+        fetch("http://35.209.219.229:5003/daily_accounts/download", {
 
+            method: "post",
+            body: JSON.stringify(excel_data),
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+            .then(res => res.blob())
+            .then(blob => {
+                var file = window.URL.createObjectURL(blob);
+                window.location.assign(file);
+            });
+    }
     return (
         <div>
             <div >
-                <label htmlFor="">Currency: </label>
-                <select name="" id="" onChange={(e) => {set_currency(e.target.value)}}>
-                    <option value="USD">USD</option>
-                    <option value="CAD">CAD</option>
-                </select>
-                <div className='summary_print' ref={targetRef}>
-                <h2>Summary</h2>
+                <div className="all_inputs all_inputs2">
 
-                    <h3>Invoices</h3>
+                    <div className="input_field">
+
+                        <label htmlFor="">Currency: </label>
+                        <select name="" id="" onChange={(e) => { set_currency(e.target.value) }}>
+                            <option value="USD">USD</option>
+                            <option value="CAD">CAD</option>
+                        </select>
+
+                    </div>
+
+                    <div className="input_field">
+                        <label htmlFor="">Header</label>
+                        <textarea type="text" value={header} onChange={(e) => { set_header(e.target.value) }} />
+                    </div>
+
+                    <div className="input_field">
+                        <label htmlFor="">Footer</label>
+                        <textarea type="text" value={footer} onChange={(e) => set_footer(e.target.value)} />
+                    </div>
+
+                    <div className="input_field">
+                        <button onClick={() => {
+                            const summaryPrintElement = targetRef.current;
+                            toPDF();
+                        }}>
+                            Download PDF
+                        </button>
+
+                    </div>
+                    <div className="input_field">
+                        <button onClick={download_excel}>Download Excel</button>
+
+                    </div>
+                </div>
+                <div className='summary_print' ref={targetRef}>
+
+                    <center>
+                        <h2>{header}</h2>
+                    </center>
                     <Table>
                         <TableHeader>
                             <TableColumn>ID</TableColumn>
@@ -348,16 +419,18 @@ function CreateSummary(data3) {
                             <TableColumn>Total Value</TableColumn>
                         </TableHeader>
                         <TableBody>
-                            
-                            {data3.data3.data3.map((item) => (
-                                <TableRow key={item.id}>
-                                    <TableCell>{item.id}</TableCell>
-                                    <TableCell>{new Date(item.date).toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}</TableCell>
-                                    <TableCell>{item.bill_to}</TableCell>
-                                    <TableCell>{item.bl_number}</TableCell>
-                                    <TableCell>{JSON.parse(item.all_items).reduce((acc, item) => acc + item.price * item.quantity, 0) + " " +currency}</TableCell>
-                                </TableRow>
-                            ))}
+
+                            {data3.data3.data3.map(function (item) {
+                                return (
+                                    <TableRow key={item.id}>
+                                        <TableCell>{item.id}</TableCell>
+                                        <TableCell>{new Date(item.date).toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}</TableCell>
+                                        <TableCell>{item.bill_to}</TableCell>
+                                        <TableCell>{item.bl_number}</TableCell>
+                                        <TableCell>{JSON.parse(item.all_items).reduce((acc, item) => acc + item.price * item.quantity, 0) + " " + currency}</TableCell>
+                                    </TableRow>
+                                )
+                            })}
                             <TableRow>
                                 <TableCell></TableCell>
                                 <TableCell></TableCell>
@@ -367,16 +440,12 @@ function CreateSummary(data3) {
                             </TableRow>
                         </TableBody>
                     </Table>
+                    <center>
+                        <h2>{footer}</h2>
+                    </center>
                 </div>
             </div>
-            <button onClick={() => {
-            const summaryPrintElement = targetRef.current;
-      
 
-            toPDF();
-        }}>
-            Download PDF
-        </button>
         </div>
     );
 }

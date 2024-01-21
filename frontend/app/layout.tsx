@@ -26,6 +26,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     <a href="/type/ship_from">Ship From</a>
                     <a href="/type/ship_to">Ship To</a>
                     <a href="/item">Items</a>
+                    <a href="/shipment">Shipment</a>
                     <a href="/invoices">Invoices</a>
                     <a href="/type/vendor">Vendors</a>
                     <a href="/purchase_order">Purchase Order</a>

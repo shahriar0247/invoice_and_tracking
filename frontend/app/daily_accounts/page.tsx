@@ -321,6 +321,8 @@ function CreateSummary(data3) {
                     <option value="USD">USD</option>
                     <option value="CAD">CAD</option>
                 </select>
+                <div className='summary_print_container'>
+
                 <div className='summary_print' ref={targetRef}>
                 <h2>Summary</h2>
 
@@ -347,8 +349,16 @@ function CreateSummary(data3) {
                                 </TableRow>
                             );
                         })}
+                          <TableRow>
+                                <TableCell></TableCell>
+                                <TableCell></TableCell>
+                                <TableCell></TableCell>
+                                <TableCell></TableCell>
+                                <TableCell>Total Price: {totalPriceOfAllItems.toFixed(2)} {currency}</TableCell>
+                            </TableRow>
                     </TableBody>
                 </Table>
+                </div>
                 </div>
             </div>
             <button onClick={toPDF}>Download PDF</button>

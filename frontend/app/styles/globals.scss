@@ -230,7 +230,9 @@ section {
     margin-top: 0 !important;
     margin-bottom: 0 !important;
 }
-
+section.bg-content1{
+    overflow-y: visible !important;
+}
 .invoice {
     height: calc(95vh - 100px);
     overflow-y: auto;
@@ -273,11 +275,18 @@ section {
 }
 
 .summary_print {
-    // transform: scale(0.2);
-    padding: 20px !important;
+    padding: 50px !important;
     width: 1000px !important;
-    height: 80vh;
-    overflow-y: auto;
+    height: 100%;
+    background-color: white;
+    page-break-before: 'always';
+}
+.summary_print_container{
+
+    page-break-before: 'always';
+    // height: calc(100vh - 240px);
+    background-color: white;
+    overflow: auto;
 
 }
 
