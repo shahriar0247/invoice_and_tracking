@@ -283,7 +283,7 @@ export default function Daily_Accounts({ create = true, daily_account_id_view = 
                 </Table>
             </div>
             <CreateSummary_Container data3={data3}></CreateSummary_Container>
-            
+
         </div>
     );
 }
@@ -309,59 +309,123 @@ function CreateSummary_Container(data3) {
 }
 function CreateSummary(data3) {
     const [currency, set_currency] = React.useState('USD');
-    const { toPDF, targetRef } = usePDF({ filename: 'Summary.pdf' });
+    const [header, set_header] = React.useState('Header');
+    const [footer, set_footer] = React.useState('');
+    const { toPDF, targetRef } = usePDF({ filename: 'Summary.pdf', size: 'A4' });
     const totalPriceOfAllItems = data3.data3.data3.flatMap((invoice) => JSON.parse(invoice.all_items || '[]').map((item) => item.price)).reduce((acc, price) => acc + price, 0);
-    console.log(data3.data3.data3)
+    function download_excel() {
+        let excel_data = [
+            ["ID",
+                "Date",
+                "Bill To",
+                "B/L Number",
+                "Total Value",
+            ]
+        ]
+        data3.data3.data3.map(function (item) {
+            let date = (new Date(item.date).toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }));
+            let total_price = JSON.parse(item.all_items).reduce((acc, item) => acc + item.price * item.quantity, 0) + " " + currency
+            excel_data.push([item.id, date, item.bill_to, item.bl_number, total_price])
+        })
+        excel_data.push(["", "", "", "", "Total Price: " + totalPriceOfAllItems.toFixed(2) + " " + currency])
 
+        fetch("http://localhost:5003/daily_accounts/download", {
+
+            method: "post",
+            body: JSON.stringify(excel_data),
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+            .then(res => res.blob())
+            .then(blob => {
+                var file = window.URL.createObjectURL(blob);
+                window.location.assign(file);
+            });
+    }
     return (
         <div>
             <div >
-                <label htmlFor="">Currency: </label>
-                <select name="" id="" onChange={(e) => {set_currency(e.target.value)}}>
-                    <option value="USD">USD</option>
-                    <option value="CAD">CAD</option>
-                </select>
-                <div className='summary_print_container'>
+                <div className="all_inputs all_inputs2">
 
+                    <div className="input_field">
+
+                        <label htmlFor="">Currency: </label>
+                        <select name="" id="" onChange={(e) => { set_currency(e.target.value) }}>
+                            <option value="USD">USD</option>
+                            <option value="CAD">CAD</option>
+                        </select>
+
+                    </div>
+
+                    <div className="input_field">
+                        <label htmlFor="">Header</label>
+                        <textarea type="text" value={header} onChange={(e) => { set_header(e.target.value) }} />
+                    </div>
+
+                    <div className="input_field">
+                        <label htmlFor="">Footer</label>
+                        <textarea type="text" value={footer} onChange={(e) => set_footer(e.target.value)} />
+                    </div>
+
+                    <div className="input_field">
+                        <button onClick={() => {
+                            const summaryPrintElement = targetRef.current;
+                            toPDF();
+                        }}>
+                            Download PDF
+                        </button>
+
+                    </div>
+                    <div className="input_field">
+                        <button onClick={download_excel}>Download Excel</button>
+
+                    </div>
+                </div>
                 <div className='summary_print' ref={targetRef}>
-                <h2>Summary</h2>
 
+                    <center>
+                        <h2>{header}</h2>
+                    </center>
                     <Table>
-                    <TableHeader>
-                        <TableColumn>ID</TableColumn>
-                        <TableColumn>Date</TableColumn>
-                        <TableColumn>Vendor</TableColumn>
-                        <TableColumn>Tax Amount</TableColumn>
-                        <TableColumn>Total Price</TableColumn>
-                    </TableHeader>
-                    <TableBody>
-                        {data3.data3.data3.map(function (item) {
-                            if (item.vendor.name == null) {
-                                return;
-                            }
-                            return (
-                                <TableRow key={item.id}>
-                                    <TableCell>{item.id}</TableCell>
-                                    <TableCell>{new Date(item.date).toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}</TableCell>
-                                    <TableCell>{item.vendor.name}</TableCell>
-                                    <TableCell>{JSON.parse(item.all_items).reduce((acc, item) => acc + (item.tax_amount) * item.quantity, 0) + ' ' + currency}</TableCell>
-                                    <TableCell>{JSON.parse(item.all_items).reduce((acc, item) => acc + (item.price + item.tax_amount) * item.quantity, 0) + ' ' + currency}</TableCell>
-                                </TableRow>
-                            );
-                        })}
-                          <TableRow>
+                        <TableHeader>
+                            <TableColumn>ID</TableColumn>
+                            <TableColumn>Date</TableColumn>
+                            <TableColumn>Bill To</TableColumn>
+                            <TableColumn>B/L Number</TableColumn>
+                            <TableColumn>Total Value</TableColumn>
+                        </TableHeader>
+                        <TableBody>
+
+                            {data3.data3.data3.map(function (item) {
+                                if (item.vendor.name == null) {
+                                    return;
+                                }
+                                return (
+                                    <TableRow key={item.id}>
+                                        <TableCell>{item.id}</TableCell>
+                                        <TableCell>{new Date(item.date).toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}</TableCell>
+                                        <TableCell>{item.bill_to.name}</TableCell>
+                                        <TableCell>{item.bl_number}</TableCell>
+                                        <TableCell>{JSON.parse(item.all_items).reduce((acc, item) => acc + item.price * item.quantity, 0) + " " + currency}</TableCell>
+                                    </TableRow>
+                                )
+                            })}
+                            <TableRow>
                                 <TableCell></TableCell>
                                 <TableCell></TableCell>
                                 <TableCell></TableCell>
                                 <TableCell></TableCell>
                                 <TableCell>Total Price: {totalPriceOfAllItems.toFixed(2)} {currency}</TableCell>
                             </TableRow>
-                    </TableBody>
-                </Table>
-                </div>
+                        </TableBody>
+                    </Table>
+                    <center>
+                        <h2>{footer}</h2>
+                    </center>
                 </div>
             </div>
-            <button onClick={toPDF}>Download PDF</button>
+
         </div>
     );
 }
@@ -597,7 +661,7 @@ function Create_daily_account({ create = true, daily_account_id_view = '', edit 
             <h1>Daily_Account Details</h1>
             <h2>{daily_account_id}</h2>
 
-        <p>A vendor is required</p>
+            <p>A vendor is required</p>
             <div className="all_inputs all_inputs2">
                 <div className="input_field">
                     <div className="title">Vendor</div>
@@ -628,7 +692,7 @@ function Create_daily_account({ create = true, daily_account_id_view = '', edit 
                         </select>
                     </div>
                 </div>
-              
+
                 <div className="input_field">
                     <div className="title">Currency</div>
                     <div className="input">
@@ -781,10 +845,18 @@ function Create_daily_account({ create = true, daily_account_id_view = '', edit 
                                 <td></td>
                                 <td></td>
                                 <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
                             </tr>
                         </tbody>
                         <tfoot>
                             <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
                                 <td></td>
                                 <td></td>
                                 <td></td>

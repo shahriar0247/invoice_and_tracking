@@ -36,18 +36,29 @@ def get_daily_account_view():
             bill_to = Bill_to.query.get(
                 daily_account.bill_to_id
             )
-            bill_to_object["id"] = bill_to.id
-            bill_to_object["name"] = bill_to.name
-            daily_account_object["bill_to_id"] = bill_to.id
+            if bill_to:
+                bill_to_object["id"] = bill_to.id
+                bill_to_object["name"] = bill_to.name
+                daily_account_object["bill_to_id"] = bill_to.id
+            else:
+                bill_to_object["id"] = ""
+                bill_to_object["name"] = ""
+                daily_account_object["bill_to_id"] = ""
 
 
         vendor_object = {}
     
         if (daily_account.vendor_id and daily_account.vendor_id !=0):
             vendor = Vendor.query.get(daily_account.vendor_id)
-            vendor_object["id"] = vendor.id
-            vendor_object["name"] = vendor.name
-            daily_account_object["vendor_id"] = vendor.id
+            if vendor:
+                vendor_object["id"] = vendor.id
+                vendor_object["name"] = vendor.name
+                daily_account_object["vendor_id"] = vendor.id
+            else:
+                vendor_object["id"] = ""
+                vendor_object["name"] = ""
+                daily_account_object["vendor_id"] = ""
+
 
         daily_account_object["vendor"] = vendor_object
         daily_account_object["bill_to"] = bill_to_object

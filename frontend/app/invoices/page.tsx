@@ -175,8 +175,8 @@ export default function Invoices({ type = null, create = true, invoice_id_view =
     if (type == "shipment") {
         all_data_array = [
             {
-                name: 'All Final Quotes',
-                data: data2,
+                name: 'All First Quotes',
+                data: data1,
             }]
     }
     else {
@@ -186,8 +186,8 @@ export default function Invoices({ type = null, create = true, invoice_id_view =
                 data: data3,
             },
             {
-                name: 'All First Quotes',
-                data: data1,
+                name: 'All Final Quotes',
+                data: data2,
             },
 
         ];
@@ -305,6 +305,8 @@ function CreateSummary(data3) {
             let total_price = JSON.parse(item.all_items).reduce((acc, item) => acc + item.price * item.quantity, 0) + " " + currency
             excel_data.push([item.id, date, item.bill_to, item.bl_number, total_price])
         })
+        excel_data.push(["", "", "", "", "Total Price: " + totalPriceOfAllItems.toFixed(2) + " " + currency])
+        
         fetch("http://localhost:5003/daily_accounts/download", {
 
             method: "post",
@@ -1048,10 +1050,18 @@ function Create_invoice({ create = true, invoice_id_view = '', edit = false, fet
                                 <td></td>
                                 <td></td>
                                 <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
                             </tr>
                         </tbody>
                         <tfoot>
                             <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
                                 <td></td>
                                 <td></td>
                                 <td></td>
