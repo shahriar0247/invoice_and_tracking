@@ -4,7 +4,7 @@ import React from 'react';
 import Delete_button from '../components/DeleteBtn';
 import Link from 'next/link';
 
-export default function DTable({ headers, table_date, columns, Custom_buttons = null, edit_function = null, delete_function = null, custom_function=[] }) {
+export default function DTable({ headers, table_data, columns, Custom_buttons = null, edit_function = null, delete_function = null, custom_function=[] }) {
     return (<Table>
         <TableHeader>
             {
@@ -16,7 +16,7 @@ export default function DTable({ headers, table_date, columns, Custom_buttons = 
             }
         </TableHeader>
         <TableBody>
-            {table_date.map((item) => (
+            {table_data.map((item) => (
                 <TableRow key={item.id}>
                     {columns.map(function (column) {
                         if (column == "actions") {

@@ -78,6 +78,35 @@ class Invoice(db.Model):
         super(Invoice, self).__init__(*args, **kwargs)
 
 
+
+class Shipment(db.Model):
+    id = db.Column(db.String(20), primary_key=True, nullable=True)
+
+    issued_to = db.Column(db.Integer, nullable=True)
+    ship_from_id = db.Column(db.Integer, nullable=True)
+    ship_to_id = db.Column(db.Integer, nullable=True)
+    all_items = db.Column(db.String(500), nullable=True)
+    
+    arrival_date = db.Column(db.DateTime, nullable=True)
+    due_date = db.Column(db.DateTime, nullable=True)
+    terms = db.Column(db.String(1200), nullable=True)
+    invoice_status = db.Column(db.String(1200), nullable=True)
+    description = db.Column(db.String(1200), nullable=True)
+    container_number = db.Column(db.String(1200), nullable=True)
+    bl_number = db.Column(db.String(1200), nullable=True)
+    shipping_details = db.Column(db.String(1200), nullable=True)
+    type = db.Column(db.String(1200), nullable=True)
+    deleted = db.Column(db.String(10), nullable=True)
+    weight = db.Column(db.String(1200), nullable=True)
+
+
+    def __init__(self, *args, **kwargs):
+        if not kwargs.get('id'):
+            kwargs['id'] = f'INV - {random.randint(1000000, 9999999)}'
+        super(Invoice, self).__init__(*args, **kwargs)
+        
+        
+        
 class Vendor(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(1200), nullable=True)
