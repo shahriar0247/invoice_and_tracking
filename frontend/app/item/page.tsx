@@ -175,7 +175,7 @@ export default function App() {
             <Modal
                 isOpen={isOpen}
                 onClose={onClose}
-                size='sm'
+                size='lg'
             >
                 <ModalContent>
                     <ModalHeader>{editItemId ? 'Edit Item' : 'Create Item'}</ModalHeader>
