@@ -22,7 +22,7 @@ export default function Company() {
     
     
     function fetchCompany() {
-        fetch('http://localhost:5003/get/company')
+        fetch('http://35.209.219.229:5003/get/company')
             .then((response) => response.json())
             .then((data) => {
                 set_name(data['name']);
@@ -50,7 +50,7 @@ export default function Company() {
             bank_details: bank_details,
         };
 
-        fetch('http://localhost:5003/create/company', {
+        fetch('http://35.209.219.229:5003/create/company', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
