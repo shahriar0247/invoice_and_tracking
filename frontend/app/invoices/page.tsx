@@ -253,10 +253,11 @@ export default function Invoices({ type = null, create = true, invoice_id_view =
             }
 
             {all_data_array.map((value, index) => {
+            console.log(data3)
                 return (
                     <div key={value.name}>
                         <h2>{value.name}</h2>
-                        <DTable headers={headers} columns={columns} table_date={value.data} delete_function={deleteInvoice} custom_function={[change_invoice_status]}></DTable>
+                        <DTable headers={headers} columns={columns} table_data={value.data} delete_function={deleteInvoice} custom_function={[change_invoice_status]}></DTable>
 
 
                     </div>

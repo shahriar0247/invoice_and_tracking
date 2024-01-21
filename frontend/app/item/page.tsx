@@ -170,7 +170,7 @@ export default function App() {
                 <button onClick={toggleCreateModal}>Create Item</button>
             </div>
 
-            <DTable headers={headers} columns={columns} table_date={tableData} edit_function={toggleEditModal} delete_function={handle_delete_click}></DTable>
+            <DTable headers={headers} columns={columns} table_data={tableData} edit_function={toggleEditModal} delete_function={handle_delete_click}></DTable>
 
             <Modal
                 isOpen={isOpen}

@@ -122,7 +122,7 @@ export default function BillTo({ }) {
                 <button onClick={() => handle_create_click()}>Create {title}</button>
             </div>
 
-            <DTable headers={headers} columns={columns} table_date={tableData} edit_function={handle_edit_click} delete_function={handle_delete_click}></DTable>
+            <DTable headers={headers} columns={columns} table_data={tableData} edit_function={handle_edit_click} delete_function={handle_delete_click}></DTable>
             <CreateModal isOpen={isOpen} onOpen={onOpen} onClose={onClose} title={title} inputs_={inputs_} edit_function={edit_bill_to_id_} data={create_data} set_data={set_create_data}></CreateModal>
 
         </div>
