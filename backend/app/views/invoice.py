@@ -14,9 +14,21 @@ def get_invoice_view():
         if invoice.deleted == "True": continue
         invoice_object = {}
         invoice_object["id"] = invoice.id
-        invoice_object["bill_to"] = Bill_to.query.get(invoice.bill_to_id).name
-        invoice_object["ship_from"] = Ship_from.query.get(invoice.ship_from_id).name
-        invoice_object["ship_to"] = Ship_to.query.get(invoice.ship_to_id).name
+        try:
+            invoice_object["bill_to"] = Bill_to.query.get(invoice.bill_to_id).name
+        except:
+            pass
+            
+        try:
+            invoice_object["ship_from"] = Ship_from.query.get(invoice.ship_from_id).name
+        except:
+            pass
+        
+        try:
+            invoice_object["ship_to"] = Ship_to.query.get(invoice.ship_to_id).name
+        except:
+            pass
+        
         invoice_object["bl_number"] = invoice.bl_number
         invoice_object["type"] = invoice.type
         invoice_object["date"] = invoice.date

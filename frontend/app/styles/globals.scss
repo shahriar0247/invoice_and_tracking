@@ -9,7 +9,7 @@ $accent: rgb(255, 66, 66);
 body {
     font-family: Arial, Helvetica, sans-serif;
     display: grid;
-    grid-template-columns: 270px 80vw;
+    grid-template-columns: 250px auto;
     height: 100vh;
 
     h1,
@@ -44,7 +44,7 @@ body {
             box-shadow: 0px 0px 10px 1px rgba(0, 0, 0, 0.319);
             padding: 20px;
             position: fixed;
-            width: 250px;
+            width: 230px;
             top: 10vh;
 
         }
@@ -76,9 +76,6 @@ body {
     }
 
     main {
-        margin: 50px;
-        margin-top: 0px;
-        height: 80vh;
 
         .topbar {
             width: max-content;
@@ -122,7 +119,6 @@ button {
     outline: none;
     background-color: $primary;
     color: white;
-    min-width: 100px;
     border-radius: 5px;
     box-shadow: 2px 2px 5px 1px rgba(0, 0, 0, 0.4);
     transition: 200ms all;
@@ -142,7 +138,6 @@ button:hover {
     outline: none;
     background-color: $primary;
     color: white;
-    min-width: 100px;
     border-radius: 5px;
     box-shadow: 2px 2px 5px 1px rgba(0, 0, 0, 0.4);
     transition: 200ms all;
@@ -170,7 +165,6 @@ select {
     outline: none;
     background-color: $primary;
     color: white;
-    min-width: 100px;
     border-radius: 5px;
     box-shadow: 2px 2px 5px 1px rgba(0, 0, 0, 0.4);
     transition: 200ms all;
@@ -201,6 +195,7 @@ table {
     td {
         max-width: 200px;
         overflow: hidden;
+        border-bottom: 1px solid black !important;
     }
 
     input,
@@ -234,7 +229,6 @@ section.bg-content1 {
 }
 
 .invoice {
-    height: calc(95vh - 100px);
     overflow-y: auto;
     overflow-x: auto;
 
@@ -258,7 +252,6 @@ section.bg-content1 {
         }
 
         input {
-            min-width: 200px !important;
             max-width: 220px !important;
         }
     }

@@ -3,6 +3,7 @@
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, useDisclosure } from '@nextui-org/react';
 import React from 'react';
 import { usePDF } from 'react-to-pdf';
+import DTable from '../components/DTable';
 
 export default function Invoices({ type = null, create = true, invoice_id_view = '' }) {
     const [data1, setData1] = React.useState([]);
@@ -191,6 +192,11 @@ export default function Invoices({ type = null, create = true, invoice_id_view =
 
         ];
     }
+
+    const headers = ['ID', 'Date', 'Bill To', "BL Number", "Actions"]
+    const columns = ['id', 'date', 'bill_to', 'bl_number', 'invoice_actions']
+
+
     return (
         <div className="invoice">
             <h1>Invoices</h1>
@@ -213,8 +219,8 @@ export default function Invoices({ type = null, create = true, invoice_id_view =
             <h1>All Filters</h1>
             <div className="all_filters">
                 <div>
-                {type == "shipment" ?<label>Advise To Search:</label> :     <label>Bill To Search:</label>}    
-                
+                    {type == "shipment" ? <label>Advise To Search:</label> : <label>Bill To Search:</label>}
+
                     <select onChange={(e) => set_bill_to_search_term(e.target.value)}>
                         <option value="">All</option>
                         {users.map((user, index) => (
@@ -242,71 +248,17 @@ export default function Invoices({ type = null, create = true, invoice_id_view =
                     </select>
                 </div>
             </div>
-      {type == "shipment" ? console.log('hi'): 
-            <CreateSummary_Container data3={data3}></CreateSummary_Container>
-}
+            {type == "shipment" ? console.log('hi') :
+                <CreateSummary_Container data3={data3}></CreateSummary_Container>
+            }
 
             {all_data_array.map((value, index) => {
                 return (
                     <div key={value.name}>
                         <h2>{value.name}</h2>
-                        <Table>
-                            <TableHeader>
-                                <TableColumn>ID</TableColumn>
-                                <TableColumn>Date</TableColumn>
-                                <TableColumn>Bill To</TableColumn>
-                                <TableColumn>B/L Number</TableColumn>
-                                <TableColumn>Invoice Status</TableColumn>
-                                <TableColumn></TableColumn>
-                                <TableColumn></TableColumn>
-                                <TableColumn></TableColumn>
-                            </TableHeader>
-                            <TableBody>
-                                {value.data.map((item) => (
-                                    <TableRow key={item.id}>
-                                        <TableCell>{item.id}</TableCell>
-                                        <TableCell>{new Date(item.date).toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}</TableCell>
-                                        <TableCell>{item.bill_to}</TableCell>
-                                        <TableCell>{item.bl_number}</TableCell>
+                        <DTable headers={headers} columns={columns} table_date={value.data} delete_function={deleteInvoice} custom_function={[change_invoice_status]}></DTable>
 
-                                        <TableCell>
-                                            <select
-                                                defaultValue={item.invoice_status}
-                                                onChange={(e) => {
-                                                    change_invoice_status(item.id, e.target.value);
-                                                }}>
-                                                <option value="pending">Pending</option>
-                                                <option value="paid">Paid</option>
-                                                <option value="partial">Partial</option>
-                                            </select>
-                                        </TableCell>
-                                        <TableCell>
-                                            <a
-                                                className="button"
-                                                href={`/invoices/${item.id}?edit=true`}>
-                                                Edit
-                                            </a>
-                                        </TableCell>
-                                        <TableCell>
-                                            <button
-                                                onClick={() => {
-                                                    deleteInvoice(item.id);
-                                                }}>
-                                                Delete
-                                            </button>
-                                        </TableCell>
-                                        <TableCell>
-                                            <button
-                                                onClick={() => {
-                                                    window.location.href = '/tracking/' + item.id;
-                                                }}>
-                                                Tracking
-                                            </button>
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
+
                     </div>
                 );
             })}
