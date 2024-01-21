@@ -32,7 +32,7 @@ export default function CreateModal({ isOpen, onOpen, onClose, title, inputs_, e
                                                 }}
                                             >
                                                 {input_['options'].map(function (option) {
-                                                    return (<option value={option['value']}>{option.name}</option>)
+                                                    return (<option value={option['value']}>{option['name']}</option>)
                                                 })}
                                             </select>
                                         </div>

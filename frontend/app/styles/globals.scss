@@ -96,10 +96,8 @@ body {
 
 .all_inputs {
     display: grid;
-    grid-template-columns: 1fr;
-    box-shadow: 2px 2px 5px 1px rgba(0, 0, 0, 0.4);
-    padding: 50px;
-    margin-bottom: 40px;
+    margin: auto;
+    width: 100%;
 
     .input_field {
         display: grid;
@@ -190,7 +188,7 @@ textarea {
     padding-left: 10px;
     padding-right: 10px;
     min-width: 100px;
-    max-width: 400px;
+    width: calc(100% - 20px);
     resize: none;
 }
 

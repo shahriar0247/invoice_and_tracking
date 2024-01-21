@@ -44,6 +44,7 @@ class Item(db.Model):
     name = db.Column(db.String(1200), nullable=True)
     description = db.Column(db.String(1200), nullable=True)
     price = db.Column(db.Float(precision=5), nullable=True)
+    vendor_cost = db.Column(db.Float(precision=5), nullable=True)
     currency = db.Column(db.String(1200), nullable=True)
     quantity = db.Column(db.Integer, nullable=True)
     vendor_id = db.Column(db.Integer, nullable=True)

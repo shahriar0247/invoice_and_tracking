@@ -10,10 +10,12 @@ export default function App() {
 
     const [name, set_name] = React.useState('');
     const [description, set_description] = React.useState('');
-    const [price, set_price] = React.useState('');
+    const [price, set_price] = React.useState(0);
     const [vendor_id, set_vendor_id] = React.useState('Select Vendor');
     const [editItemId, setEditItemId] = React.useState(null);
-    const [vendor_cost, set_vendor_cost] = React.useState(null);
+    const [vendor_cost, set_vendor_cost] = React.useState(0);
+    const [currency, set_currency] = React.useState("USD");
+    const [quantity, set_quantity] = React.useState(1);
 
     const [all_vendors, set_all_vendors] = React.useState([]);
 
@@ -22,8 +24,9 @@ export default function App() {
     function toggleCreateModal() {
         set_name('');
         set_description('');
-        set_price('');
-        set_vendor_cost('');
+        set_price(0);
+        set_quantity(1);
+        set_vendor_cost(0);
         set_vendor_id('Select Vendor');
         setEditItemId(null);
         onOpen();
@@ -38,6 +41,8 @@ export default function App() {
                 set_name(data.name);
                 set_description(data.description);
                 set_price(data.price);
+                set_currency(data.currency);
+                set_quantity(data.quantity);
                 set_vendor_cost(data.vendor_cost);
                 if (data.vendor_id) {
                     set_vendor_id(data.vendor_id);
@@ -82,6 +87,8 @@ export default function App() {
             name: name,
             description: description,
             price: price,
+            currency: currency,
+            quantity: quantity,
             vendor_cost: vendor_cost,
             vendor_id: vendor_id,
         };
@@ -112,6 +119,8 @@ export default function App() {
             description: description,
             price: price,
             vendor_cost: vendor_cost,
+            currency: currency,
+            quantity: quantity,
             vendor_id: vendor_id,
         };
 
@@ -146,6 +155,13 @@ export default function App() {
     }
     const headers = ['Name', 'Description', 'Price', "Actions"]
     const columns = ['name', 'description', 'price', 'actions']
+    // const inputs_ = [{ 'title': "Name", "name": 'name' },
+    // { 'title': "Description", "name": 'description' },
+    // { 'title': "Price", "name": 'price', 'type': 'number' },
+    // {
+    //     'title': "Vendor", 'name': 'vendor', 'type': "select",
+    //     'options': all_vendors.map(name => ({ name, value: name }))
+    // }]
 
     return (
         <div className="item">
@@ -156,10 +172,11 @@ export default function App() {
 
             <DTable headers={headers} columns={columns} table_date={tableData} edit_function={toggleEditModal} delete_function={handle_delete_click}></DTable>
 
-
             <Modal
                 isOpen={isOpen}
-                onClose={onClose}>
+                onClose={onClose}
+                size='sm'
+            >
                 <ModalContent>
                     <ModalHeader>{editItemId ? 'Edit Item' : 'Create Item'}</ModalHeader>
                     <ModalBody>
@@ -198,6 +215,29 @@ export default function App() {
                                             set_price(e.target.value);
                                         }}
                                     />
+                                </div>
+                            </div>
+                            <div className="input_field">
+                                <div className="title">Quantity</div>
+                                <div className="input">
+                                    <input
+                                        type="number"
+                                        value={quantity}
+                                        onChange={(e) => set_quantity(e.target.value)}
+                                    />
+                                </div>
+                            </div>
+                            <div className="input_field">
+                                <div className="title">Currency</div>
+                                <div className="input">
+                                    <select
+                                        type="number"
+                                        value={currency}
+                                        onChange={(e) => set_currency(e.target.value)}
+                                    >
+                                        <option value="USD">USD</option>
+                                        <option value="CAD">CAD</option>
+                                    </select>
                                 </div>
                             </div>
                             <div className="input_field">
@@ -246,7 +286,7 @@ export default function App() {
                         </button>
                     </ModalFooter>
                 </ModalContent>
-            </Modal>
-        </div>
+            </Modal >
+        </div >
     );
 }

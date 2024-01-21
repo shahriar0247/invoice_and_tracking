@@ -9,12 +9,16 @@ def get_item_view():
     all_bills = []
     all_bills_raw = Item.query.order_by(Item.id).all()
     for item in all_bills_raw:
-        if item.deleted == "True": continue
+        if item.deleted == "True":
+            continue
         item_object = {}
         item_object["id"] = item.id
         item_object["name"] = item.name
         item_object["description"] = item.description
         item_object["price"] = item.price
+        item_object["vendor_cost"] = item.vendor_cost
+        item_object["currency"] = item.currency
+        item_object["quantity"] = item.quantity
         item_object["vendor_id"] = item.vendor_id
 
         all_bills.append(item_object)
@@ -33,11 +37,13 @@ def edit_item_view(item_id):
     item.name = data.get("name", item.name)
     item.description = data.get("description", item.description)
     item.price = data.get("price", item.price)
-    if data['vendor_id'] != "Select Vendor":
-        item.vendor_id = data.get("vendor_id", item.vendor_id)
-    else:
+    item.vendor_cost = data.get("vendor_cost", item.vendor_cost)
+    item.quantity = data.get("quantity", item.quantity)
+    item.currency = data.get("currency", item.currency)
+    if data["vendor_id"] == "Select Vendor":
         item.vendor_id = None
-        
+    else:
+        item.vendor_id = data.get("vendor_id", item.vendor_id)
 
     db.session.commit()
 
@@ -56,6 +62,9 @@ def get_item_one_view(item_id):
         "name": item.name,
         "description": item.description,
         "price": item.price,
+        "vendor_cost": item.vendor_cost,
+        "quantity": item.quantity,
+        "currency": item.currency,
         "vendor_id": item.vendor_id,
     }
 
@@ -65,11 +74,19 @@ def get_item_one_view(item_id):
 @app.route("/create/item", methods=["POST"])
 def create_item_view():
     data = request.json
+
+    if data.get("vendor_id") == "Select Vendor":
+        vendor_id = None
+    else:
+        vendor_id = data.get("vendor_id", None)
     new_item = Item(
-        name=data["name"],
-        description=data["description"],
-        price=data["price"],
-        vendor_id=data["vendor_id"],
+        name=data.get("name", ""),
+        description=data.get("description", ""),
+        price=data.get("price", 0),
+        vendor_cost=data.get("vendor_cost", 0),
+        currency=data.get("currency", "USD"),
+        quantity=data.get("quantity", 1),
+        vendor_id=vendor_id,
     )
 
     db.session.add(new_item)
@@ -77,11 +94,11 @@ def create_item_view():
 
     return "Invoice created successfully"
 
+
 @app.route("/delete/item/<int:item_id>", methods=["DELETE"])
 def delete_item_view(item_id):
     item = Item.query.get(item_id)
     item.deleted = "True"
     db.session.commit()
-
 
     return "Bill_to deleted successfully"

@@ -18,7 +18,8 @@ def get_items_view(type):
     elif type == "vendor":
         all_bills_raw = Vendor.query.all()
     for item in all_bills_raw:
-        if item.deleted == "True": continue
+        if item.deleted == "True":
+            continue
         item_object = {}
         item_object["id"] = item.id
         item_object["name"] = item.name
@@ -35,29 +36,28 @@ def create_items_view(type):
     data = request.json
     if type == "ship_from":
         new_item = Ship_from(
-            name=data["name"],
-            address1=data["address1"],
-            address2=data["address2"],
+            name=data.get("name", ""),
+            address1=data.get("address1", ""),
+            address2=data.get("address2", ""),
         )
     elif type == "bill_to":
         new_item = Bill_to(
-            name=data["name"],
-            address1=data["address1"],
-            address2=data["address2"],
+            name=data.get("name", ""),
+            address1=data.get("address1", ""),
+            address2=data.get("address2", ""),
         )
     elif type == "ship_to":
         new_item = Ship_to(
-            name=data["name"],
-            address1=data["address1"],
-            address2=data["address2"],
+            name=data.get("name", ""),
+            address1=data.get("address1", ""),
+            address2=data.get("address2", ""),
         )
     elif type == "vendor":
         new_item = Vendor(
-            name=data["name"],
-            address1=data["address1"],
-            address2=data["address2"],
+            name=data.get("name", ""),
+            address1=data.get("address1", ""),
+            address2=data.get("address2", ""),
         )
-        
 
     db.session.add(new_item)
     db.session.commit()
@@ -99,7 +99,7 @@ def get_items_one_view(type, item_id):
         item = Ship_to.query.get(item_id)
     elif type == "vendor":
         item = Vendor.query.get(item_id)
-    
+
     item_object = {}
     item_object["id"] = item.id
     item_object["name"] = item.name
@@ -107,7 +107,6 @@ def get_items_one_view(type, item_id):
     item_object["address2"] = item.address2
 
     return jsonify(item_object)
-
 
 
 @app.route("/delete/type/<type>/<int:item_id>", methods=["DELETE"])
