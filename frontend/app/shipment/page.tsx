@@ -389,7 +389,7 @@ function Create_shipment({ create = true, shipment_id_view = '', edit = false, f
     const [shipping_details_information, set_shipping_details_information] = React.useState('');
 
     const [terms_and_conditions, set_terms_and_conditions] = React.useState('');
-    const [shipment_type, set_shipment_type] = React.useState('First Quote');
+    const [shipment_type, set_shipment_type] = React.useState('Pre Alert');
     const [bl_number, set_bl_number] = React.useState('');
     const [issued_to_id, set_issued_to_id] = React.useState('');
     const [issued_to, set_issued_to] = React.useState('');
@@ -811,7 +811,7 @@ function Create_shipment({ create = true, shipment_id_view = '', edit = false, f
                 </div>
 
                 <div className="input_field">
-                    <div className="title">Shipping Details</div>
+                    <div className="title">Shipment Details</div>
                     <div className="input">
                         <textarea
                             type="text"
@@ -834,7 +834,7 @@ function Create_shipment({ create = true, shipment_id_view = '', edit = false, f
                     </div>
                 </div>
                 <div className="input_field">
-                    <div className="title">Due Date</div>
+                    <div className="title">Issued Date</div>
                     <div className="input">
                         <input
                             value={due_date}
@@ -845,21 +845,7 @@ function Create_shipment({ create = true, shipment_id_view = '', edit = false, f
                         />
                     </div>
                 </div>
-                <div className="input_field">
-                    <div className="title">Currency</div>
-                    <div className="input">
-                        <select
-                            value={currency}
-                            onChange={(e) => {
-                                let value = e.target.value;
-                                set_currency(value);
-                            }}>
-                            <option value="USD">USD</option>
-                            <option value="CAD">CAD</option>
-                        </select>
-                    </div>
-                </div>
-                <div className="input_field">
+               <div className="input_field">
                     <div className="title">Description</div>
                     <div className="input">
                         <textarea
@@ -871,22 +857,7 @@ function Create_shipment({ create = true, shipment_id_view = '', edit = false, f
                         />
                     </div>
                 </div>
-                <div className="input_field">
-                    <div className="title">Terms</div>
-                    <div className="input">
-                        <textarea
-                            value={terms_and_conditions}
-                            name=""
-                            id=""
-                            cols="30"
-                            rows="10"
-                            onChange={(e) => {
-                                let value = e.target.value;
-                                set_terms_and_conditions(value);
-                            }}></textarea>
-                    </div>
-                </div>
-                <div className="input_field">
+                               <div className="input_field">
                     <div className="title">Type</div>
                     <div className="input">
                         <select
@@ -904,7 +875,7 @@ function Create_shipment({ create = true, shipment_id_view = '', edit = false, f
                     <div className="input">
                         <input
                             value={weight}
-                            type="date"
+                            type="text"
                             onChange={(e) => {
                                 set_weight(e.target.value);
                             }}
@@ -935,9 +906,11 @@ function Create_shipment({ create = true, shipment_id_view = '', edit = false, f
                             onChange={(e) => {
                                 set_shipment_status(e.target.value);
                             }}>
-                            <option value="pending">Pending</option>
-                            <option value="paid">Paid</option>
-                            <option value="partial">Partial</option>
+                            <option value="air">Air</option>
+                            <option value="sea">Sea</option>
+                            <option value="rail">Rail</option>
+                            <option value="warhouse">Warehouse</option>
+                            <option value="customs_released">Customs Released</option>
                         </select>
                     </div>
                 </div>
@@ -963,12 +936,6 @@ function Create_shipment({ create = true, shipment_id_view = '', edit = false, f
                             <tr>
                                 <th>Item</th>
                                 <th>Description</th>
-                                <th>Price</th>
-                                <th>Quantity</th>
-                                <th>Total Price</th>
-                                <th>Vendor</th>
-                                <th>Vendor Cost</th>
-                                <th>Profit</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -989,48 +956,7 @@ function Create_shipment({ create = true, shipment_id_view = '', edit = false, f
                                             onChange={(e) => edit_shipment_fields(index, 'description', e.target.value)}
                                         />
                                     </td>
-                                    <td>
-                                        <input
-                                            type="number"
-                                            value={item.price}
-                                            onChange={(e) => edit_shipment_fields(index, 'price', parseFloat(e.target.value))}
-                                        />
-                                    </td>
-                                    <td>
-                                        <input
-                                            type="number"
-                                            value={item.quantity}
-                                            onChange={(e) => edit_shipment_fields(index, 'quantity', parseFloat(e.target.value))}
-                                        />
-                                    </td>
-                                    <td>{(item.price * item.quantity).toFixed(2)}</td>
-
-                                    <td>
-                                        <select
-                                            value={item.vendor_id}
-                                            onChange={(e) => edit_shipment_fields(index, 'vendor_id', parseFloat(e.target.value))}>
-                                            <option value={'Select Vendor'}>No Vendor</option>
-                                            {all_vendors.map(function (vendor_) {
-                                                return (
-                                                    <option
-                                                        key={vendor_.id}
-                                                        value={vendor_.id}>
-                                                        {vendor_.name}
-                                                    </option>
-                                                );
-                                            })}
-                                        </select>
-                                    </td>
-
-                                    <td>
-                                        <input
-                                            type="number"
-                                            value={item.vendor_cost}
-                                            onChange={(e) => edit_shipment_fields(index, 'vendor_cost', parseFloat(e.target.value))}
-                                        />
-                                    </td>
-                                    <td>{item.price - item.vendor_cost}</td>
-                                    <td>
+                                   <td>
                                         <button onClick={() => removeItem(index)}>Remove</button> {/* Button to remove item */}
                                     </td>
                                 </tr>
@@ -1104,14 +1030,11 @@ function Create_shipment({ create = true, shipment_id_view = '', edit = false, f
                                 <div className="first_section">
                                     <div className="company_information">{company_information}</div>
                                     <div className="shipment_information">
-                                        <br />
-                                        <br />
 
-                                        <h1>{shipment_id}</h1>
+                                        <h2>{shipment_id}</h2>
                                         <div>Arrival Date: {arrival_date}</div>
-                                        <div>Due Date: {due_date}</div>
+                                        <div>Issued Date: {due_date}</div>
                                         <div>B/L Number: {bl_number}</div>
-                                        <div>Description: {description}</div>
                                         <div>Shipment Status: {shipment_status}</div>
                                         <div
                                             dangerouslySetInnerHTML={{
@@ -1121,81 +1044,57 @@ function Create_shipment({ create = true, shipment_id_view = '', edit = false, f
                                 </div>
                                 <div className="second_section">
                                     <div className="issued_to_information">
-                                        <h3>Issued To</h3>
+                                        <h2>Issued To</h2>
 
                                         {issued_to_information}
                                     </div>
                                     <div className="ship_from_information">
-                                        <h3>Ship From</h3>
+                                        <h2>Ship From</h2>
 
                                         {ship_from_information}
                                     </div>
                                 </div>
                                 <div className="third_section">
                                     <div className="ship_to_information">
-                                        <h3>Ship To </h3>
+                                        <h2>Ship To </h2>
                                         {ship_to_information}
                                     </div>
+                               <div className="ship_to_information">
+                                        <h2>Shipment Details</h2>
+                                        {shipping_details_information}
+                                    </div>
+<br />
+                                <div className="third_section">
                                     <div className="container_number">
+                      <h2>Container Number</h2>
                                         <div
                                             dangerouslySetInnerHTML={{
                                                 __html: container_number.replace(/\n/g, '<br>'),
                                             }}></div>
                                     </div>
                                 </div>
+                                    </div>
                                 <div className="forth_section">
                                     <Table>
                                         <TableHeader>
                                             <TableColumn>Item</TableColumn>
                                             <TableColumn>Description</TableColumn>
-                                            <TableColumn>Price</TableColumn>
-                                            <TableColumn>Quantity</TableColumn>
-                                            <TableColumn>Total Price</TableColumn>
                                         </TableHeader>
                                         <TableBody>
                                             {selected_items.map((item, index) => (
                                                 <TableRow key={index}>
                                                     <TableCell>{item.name}</TableCell>
                                                     <TableCell>{item.description}</TableCell>
-                                                    <TableCell>
-                                                        {currency} {item.price.toFixed(2)}
-                                                    </TableCell>
-                                                    <TableCell>{item.quantity}</TableCell>
-                                                    <TableCell>
-                                                        {currency} {(item.price * item.quantity).toFixed(2)}
-                                                    </TableCell>
                                                 </TableRow>
                                             ))}
                                         </TableBody>
                                     </Table>
-                                    <div className="total_price_">
-                                        Total Price: {total_price} {currency}
-                                    </div>
-                                </div>
-                                <div className="fifth_section">
-                                    <h3>Shipping Details</h3>
-                                    {shipping_details_information &&
-
-                                        <div
-                                            dangerouslySetInnerHTML={{
-                                                __html: shipping_details_information.replace(/\n/g, '<br>'),
-                                            }}>
-                                        </div>
-                                    }
-
-
+      <br />
+                                    <div>{description}</div>
                                 </div>
                                 <div className="sixth_section">
                                     <center>THANK YOU FOR SHIPPING THROUGH MIANZ WE APPRECIATE YOUR BUSINESS</center>
-                                    <div className="terms_and_conditions">
-                                        <strong>Terms & Conditions: </strong>
-                                        <div
-                                            dangerouslySetInnerHTML={{
-                                                __html: terms_and_conditions.replace(/\n/g, '<br>'),
-                                            }}></div>
-                                    </div>
                                     <div className="name">Ahmed Mukit</div>
-                                    <div className="nsf">All NSF Charges $25.00</div>
                                 </div>
                             </div>
                         </div>

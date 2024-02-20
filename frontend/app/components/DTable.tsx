@@ -42,7 +42,22 @@ export default function DTable({ headers, table_data, columns, Custom_buttons = 
                             return (
 
                                 <TableCell>
-                                    <div style={{ display: 'grid', gridAutoFlow: 'column', gridGap: '5px' }}>
+                                    <div style={{ display: 'grid', gridTemplateColumns: 'auto auto auto', gridGap: '5px' }}>
+ <button
+
+                                            onClick={() => {
+                                                window.location.href = '/tracking/' + item.id;
+                                            }}>
+                                            Tracking
+                                        </button>
+                                       <a
+                                            className="button"
+                                            href={`/shipment/${item.id}?edit=true`}>
+                                            Edit
+                                        </a>
+                                 
+ 
+                
                                         {edit_function &&
                                             <button onClick={() => edit_function(item.id)}>Edit</button>
 
@@ -54,28 +69,17 @@ export default function DTable({ headers, table_data, columns, Custom_buttons = 
                                         {Custom_buttons &&
                                             <Custom_buttons></Custom_buttons>
                                         }
-
-                                        <Link
-                                            className="button"
-                                            href={`/shipment/${item.id}?edit=true`}>
-                                            Edit
-                                        </Link>
-                                        <button
-
-                                            onClick={() => {
-                                                window.location.href = '/tracking/' + item.id;
-                                            }}>
-                                            Tracking
-                                        </button>
-                                        <select
+                                       <select
                                             defaultValue={item.invoice_status}
                                             onChange={(e) => {
                                                 custom_function[0](item.id, e.target.value);
                                             }}>
-                                            <option value="pending">Pending</option>
-                                            <option value="paid">Paid</option>
-                                            <option value="partial">Partial</option>
-                                        </select>
+                              <option value="air">Air</option>
+                            <option value="sea">Sea</option>
+                            <option value="rail">Rail</option>
+                            <option value="warhouse">Warehouse</option>
+                            <option value="customs_released">Customs Released</option>
+                                      </select>
                                     </div>
 
                                 </TableCell>)
@@ -98,11 +102,11 @@ export default function DTable({ headers, table_data, columns, Custom_buttons = 
                                             <Custom_buttons></Custom_buttons>
                                         }
 
-                                        <Link
+                                        <a
                                             className="button"
                                             href={`/invoices/${item.id}?edit=true`}>
                                             Edit
-                                        </Link>
+                                        </a>
                                         <button
 
                                             onClick={() => {
