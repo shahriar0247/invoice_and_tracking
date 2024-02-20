@@ -344,8 +344,8 @@ function CreateSummary(data3) {
             });
     }
     return (
-        <div>
-            <div >
+        <div >
+            <div className='create_summary'>
                 <div className="all_inputs all_inputs2">
 
                     <div className="input_field">

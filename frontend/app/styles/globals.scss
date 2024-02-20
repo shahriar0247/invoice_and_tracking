@@ -273,12 +273,13 @@ section.bg-content1 {
     height: 100%;
     background-color: white;
     page-break-before: 'always';
-    table{
-        td{
+
+    table {
+        td {
             border-bottom: none !important;
         }
     }
-   
+
 }
 
 .summary_print_container {
@@ -287,8 +288,12 @@ section.bg-content1 {
     // height: calc(100vh - 240px);
     background-color: white;
     overflow: auto;
-   
 
+
+}
+
+.create_summary {
+    max-height: 80vh !important;
 }
 
 @import './invoice_viewer.scss';

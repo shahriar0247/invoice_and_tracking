@@ -253,7 +253,7 @@ export default function Invoices({ type = null, create = true, invoice_id_view =
             }
 
             {all_data_array.map((value, index) => {
-            console.log(data3)
+                console.log(data3)
                 return (
                     <div key={value.name}>
                         <h2>{value.name}</h2>
@@ -288,7 +288,7 @@ function CreateSummary_Container(data3) {
 }
 function CreateSummary(data3) {
     const [currency, set_currency] = React.useState('USD');
-    const [header, set_header] = React.useState('Header');
+    const [header, set_header] = React.useState('');
     const [footer, set_footer] = React.useState('');
     const { toPDF, targetRef } = usePDF({ filename: 'Summary.pdf', size: 'A4' });
     const totalPriceOfAllItems = data3.data3.data3.flatMap((invoice) => JSON.parse(invoice.all_items || '[]').map((item) => item.price)).reduce((acc, price) => acc + price, 0);
@@ -307,7 +307,7 @@ function CreateSummary(data3) {
             excel_data.push([item.id, date, item.bill_to, item.bl_number, total_price])
         })
         excel_data.push(["", "", "", "", "Total Price: " + totalPriceOfAllItems.toFixed(2) + " " + currency])
-        
+
         fetch("http://35.209.219.229:5003/daily_accounts/download", {
 
             method: "post",
@@ -324,7 +324,7 @@ function CreateSummary(data3) {
     }
     return (
         <div>
-            <div >
+            <div className='create_summary'>
                 <div className="all_inputs all_inputs2">
 
                     <div className="input_field">
