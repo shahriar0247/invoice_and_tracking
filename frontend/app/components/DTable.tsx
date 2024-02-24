@@ -89,7 +89,7 @@ export default function DTable({ headers, table_data, columns, Custom_buttons = 
                             return (
 
                                 <TableCell>
-                                    <div style={{ display: 'grid', gridAutoFlow: 'column', gridGap: '5px' }}>
+                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gridGap: '5px' }}>
                                         {edit_function &&
                                             <button onClick={() => edit_function(item.id)}>Edit</button>
 

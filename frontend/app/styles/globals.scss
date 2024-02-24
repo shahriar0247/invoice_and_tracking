@@ -209,17 +209,30 @@ textarea {
     padding: 10px;
 }
 
+.input_field {
+    table {
+        tr {
+            border-bottom: none !important;
+        }
+    }
+}
+
 table {
     tr {
         max-width: 200px;
         overflow: hidden;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.342);
 
         select,
         input {
             width: 90% !important;
+            min-width: 100px;
+            padding-left: 10px;
 
         }
     }
+
+
 
 
 
