@@ -720,233 +720,244 @@ function Create_invoice({ create = true, invoice_id_view = '', edit = false, fet
     const [currency, set_currency] = React.useState('USD');
     return (
         <div className="invoice">
-            <h1>Invoice Details</h1>
-            <h2>{invoice_id}</h2>
+            <div>{invoice_id}</div>
 
             <div className="all_inputs all_inputs2">
-                <div className="input_field">
-                    <div className="title">Bill To</div>
-                    <div className="input">
-                        <select
-                            value={bill_to}
-                            onChange={(e) => {
-                                let value = e.target.value;
-                                let data = JSON.parse(value);
-                                set_bill_to_id(data.id);
-                                set_bill_to(value);
-                                set_bill_to_information(
-                                    <div>
-                                        <div>{data.name}</div>
-                                        <div>{data.address1}</div>
-                                        <div>{data.address2}</div>
-                                    </div>
-                                );
-                            }}>
-                            {all_bill_to.map(function (bill_to) {
-                                return (
-                                    <option
-                                        key={JSON.stringify(bill_to)}
-                                        value={JSON.stringify(bill_to)}>
-                                        {bill_to.name}
-                                    </option>
-                                );
-                            })}
-                        </select>
+                <div className="all_inputs">
+                    <div className="input_field">
+                        <div className="title">Bill To</div>
+                        <div className="input">
+                            <select
+                                value={bill_to}
+                                onChange={(e) => {
+                                    let value = e.target.value;
+                                    let data = JSON.parse(value);
+                                    set_bill_to_id(data.id);
+                                    set_bill_to(value);
+                                    set_bill_to_information(
+                                        <div>
+                                            <div>{data.name}</div>
+                                            <div>{data.address1}</div>
+                                            <div>{data.address2}</div>
+                                        </div>
+                                    );
+                                }}>
+                                {all_bill_to.map(function (bill_to) {
+                                    return (
+                                        <option
+                                            key={JSON.stringify(bill_to)}
+                                            value={JSON.stringify(bill_to)}>
+                                            {bill_to.name}
+                                        </option>
+                                    );
+                                })}
+                            </select>
+                        </div>
+                    </div>
+                    <div className="input_field">
+                        <div className="title">Ship To</div>
+                        <div className="input">
+                            <select
+                                value={ship_to}
+                                onChange={(e) => {
+                                    let value = e.target.value;
+                                    let data = JSON.parse(value);
+                                    set_ship_to_id(data.id);
+                                    set_ship_to(value);
+                                    set_ship_to_information(
+                                        <div>
+                                            <div>{data.name}</div>
+                                            <div>{data.address1}</div>
+                                            <div>{data.address2}</div>
+                                        </div>
+                                    );
+                                }}>
+                                {all_ship_to.map(function (ship_to) {
+                                    return (
+                                        <option
+                                            key={JSON.stringify(ship_to)}
+                                            value={JSON.stringify(ship_to)}>
+                                            {ship_to.name}
+                                        </option>
+                                    );
+                                })}
+                            </select>
+                        </div>
+                    </div>
+                    <div className="input_field">
+                        <div className="title">Ship From</div>
+                        <div className="input">
+                            <select
+                                value={ship_from}
+                                onChange={(e) => {
+                                    let value = e.target.value;
+                                    let data = JSON.parse(value);
+                                    set_ship_from_id(data.id);
+                                    set_ship_from(value);
+                                    set_ship_from_information(
+                                        <div>
+                                            <div>{data.name}</div>
+                                            <div>{data.address1}</div>
+                                            <div>{data.address2}</div>
+                                        </div>
+                                    );
+                                }}>
+                                {all_ship_from.map(function (ship_from) {
+                                    return (
+                                        <option
+                                            key={JSON.stringify(ship_from)}
+                                            value={JSON.stringify(ship_from)}>
+                                            {ship_from.name}
+                                        </option>
+                                    );
+                                })}
+                            </select>
+                        </div>
+                    </div>
+                    <div className="input_field">
+                        <div className="title">Date</div>
+                        <div className="input">
+                            <input
+                                value={date}
+                                type="date"
+                                onChange={(e) => {
+                                    set_date(e.target.value);
+                                }}
+                            />
+                        </div>
+                    </div>
+
+                    <div className="input_field">
+                        <div className="title">Due Date</div>
+                        <div className="input">
+                            <input
+                                value={due_date}
+                                type="date"
+                                onChange={(e) => {
+                                    set_due_date(e.target.value);
+                                }}
+                            />
+                        </div>
                     </div>
                 </div>
-                <div className="input_field">
-                    <div className="title">Ship To</div>
-                    <div className="input">
-                        <select
-                            value={ship_to}
-                            onChange={(e) => {
-                                let value = e.target.value;
-                                let data = JSON.parse(value);
-                                set_ship_to_id(data.id);
-                                set_ship_to(value);
-                                set_ship_to_information(
-                                    <div>
-                                        <div>{data.name}</div>
-                                        <div>{data.address1}</div>
-                                        <div>{data.address2}</div>
-                                    </div>
-                                );
-                            }}>
-                            {all_ship_to.map(function (ship_to) {
-                                return (
-                                    <option
-                                        key={JSON.stringify(ship_to)}
-                                        value={JSON.stringify(ship_to)}>
-                                        {ship_to.name}
-                                    </option>
-                                );
-                            })}
-                        </select>
+                <div className="all_inputs">
+
+                    <div className="input_field">
+                        <div className="title">Currency</div>
+                        <div className="input">
+                            <select
+                                value={currency}
+                                onChange={(e) => {
+                                    let value = e.target.value;
+                                    set_currency(value);
+                                }}>
+                                <option value="USD">USD</option>
+                                <option value="CAD">CAD</option>
+                            </select>
+                        </div>
                     </div>
-                </div>
-                <div className="input_field">
-                    <div className="title">Ship From</div>
-                    <div className="input">
-                        <select
-                            value={ship_from}
-                            onChange={(e) => {
-                                let value = e.target.value;
-                                let data = JSON.parse(value);
-                                set_ship_from_id(data.id);
-                                set_ship_from(value);
-                                set_ship_from_information(
-                                    <div>
-                                        <div>{data.name}</div>
-                                        <div>{data.address1}</div>
-                                        <div>{data.address2}</div>
-                                    </div>
-                                );
-                            }}>
-                            {all_ship_from.map(function (ship_from) {
-                                return (
-                                    <option
-                                        key={JSON.stringify(ship_from)}
-                                        value={JSON.stringify(ship_from)}>
-                                        {ship_from.name}
-                                    </option>
-                                );
-                            })}
-                        </select>
+                    <div className="input_field">
+                        <div className="title">Type</div>
+                        <div className="input">
+                            <select
+                                value={invoice_type}
+                                onChange={(e) => {
+                                    set_invoice_type(e.target.value);
+                                }}>
+                                <option value="First Quote">First Quote</option>
+                                <option value="Final Quote">Final Quote</option>
+                                <option value="Invoice">Invoice</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div className="input_field">
+                        <div className="title">Invoice Status</div>
+                        <div className="input">
+                            <select
+                                value={invoice_status}
+                                defaultValue={'pending'}
+                                onChange={(e) => {
+                                    set_invoice_status(e.target.value);
+                                }}>
+                                <option value="pending">Pending</option>
+                                <option value="paid">Paid</option>
+                                <option value="partial">Partial</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div className="input_field">
+                        <div className="title">B/L number #</div>
+                        <div className="input">
+                            <input
+                                type="text"
+                                value={bl_number}
+                                onChange={(e) => {
+                                    set_bl_number(e.target.value);
+                                }}
+                            />
+                        </div>
+                    </div>
+
+                    <div className="input_field">
+                        <div className="title">Bank Details</div>
+                        <div className="input">
+                            <textarea
+                                type="text"
+                                value={bank_details_information}
+                                onChange={(e) => set_bank_details_information(e.target.value)}
+                            />
+                        </div>
                     </div>
                 </div>
 
-                <div className="input_field">
-                    <div className="title">Bank Details</div>
-                    <div className="input">
-                        <textarea
-                            type="text"
-                            value={bank_details_information}
-                            onChange={(e) => set_bank_details_information(e.target.value)}
-                        />
+                <div className="all_inputs">
+
+                    <div className="input_field">
+                        <div className="title">Description</div>
+                        <div className="input">
+                            <textarea
+                                type="text"
+                                value={description}
+                                onChange={(e) => {
+                                    set_description(e.target.value);
+                                }}
+                            />
+                        </div>
+                    </div>
+
+                    <div className="input_field">
+                        <div className="title">Terms</div>
+                        <div className="input">
+                            <textarea
+                                value={terms_and_conditions}
+                                name=""
+                                id=""
+                                cols="30"
+                                rows="10"
+                                onChange={(e) => {
+                                    let value = e.target.value;
+                                    set_terms_and_conditions(value);
+                                }}></textarea>
+                        </div>
+                    </div>
+
+                    <div className="input_field">
+                        <div className="title">Extra Info</div>
+                        <div className="input">
+                            <textarea
+                                value={extra_information}
+                                name=""
+                                id=""
+                                cols="30"
+                                rows="10"
+                                onChange={(e) => {
+                                    set_extra_information(e.target.value);
+                                }}></textarea>
+                        </div>
                     </div>
                 </div>
 
-                <div className="input_field">
-                    <div className="title">Date</div>
-                    <div className="input">
-                        <input
-                            value={date}
-                            type="date"
-                            onChange={(e) => {
-                                set_date(e.target.value);
-                            }}
-                        />
-                    </div>
-                </div>
-                <div className="input_field">
-                    <div className="title">Due Date</div>
-                    <div className="input">
-                        <input
-                            value={due_date}
-                            type="date"
-                            onChange={(e) => {
-                                set_due_date(e.target.value);
-                            }}
-                        />
-                    </div>
-                </div>
-                <div className="input_field">
-                    <div className="title">Currency</div>
-                    <div className="input">
-                        <select
-                            value={currency}
-                            onChange={(e) => {
-                                let value = e.target.value;
-                                set_currency(value);
-                            }}>
-                            <option value="USD">USD</option>
-                            <option value="CAD">CAD</option>
-                        </select>
-                    </div>
-                </div>
-                <div className="input_field">
-                    <div className="title">Description</div>
-                    <div className="input">
-                        <textarea
-                            type="text"
-                            value={description}
-                            onChange={(e) => {
-                                set_description(e.target.value);
-                            }}
-                        />
-                    </div>
-                </div>
-                <div className="input_field">
-                    <div className="title">Terms</div>
-                    <div className="input">
-                        <textarea
-                            value={terms_and_conditions}
-                            name=""
-                            id=""
-                            cols="30"
-                            rows="10"
-                            onChange={(e) => {
-                                let value = e.target.value;
-                                set_terms_and_conditions(value);
-                            }}></textarea>
-                    </div>
-                </div>
-                <div className="input_field">
-                    <div className="title">Type</div>
-                    <div className="input">
-                        <select
-                            value={invoice_type}
-                            onChange={(e) => {
-                                set_invoice_type(e.target.value);
-                            }}>
-                            <option value="First Quote">First Quote</option>
-                            <option value="Final Quote">Final Quote</option>
-                            <option value="Invoice">Invoice</option>
-                        </select>
-                    </div>
-                </div>
-                <div className="input_field">
-                    <div className="title">Extra Info</div>
-                    <div className="input">
-                        <textarea
-                            value={extra_information}
-                            name=""
-                            id=""
-                            cols="30"
-                            rows="10"
-                            onChange={(e) => {
-                                set_extra_information(e.target.value);
-                            }}></textarea>
-                    </div>
-                </div>
 
-                <div className="input_field">
-                    <div className="title">Invoice Status</div>
-                    <div className="input">
-                        <select
-                            value={invoice_status}
-                            defaultValue={'pending'}
-                            onChange={(e) => {
-                                set_invoice_status(e.target.value);
-                            }}>
-                            <option value="pending">Pending</option>
-                            <option value="paid">Paid</option>
-                            <option value="partial">Partial</option>
-                        </select>
-                    </div>
-                </div>
-                <div className="input_field">
-                    <div className="title">B/L number #</div>
-                    <div className="input">
-                        <input
-                            type="text"
-                            value={bl_number}
-                            onChange={(e) => {
-                                set_bl_number(e.target.value);
-                            }}
-                        />
-                    </div>
-                </div>
             </div>
             <div className="input_field">
                 <div className="input">

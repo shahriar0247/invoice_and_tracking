@@ -90,26 +90,45 @@ body {
     }
 }
 
-.all_inputs {
+.all_inputs2 {
     display: grid;
     margin: auto;
     width: 100%;
+    padding: 20px;
+    margin: 50px 0px;
+    box-shadow: 0px 0px 10px 1px rgba(0, 0, 0, 0.2);
+
 
     .input_field {
         display: grid;
-        grid-template-columns: 130px 1fr;
-        margin-bottom: 10px;
 
         .title {
             margin-top: 9px;
+            font-size: 14px;
+            color: grey;
         }
 
         .input {}
+
+        select {
+            min-width: 200px;
+            width: 90%;
+            max-width: max-content;
+        }
     }
 }
 
 .all_inputs2 {
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 2fr 1fr;
+
+    .all_inputs:nth-child(2) {
+        border-left: 1px solid black;
+        border-right: 1px solid black;
+        margin: 20px;
+        padding: 20px;
+        margin-top: 0;
+        padding-top: 5px;
+    }
 }
 
 button {
@@ -191,11 +210,18 @@ textarea {
 }
 
 table {
-    td {
+    tr {
         max-width: 200px;
         overflow: hidden;
-        border-bottom: 1px solid black;
+
+        select,
+        input {
+            width: 90% !important;
+
+        }
     }
+
+
 
     input,
     textarea {
