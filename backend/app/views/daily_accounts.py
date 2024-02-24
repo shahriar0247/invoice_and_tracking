@@ -187,7 +187,7 @@ def download_excel():
     data = request.json
     df = pd.DataFrame(data[1:], columns=data[0])
     random_filename = f"output_excel_{uuid.uuid4().hex}.xlsx"
-    excel_file_path = os.path.join("/home/ahmedshahriar0247/invoice_and_tracking/backend/", random_filename)
+    excel_file_path = os.path.join(os.path.abspath(os.getcwd()), random_filename)
     df.to_excel(excel_file_path, index=False, engine='openpyxl')
     response = send_file(excel_file_path, as_attachment=True)
     os.remove(excel_file_path)
