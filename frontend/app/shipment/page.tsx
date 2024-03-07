@@ -77,7 +77,7 @@ export default function Shipments({ type = null, create = true, shipment_id_view
     }, []);
 
     function fetch_shipments() {
-        fetch('http://35.209.219.229:5003/get/shipment')
+        fetch('http://89.116.50.93:5003/get/shipment')
             .then((response) => response.json())
             .then((data) => {
                 setData3(data);
@@ -95,7 +95,7 @@ export default function Shipments({ type = null, create = true, shipment_id_view
         return uniqueUsers;
     }
     function deleteShipment(shipmentId) {
-        fetch(`http://35.209.219.229:5003/delete/shipment/${shipmentId}`, {
+        fetch(`http://89.116.50.93:5003/delete/shipment/${shipmentId}`, {
             method: 'DELETE',
         })
             .then((response) => {
@@ -136,7 +136,7 @@ export default function Shipments({ type = null, create = true, shipment_id_view
             id: id,
             status: status,
         };
-        fetch(`http://35.209.219.229:5003/shipment/change_status`, {
+        fetch(`http://89.116.50.93:5003/shipment/change_status`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -273,7 +273,7 @@ function CreateSummary(data3) {
         })
         excel_data.push(["", "", "", "", "Total Price: " + totalPriceOfAllItems.toFixed(2) + " " + currency])
 
-        fetch("http://35.209.219.229:5003/daily_accounts/download", {
+        fetch("http://89.116.50.93:5003/daily_accounts/download", {
 
             method: "post",
             body: JSON.stringify(excel_data),
@@ -439,7 +439,7 @@ function Create_shipment({ create = true, shipment_id_view = '', edit = false, f
     }
 
     async function get_shipment_details() {
-        const response = await fetch('http://35.209.219.229:5003/get_shipment_details/' + shipment_id_view);
+        const response = await fetch('http://89.116.50.93:5003/get_shipment_details/' + shipment_id_view);
         const data = await response.json();
         const all_items_ = JSON.parse(data['all_items']);
         set_shipment_id(data.id);
@@ -525,7 +525,7 @@ function Create_shipment({ create = true, shipment_id_view = '', edit = false, f
         set_selected_items(updatedItems);
     };
     function fetchVendor() {
-        fetch('http://35.209.219.229:5003/get/vendor')
+        fetch('http://89.116.50.93:5003/get/vendor')
             .then((response) => response.json())
             .then((data) => {
                 set_all_vendors(data);
@@ -535,7 +535,7 @@ function Create_shipment({ create = true, shipment_id_view = '', edit = false, f
             });
     }
     function fetchInvoices() {
-        fetch('http://35.209.219.229:5003/get/invoice')
+        fetch('http://89.116.50.93:5003/get/invoice')
             .then((response) => response.json())
             .then((data) => {
                 set_invoices(data);
@@ -546,7 +546,7 @@ function Create_shipment({ create = true, shipment_id_view = '', edit = false, f
             });
     }
     function fetchCompany() {
-        fetch('http://35.209.219.229:5003/get/company')
+        fetch('http://89.116.50.93:5003/get/company')
             .then((response) => response.json())
             .then((data) => {
                 set_company(data);
@@ -567,7 +567,7 @@ function Create_shipment({ create = true, shipment_id_view = '', edit = false, f
             });
     }
     function fetchBillTo() {
-        fetch('http://35.209.219.229:5003/get/type/bill_to')
+        fetch('http://89.116.50.93:5003/get/type/bill_to')
             .then((response) => response.json())
             .then((data) => {
                 set_all_issued_to(data);
@@ -586,7 +586,7 @@ function Create_shipment({ create = true, shipment_id_view = '', edit = false, f
             });
     }
     function fetchShipFrom() {
-        fetch('http://35.209.219.229:5003/get/type/ship_from')
+        fetch('http://89.116.50.93:5003/get/type/ship_from')
             .then((response) => response.json())
             .then((data) => {
                 set_all_ship_from(data);
@@ -605,7 +605,7 @@ function Create_shipment({ create = true, shipment_id_view = '', edit = false, f
             });
     }
     function fetchShipTo() {
-        fetch('http://35.209.219.229:5003/get/type/ship_to')
+        fetch('http://89.116.50.93:5003/get/type/ship_to')
             .then((response) => response.json())
             .then((data) => {
                 set_all_ship_to(data);
@@ -624,7 +624,7 @@ function Create_shipment({ create = true, shipment_id_view = '', edit = false, f
             });
     }
     function fetchItems() {
-        fetch('http://35.209.219.229:5003/get/item')
+        fetch('http://89.116.50.93:5003/get/item')
             .then((response) => response.json())
             .then((data) => {
                 set_all_items(data);
@@ -655,7 +655,7 @@ function Create_shipment({ create = true, shipment_id_view = '', edit = false, f
             edit: edit,
         };
 
-        fetch('http://35.209.219.229:5003/create/shipment/' + shipment_id, {
+        fetch('http://89.116.50.93:5003/create/shipment/' + shipment_id, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -664,7 +664,7 @@ function Create_shipment({ create = true, shipment_id_view = '', edit = false, f
         })
             .then((response) => {
                 if (response.ok) {
-                    alert('Shipment created successfully');
+                    alert('Shipmentcreated successfully');
                 } else {
                     alert('Failed to create shipment');
                 }
@@ -688,243 +688,250 @@ function Create_shipment({ create = true, shipment_id_view = '', edit = false, f
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [currency, set_currency] = React.useState('USD');
     return (
-        <div className="shipment">
+        <div className="invoice">
             <h1>Shipment Details</h1>
             <h2>{shipment_id}</h2>
 
-            <div className="all_inputs all_inputs2">
+            <div className="all_inputs all_inputs3">
+                <div className="all_inputs ">
 
-                <div className="input_field">
-
-
-                    <div className="title">Invoices</div>
-                    <div className="input">
-                        <select
-                            value={invoice}
-                            onChange={(e) => {
-                                let value = e.target.value;
-                                set_invoice(value);
-                            }}>
-                            {invoices.map(function (invoice) {
-                                return (
-                                    <option
-                                        key={invoice.id}
-                                        value={invoice.id}>
-                                        {invoice.id}
-                                    </option>
-                                );
-                            })}
-                        </select>
-                    </div>
-                </div>
-                <div className="input_field">
+                    <div className="input_field">
 
 
-                    <div className="title">Issued To</div>
-                    <div className="input">
-                        <select
-                            value={issued_to}
-                            onChange={(e) => {
-                                let value = e.target.value;
-                                let data = JSON.parse(value);
-                                set_issued_to_id(data.id);
-                                set_issued_to(value);
-                                set_issued_to_information(
-                                    <div>
-                                        <div>{data.name}</div>
-                                        <div>{data.address1}</div>
-                                        <div>{data.address2}</div>
-                                    </div>
-                                );
-                            }}>
-                            {all_issued_to.map(function (issued_to) {
-                                return (
-                                    <option
-                                        key={JSON.stringify(issued_to)}
-                                        value={JSON.stringify(issued_to)}>
-                                        {issued_to.name}
-                                    </option>
-                                );
-                            })}
-                        </select>
+                        <div className="title">Invoices</div>
+                        <div className="input">
+                            <select
+                                value={invoice}
+                                onChange={(e) => {
+                                    let value = e.target.value;
+                                    set_invoice(value);
+                                }}>
+                                {invoices.map(function (invoice) {
+                                    return (
+                                        <option
+                                            key={invoice.id}
+                                            value={invoice.id}>
+                                            {invoice.id}
+                                        </option>
+                                    );
+                                })}
+                            </select>
+                        </div>
                     </div>
-                </div>
-                <div className="input_field">
-                    <div className="title">Ship To</div>
-                    <div className="input">
-                        <select
-                            value={ship_to}
-                            onChange={(e) => {
-                                let value = e.target.value;
-                                let data = JSON.parse(value);
-                                set_ship_to_id(data.id);
-                                set_ship_to(value);
-                                set_ship_to_information(
-                                    <div>
-                                        <div>{data.name}</div>
-                                        <div>{data.address1}</div>
-                                        <div>{data.address2}</div>
-                                    </div>
-                                );
-                            }}>
-                            {all_ship_to.map(function (ship_to) {
-                                return (
-                                    <option
-                                        key={JSON.stringify(ship_to)}
-                                        value={JSON.stringify(ship_to)}>
-                                        {ship_to.name}
-                                    </option>
-                                );
-                            })}
-                        </select>
-                    </div>
-                </div>
-                <div className="input_field">
-                    <div className="title">Ship From</div>
-                    <div className="input">
-                        <select
-                            value={ship_from}
-                            onChange={(e) => {
-                                let value = e.target.value;
-                                let data = JSON.parse(value);
-                                set_ship_from_id(data.id);
-                                set_ship_from(value);
-                                set_ship_from_information(
-                                    <div>
-                                        <div>{data.name}</div>
-                                        <div>{data.address1}</div>
-                                        <div>{data.address2}</div>
-                                    </div>
-                                );
-                            }}>
-                            {all_ship_from.map(function (ship_from) {
-                                return (
-                                    <option
-                                        key={JSON.stringify(ship_from)}
-                                        value={JSON.stringify(ship_from)}>
-                                        {ship_from.name}
-                                    </option>
-                                );
-                            })}
-                        </select>
-                    </div>
-                </div>
+                    <div className="input_field">
 
-                <div className="input_field">
-                    <div className="title">Shipment Details</div>
-                    <div className="input">
-                        <textarea
-                            type="text"
-                            value={shipping_details_information}
-                            onChange={(e) => set_shipping_details_information(e.target.value)}
-                        />
-                    </div>
-                </div>
 
-                <div className="input_field">
-                    <div className="title">Arrival Date</div>
-                    <div className="input">
-                        <input
-                            value={arrival_date}
-                            type="date"
-                            onChange={(e) => {
-                                set_arrival_date(e.target.value);
-                            }}
-                        />
+                        <div className="title">Issued To</div>
+                        <div className="input">
+                            <select
+                                value={issued_to}
+                                onChange={(e) => {
+                                    let value = e.target.value;
+                                    let data = JSON.parse(value);
+                                    set_issued_to_id(data.id);
+                                    set_issued_to(value);
+                                    set_issued_to_information(
+                                        <div>
+                                            <div>{data.name}</div>
+                                            <div>{data.address1}</div>
+                                            <div>{data.address2}</div>
+                                        </div>
+                                    );
+                                }}>
+                                {all_issued_to.map(function (issued_to) {
+                                    return (
+                                        <option
+                                            key={JSON.stringify(issued_to)}
+                                            value={JSON.stringify(issued_to)}>
+                                            {issued_to.name}
+                                        </option>
+                                    );
+                                })}
+                            </select>
+                        </div>
+                    </div>
+                    <div className="input_field">
+                        <div className="title">Ship To</div>
+                        <div className="input">
+                            <select
+                                value={ship_to}
+                                onChange={(e) => {
+                                    let value = e.target.value;
+                                    let data = JSON.parse(value);
+                                    set_ship_to_id(data.id);
+                                    set_ship_to(value);
+                                    set_ship_to_information(
+                                        <div>
+                                            <div>{data.name}</div>
+                                            <div>{data.address1}</div>
+                                            <div>{data.address2}</div>
+                                        </div>
+                                    );
+                                }}>
+                                {all_ship_to.map(function (ship_to) {
+                                    return (
+                                        <option
+                                            key={JSON.stringify(ship_to)}
+                                            value={JSON.stringify(ship_to)}>
+                                            {ship_to.name}
+                                        </option>
+                                    );
+                                })}
+                            </select>
+                        </div>
+                    </div>
+                    <div className="input_field">
+                        <div className="title">Ship From</div>
+                        <div className="input">
+                            <select
+                                value={ship_from}
+                                onChange={(e) => {
+                                    let value = e.target.value;
+                                    let data = JSON.parse(value);
+                                    set_ship_from_id(data.id);
+                                    set_ship_from(value);
+                                    set_ship_from_information(
+                                        <div>
+                                            <div>{data.name}</div>
+                                            <div>{data.address1}</div>
+                                            <div>{data.address2}</div>
+                                        </div>
+                                    );
+                                }}>
+                                {all_ship_from.map(function (ship_from) {
+                                    return (
+                                        <option
+                                            key={JSON.stringify(ship_from)}
+                                            value={JSON.stringify(ship_from)}>
+                                            {ship_from.name}
+                                        </option>
+                                    );
+                                })}
+                            </select>
+                        </div>
+                    </div>
+                    <div className="input_field">
+                        <div className="title">Arrival Date</div>
+                        <div className="input">
+                            <input
+                                value={arrival_date}
+                                type="date"
+                                onChange={(e) => {
+                                    set_arrival_date(e.target.value);
+                                }}
+                            />
+                        </div>
+                    </div>
+                    <div className="input_field">
+                        <div className="title">Issued Date</div>
+                        <div className="input">
+                            <input
+                                value={due_date}
+                                type="date"
+                                onChange={(e) => {
+                                    set_due_date(e.target.value);
+                                }}
+                            />
+                        </div>
+                    </div>
+                    <div className="input_field">
+                        <div className="title">Type</div>
+                        <div className="input">
+                            <select
+                                value={shipment_type}
+                                onChange={(e) => {
+                                    set_shipment_type(e.target.value);
+                                }}>
+                                <option value="Delivery Order">Delivery Order</option>
+                                <option value="Pre Alert">Pre Alert</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div className="input_field">
+                        <div className="title">Weight</div>
+                        <div className="input">
+                            <input
+                                value={weight}
+                                type="text"
+                                onChange={(e) => {
+                                    set_weight(e.target.value);
+                                }}
+                            />
+                        </div>
                     </div>
                 </div>
-                <div className="input_field">
-                    <div className="title">Issued Date</div>
-                    <div className="input">
-                        <input
-                            value={due_date}
-                            type="date"
-                            onChange={(e) => {
-                                set_due_date(e.target.value);
-                            }}
-                        />
-                    </div>
-                </div>
-               <div className="input_field">
-                    <div className="title">Description</div>
-                    <div className="input">
-                        <textarea
-                            type="text"
-                            value={description}
-                            onChange={(e) => {
-                                set_description(e.target.value);
-                            }}
-                        />
-                    </div>
-                </div>
-                               <div className="input_field">
-                    <div className="title">Type</div>
-                    <div className="input">
-                        <select
-                            value={shipment_type}
-                            onChange={(e) => {
-                                set_shipment_type(e.target.value);
-                            }}>
-                            <option value="Delivery Order">Delivery Order</option>
-                            <option value="Pre Alert">Pre Alert</option>
-                        </select>
-                    </div>
-                </div>
-                <div className="input_field">
-                    <div className="title">Weight</div>
-                    <div className="input">
-                        <input
-                            value={weight}
-                            type="text"
-                            onChange={(e) => {
-                                set_weight(e.target.value);
-                            }}
-                        />
-                    </div>
-                </div>
-                <div className="input_field">
-                    <div className="title">Container Number</div>
-                    <div className="input">
-                        <textarea
-                            value={container_number}
-                            name=""
-                            id=""
-                            cols="30"
-                            rows="10"
-                            onChange={(e) => {
-                                set_container_number(e.target.value);
-                            }}></textarea>
-                    </div>
-                </div>
+                <div className="all_inputs">
 
-                <div className="input_field">
-                    <div className="title">Shipment Status</div>
-                    <div className="input">
-                        <select
-                            value={shipment_status}
-                            defaultValue={'pending'}
-                            onChange={(e) => {
-                                set_shipment_status(e.target.value);
-                            }}>
-                            <option value="air">Air</option>
-                            <option value="sea">Sea</option>
-                            <option value="rail">Rail</option>
-                            <option value="warhouse">Warehouse</option>
-                            <option value="customs_released">Customs Released</option>
-                        </select>
+                    <div className="input_field">
+                        <div className="title">Shipment Status</div>
+                        <div className="input">
+                            <select
+                                value={shipment_status}
+                                defaultValue={'pending'}
+                                onChange={(e) => {
+                                    set_shipment_status(e.target.value);
+                                }}>
+                                <option value="air">Air</option>
+                                <option value="sea">Sea</option>
+                                <option value="rail">Rail</option>
+                                <option value="warhouse">Warehouse</option>
+                                <option value="customs_released">Customs Released</option>
+                            </select>
+                        </div>
                     </div>
-                </div>
-                <div className="input_field">
-                    <div className="title">B/L number #</div>
-                    <div className="input">
-                        <input
-                            type="text"
-                            value={bl_number}
-                            onChange={(e) => {
-                                set_bl_number(e.target.value);
-                            }}
-                        />
+                    <div className="input_field">
+                        <div className="title">B/L number #</div>
+                        <div className="input">
+                            <input
+                                type="text"
+                                value={bl_number}
+                                onChange={(e) => {
+                                    set_bl_number(e.target.value);
+                                }}
+                            />
+                        </div>
                     </div>
+                    <div className="input_field">
+                        <div className="title">Shipment Details</div>
+                        <div className="input">
+                            <textarea
+                                type="text"
+                                value={shipping_details_information}
+                                onChange={(e) => set_shipping_details_information(e.target.value)}
+                            />
+                        </div>
+                    </div>
+
+
+                    <div className="input_field">
+                        <div className="title">Description</div>
+                        <div className="input">
+                            <textarea
+                                type="text"
+                                value={description}
+                                onChange={(e) => {
+                                    set_description(e.target.value);
+                                }}
+                            />
+                        </div>
+                    </div>
+
+                    <div className="input_field">
+                        <div className="title">Container Number</div>
+                        <div className="input">
+                            <textarea
+                                value={container_number}
+                                name=""
+                                id=""
+                                cols="30"
+                                rows="10"
+                                onChange={(e) => {
+                                    set_container_number(e.target.value);
+                                }}></textarea>
+                        </div>
+                    </div>
+
+
                 </div>
             </div>
             <div className="input_field">
@@ -956,7 +963,7 @@ function Create_shipment({ create = true, shipment_id_view = '', edit = false, f
                                             onChange={(e) => edit_shipment_fields(index, 'description', e.target.value)}
                                         />
                                     </td>
-                                   <td>
+                                    <td>
                                         <button onClick={() => removeItem(index)}>Remove</button> {/* Button to remove item */}
                                     </td>
                                 </tr>
@@ -1059,21 +1066,21 @@ function Create_shipment({ create = true, shipment_id_view = '', edit = false, f
                                         <h2>Ship To </h2>
                                         {ship_to_information}
                                     </div>
-                               <div className="ship_to_information">
+                                    <div className="ship_to_information">
                                         <h2>Shipment Details</h2>
                                         {shipping_details_information}
                                     </div>
-<br />
-                                <div className="third_section">
-                                    <div className="container_number">
-                      <h2>Container Number</h2>
-                                        <div
-                                            dangerouslySetInnerHTML={{
-                                                __html: container_number.replace(/\n/g, '<br>'),
-                                            }}></div>
+                                    <br />
+                                    <div className="third_section">
+                                        <div className="container_number">
+                                            <h2>Container Number</h2>
+                                            <div
+                                                dangerouslySetInnerHTML={{
+                                                    __html: container_number.replace(/\n/g, '<br>'),
+                                                }}></div>
+                                        </div>
                                     </div>
                                 </div>
-                                    </div>
                                 <div className="forth_section">
                                     <Table>
                                         <TableHeader>
@@ -1089,7 +1096,7 @@ function Create_shipment({ create = true, shipment_id_view = '', edit = false, f
                                             ))}
                                         </TableBody>
                                     </Table>
-      <br />
+                                    <br />
                                     <div>{description}</div>
                                 </div>
                                 <div className="sixth_section">
