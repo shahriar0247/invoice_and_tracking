@@ -10,7 +10,7 @@ export default function DTable({ headers, table_data, columns, Custom_buttons = 
             {
                 headers.map(function (header) {
                     return (
-                        <TableColumn>{header}</TableColumn>
+                        <TableColumn key={header}>{header}</TableColumn>
                     )
                 })
             }
@@ -21,7 +21,7 @@ export default function DTable({ headers, table_data, columns, Custom_buttons = 
                     {columns.map(function (column) {
                         if (column == "actions") {
                             return (
-                                <TableCell>
+                                <TableCell key={column}>
                                     <div className="grid grid-cols-2 gap-4">
                                         {edit_function &&
                                             <button onClick={() => edit_function(item.id)}>Edit</button>
@@ -41,23 +41,23 @@ export default function DTable({ headers, table_data, columns, Custom_buttons = 
                         else if (column == "shipment_actions") {
                             return (
 
-                                <TableCell>
+                                <TableCell key={column}>
                                     <div style={{ display: 'grid', gridTemplateColumns: 'auto auto auto', gridGap: '5px' }}>
- <button
+                                        <button
 
                                             onClick={() => {
                                                 window.location.href = '/tracking/' + item.id;
                                             }}>
                                             Tracking
                                         </button>
-                                       <a
+                                        <a
                                             className="button"
                                             href={`/shipment/${item.id}?edit=true`}>
                                             Edit
                                         </a>
-                                 
- 
-                
+
+
+
                                         {edit_function &&
                                             <button onClick={() => edit_function(item.id)}>Edit</button>
 
@@ -69,17 +69,17 @@ export default function DTable({ headers, table_data, columns, Custom_buttons = 
                                         {Custom_buttons &&
                                             <Custom_buttons></Custom_buttons>
                                         }
-                                       <select
+                                        <select
                                             defaultValue={item.invoice_status}
                                             onChange={(e) => {
                                                 custom_function[0](item.id, e.target.value);
                                             }}>
-                              <option value="air">Air</option>
-                            <option value="sea">Sea</option>
-                            <option value="rail">Rail</option>
-                            <option value="warhouse">Warehouse</option>
-                            <option value="customs_released">Customs Released</option>
-                                      </select>
+                                            <option value="air">Air</option>
+                                            <option value="sea">Sea</option>
+                                            <option value="rail">Rail</option>
+                                            <option value="warhouse">Warehouse</option>
+                                            <option value="customs_released">Customs Released</option>
+                                        </select>
                                     </div>
 
                                 </TableCell>)
@@ -88,7 +88,7 @@ export default function DTable({ headers, table_data, columns, Custom_buttons = 
                         else if (column == "invoice_actions") {
                             return (
 
-                                <TableCell>
+                                <TableCell key={column}>
                                     <div style={{ display: 'grid', gridAutoFlow: 'column', gridGap: '5px' }}>
                                         {edit_function &&
                                             <button onClick={() => edit_function(item.id)}>Edit</button>
@@ -129,10 +129,10 @@ export default function DTable({ headers, table_data, columns, Custom_buttons = 
 
                         }
                         else if (column == "date") {
-                            <TableCell>   {new Date(item[column]).toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}</TableCell>
+                            <TableCell key={column}>   {new Date(item[column]).toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}</TableCell>
                         }
                         return (
-                            <TableCell>{item[column]}</TableCell>
+                            <TableCell key={column}>{item[column]}</TableCell>
                         )
                     })
                     }

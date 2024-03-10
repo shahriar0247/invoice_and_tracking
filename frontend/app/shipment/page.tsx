@@ -77,7 +77,7 @@ export default function Shipments({ type = null, create = true, shipment_id_view
     }, []);
 
     function fetch_shipments() {
-        fetch('http://89.116.50.93:5003/get/shipment')
+        fetch('http://localhost:5003/get/shipment')
             .then((response) => response.json())
             .then((data) => {
                 setData3(data);
@@ -95,7 +95,7 @@ export default function Shipments({ type = null, create = true, shipment_id_view
         return uniqueUsers;
     }
     function deleteShipment(shipmentId) {
-        fetch(`http://89.116.50.93:5003/delete/shipment/${shipmentId}`, {
+        fetch(`http://localhost:5003/delete/shipment/${shipmentId}`, {
             method: 'DELETE',
         })
             .then((response) => {
@@ -136,7 +136,7 @@ export default function Shipments({ type = null, create = true, shipment_id_view
             id: id,
             status: status,
         };
-        fetch(`http://89.116.50.93:5003/shipment/change_status`, {
+        fetch(`http://localhost:5003/shipment/change_status`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -273,7 +273,7 @@ function CreateSummary(data3) {
         })
         excel_data.push(["", "", "", "", "Total Price: " + totalPriceOfAllItems.toFixed(2) + " " + currency])
 
-        fetch("http://89.116.50.93:5003/daily_accounts/download", {
+        fetch("http://localhost:5003/daily_accounts/download", {
 
             method: "post",
             body: JSON.stringify(excel_data),
@@ -439,7 +439,7 @@ function Create_shipment({ create = true, shipment_id_view = '', edit = false, f
     }
 
     async function get_shipment_details() {
-        const response = await fetch('http://89.116.50.93:5003/get_shipment_details/' + shipment_id_view);
+        const response = await fetch('http://localhost:5003/get_shipment_details/' + shipment_id_view);
         const data = await response.json();
         const all_items_ = JSON.parse(data['all_items']);
         set_shipment_id(data.id);
@@ -525,7 +525,7 @@ function Create_shipment({ create = true, shipment_id_view = '', edit = false, f
         set_selected_items(updatedItems);
     };
     function fetchVendor() {
-        fetch('http://89.116.50.93:5003/get/vendor')
+        fetch('http://localhost:5003/get/vendor')
             .then((response) => response.json())
             .then((data) => {
                 set_all_vendors(data);
@@ -535,7 +535,7 @@ function Create_shipment({ create = true, shipment_id_view = '', edit = false, f
             });
     }
     function fetchInvoices() {
-        fetch('http://89.116.50.93:5003/get/invoice')
+        fetch('http://localhost:5003/get/invoice')
             .then((response) => response.json())
             .then((data) => {
                 set_invoices(data);
@@ -546,7 +546,7 @@ function Create_shipment({ create = true, shipment_id_view = '', edit = false, f
             });
     }
     function fetchCompany() {
-        fetch('http://89.116.50.93:5003/get/company')
+        fetch('http://localhost:5003/get/company')
             .then((response) => response.json())
             .then((data) => {
                 set_company(data);
@@ -567,7 +567,7 @@ function Create_shipment({ create = true, shipment_id_view = '', edit = false, f
             });
     }
     function fetchBillTo() {
-        fetch('http://89.116.50.93:5003/get/type/bill_to')
+        fetch('http://localhost:5003/get/type/bill_to')
             .then((response) => response.json())
             .then((data) => {
                 set_all_issued_to(data);
@@ -586,7 +586,7 @@ function Create_shipment({ create = true, shipment_id_view = '', edit = false, f
             });
     }
     function fetchShipFrom() {
-        fetch('http://89.116.50.93:5003/get/type/ship_from')
+        fetch('http://localhost:5003/get/type/ship_from')
             .then((response) => response.json())
             .then((data) => {
                 set_all_ship_from(data);
@@ -605,7 +605,7 @@ function Create_shipment({ create = true, shipment_id_view = '', edit = false, f
             });
     }
     function fetchShipTo() {
-        fetch('http://89.116.50.93:5003/get/type/ship_to')
+        fetch('http://localhost:5003/get/type/ship_to')
             .then((response) => response.json())
             .then((data) => {
                 set_all_ship_to(data);
@@ -624,7 +624,7 @@ function Create_shipment({ create = true, shipment_id_view = '', edit = false, f
             });
     }
     function fetchItems() {
-        fetch('http://89.116.50.93:5003/get/item')
+        fetch('http://localhost:5003/get/item')
             .then((response) => response.json())
             .then((data) => {
                 set_all_items(data);
@@ -655,7 +655,7 @@ function Create_shipment({ create = true, shipment_id_view = '', edit = false, f
             edit: edit,
         };
 
-        fetch('http://89.116.50.93:5003/create/shipment/' + shipment_id, {
+        fetch('http://localhost:5003/create/shipment/' + shipment_id, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

@@ -78,7 +78,7 @@ export default function Purchase_Orders({ create = true, purchase_order_id_view 
     }, []);
 
     function fetch_purchase_orders() {
-        fetch('http://89.116.50.93:5003/get/purchase_order')
+        fetch('http://localhost:5003/get/purchase_order')
             .then((response) => response.json())
             .then((data) => {
                 setData3(data);
@@ -96,7 +96,7 @@ export default function Purchase_Orders({ create = true, purchase_order_id_view 
         return uniqueUsers;
     }
     function deletePurchase_Order(purchase_orderId) {
-        fetch(`http://89.116.50.93:5003/delete/purchase_order/${purchase_orderId}`, {
+        fetch(`http://localhost:5003/delete/purchase_order/${purchase_orderId}`, {
             method: 'DELETE',
         })
             .then((response) => {
@@ -142,7 +142,7 @@ export default function Purchase_Orders({ create = true, purchase_order_id_view 
             id: id,
             status: status,
         };
-        fetch(`http://89.116.50.93:5003/purchase_order/change_status`, {
+        fetch(`http://localhost:5003/purchase_order/change_status`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -353,7 +353,7 @@ function Create_purchase_order({ create = true, purchase_order_id_view = '', edi
     }
 
     async function get_purchase_order_details() {
-        const response = await fetch('http://89.116.50.93:5003/get_purchase_order_details/' + purchase_order_id_view);
+        const response = await fetch('http://localhost:5003/get_purchase_order_details/' + purchase_order_id_view);
         const data = await response.json();
         const all_items_ = JSON.parse(data['all_items']);
         set_purchase_order_id(data.id);
@@ -406,7 +406,7 @@ function Create_purchase_order({ create = true, purchase_order_id_view = '', edi
         set_selected_items(updatedItems);
     };
     function fetchInvoices() {
-        fetch('http://89.116.50.93:5003/get/invoice')
+        fetch('http://localhost:5003/get/invoice')
             .then((response) => response.json())
             .then((data) => {
                 set_invoices(data);
@@ -416,7 +416,7 @@ function Create_purchase_order({ create = true, purchase_order_id_view = '', edi
             });
     }
     function fetchVendor() {
-        fetch('http://89.116.50.93:5003/get/vendor')
+        fetch('http://localhost:5003/get/vendor')
             .then((response) => response.json())
             .then((data) => {
                 set_all_vendors(data);
@@ -426,7 +426,7 @@ function Create_purchase_order({ create = true, purchase_order_id_view = '', edi
             });
     }
     function fetchCompany() {
-        fetch('http://89.116.50.93:5003/get/company')
+        fetch('http://localhost:5003/get/company')
             .then((response) => response.json())
             .then((data) => {
                 set_company(data);
@@ -448,7 +448,7 @@ function Create_purchase_order({ create = true, purchase_order_id_view = '', edi
             });
     }
     function fetchBillTo() {
-        fetch('http://89.116.50.93:5003/get/type/bill_to')
+        fetch('http://localhost:5003/get/type/bill_to')
             .then((response) => response.json())
             .then((data) => {
                 set_all_bill_to(data);
@@ -467,7 +467,7 @@ function Create_purchase_order({ create = true, purchase_order_id_view = '', edi
             });
     }
     function fetchShipFrom() {
-        fetch('http://89.116.50.93:5003/get/type/ship_from')
+        fetch('http://localhost:5003/get/type/ship_from')
             .then((response) => response.json())
             .then((data) => {
                 set_all_ship_from(data);
@@ -486,7 +486,7 @@ function Create_purchase_order({ create = true, purchase_order_id_view = '', edi
             });
     }
     function fetchShipTo() {
-        fetch('http://89.116.50.93:5003/get/type/ship_to')
+        fetch('http://localhost:5003/get/type/ship_to')
             .then((response) => response.json())
             .then((data) => {
                 set_all_ship_to(data);
@@ -506,7 +506,7 @@ function Create_purchase_order({ create = true, purchase_order_id_view = '', edi
     }
     function fetchItems() {
         console.log('here 2');
-        fetch('http://89.116.50.93:5003/get/item')
+        fetch('http://localhost:5003/get/item')
             .then((response) => response.json())
             .then((data) => {
                 console.log(data);
@@ -531,7 +531,7 @@ function Create_purchase_order({ create = true, purchase_order_id_view = '', edi
             edit: edit,
         };
 
-        fetch('http://89.116.50.93:5003/create/purchase_order/' + purchase_order_id, {
+        fetch('http://localhost:5003/create/purchase_order/' + purchase_order_id, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

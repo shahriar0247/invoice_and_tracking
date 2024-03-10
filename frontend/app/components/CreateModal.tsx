@@ -26,13 +26,14 @@ export default function CreateModal({ isOpen, onOpen, onClose, title, inputs_, e
                                         <div className="title">{input_['title']}</div>
                                         <div className="input">
                                             <select
+                                                key={data[input_['name']]}
                                                 value={data[input_['name']]}
                                                 onChange={(e) => {
                                                     set_data({ ...data, [input_['name']]: e.target.value });
                                                 }}
                                             >
                                                 {input_['options'].map(function (option) {
-                                                    return (<option value={option['value']}>{option['name']}</option>)
+                                                    return (<option key={option['value']} value={option['value']}>{option['name']}</option>)
                                                 })}
                                             </select>
                                         </div>

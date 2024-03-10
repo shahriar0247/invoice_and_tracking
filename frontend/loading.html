@@ -1,0 +1,56 @@
+<div class="loader_">
+    <h1>Ginger</h1>
+    <br>
+    <br>
+    <br>
+    <div class="loader"></div>
+
+</div>
+<style>
+    .loader_ {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        display: grid;
+        justify-content: center;
+    }
+
+    .loader {
+        width: 15px;
+        aspect-ratio: 1;
+        position: relative;
+        margin-left: 35px;
+    }
+
+    .loader::before,
+    .loader::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        background: #000;
+    }
+
+    .loader::before {
+        box-shadow: -25px 0;
+        animation: l8-1 1s infinite linear;
+    }
+
+    .loader::after {
+        transform: rotate(0deg) translateX(25px);
+        animation: l8-2 1s infinite linear;
+    }
+
+    @keyframes l8-1 {
+        100% {
+            transform: translateX(25px);
+        }
+    }
+
+    @keyframes l8-2 {
+        100% {
+            transform: rotate(-180deg) translateX(25px);
+        }
+    }
+</style>

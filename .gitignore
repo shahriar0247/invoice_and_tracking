@@ -9,6 +9,7 @@ backend/venv/
 backend/*.pyc
 
 frontend/logs
+frontend/dist
 frontend/*.log
 frontend/npm-debug.log*
 frontend/pids

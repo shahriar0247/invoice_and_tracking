@@ -43,7 +43,7 @@ export default function BillTo({ }) {
         var item = pathParts[pathParts.length - 1];
 
 
-        fetch(`http://89.116.50.93:5003/get/type/${item}`)
+        fetch(`http://localhost:5003/get/type/${item}`)
             .then((response) => response.json())
             .then((data) => {
                 setTableData(data);
@@ -54,7 +54,7 @@ export default function BillTo({ }) {
     }
 
     function handle_delete_click(bill_to_id) {
-        fetch(`http://89.116.50.93:5003/delete/type/${item}/${bill_to_id}`, {
+        fetch(`http://localhost:5003/delete/type/${item}/${bill_to_id}`, {
             method: 'DELETE',
         })
             .then((response) => response.text())
@@ -79,7 +79,7 @@ export default function BillTo({ }) {
     }
 
     function get_bill_to_details(bill_to_id) {
-        fetch(`http://89.116.50.93:5003/get/type/${item}/${bill_to_id}`)
+        fetch(`http://localhost:5003/get/type/${item}/${bill_to_id}`)
             .then((response) => response.json())
             .then((data) => {
                 set_create_data(data);
@@ -92,7 +92,7 @@ export default function BillTo({ }) {
 
     function edit_bill_to_id_() {
 
-        const apiUrl = create_mode ? `http://89.116.50.93:5003/create/type/${item}` : `http://89.116.50.93:5003/edit/type/${item}/${edit_bill_to_id}`;
+        const apiUrl = create_mode ? `http://localhost:5003/create/type/${item}` : `http://localhost:5003/edit/type/${item}/${edit_bill_to_id}`;
 
         fetch(apiUrl, {
             method: create_mode ? 'POST' : 'PUT',
